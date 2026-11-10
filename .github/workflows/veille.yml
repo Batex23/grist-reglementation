@@ -1,0 +1,79 @@
+name: Veille réglementaire incendie
+
+# Chaque matin : applique les publications du Journal officiel (base LEGI de la DILA) aux textes suivis,
+# puis publie le widget et les textes à jour sur GitHub Pages.
+# Aucune clé Grist ici : c'est le widget qui met GPREV à jour, avec les droits de l'agent qui l'ouvre.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: veille
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install lxml
+
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm install --prefix sync @huggingface/transformers@3
+
+      - name: Restaurer le cache des textes officiels
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            cache
+            data/vecteurs.json
+            sync/node_modules/@huggingface/transformers/.cache
+          key: legi-${{ github.run_id }}
+          restore-keys: legi-
+
+      - name: Première extraction (si le cache est vide)
+        run: |
+          if [ ! -d cache/legi ]; then
+            mkdir -p cache/legi
+            python -I sync/legi_scan.py bootstrap cache/legi data/cibles.json
+          fi
+
+      - name: Appliquer les publications du Journal officiel
+        run: python -I sync/grist_sync.py extraire
+
+      - name: Calculer les vecteurs sémantiques des articles modifiés
+        working-directory: sync
+        run: node embed.mjs ../data/reglementation.json ../data/vecteurs.json
+
+      - name: Préparer les données du widget
+        run: python -I sync/grist_sync.py publier
+
+      - name: Sauvegarder le cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            cache
+            data/vecteurs.json
+            sync/node_modules/@huggingface/transformers/.cache
+          key: legi-${{ github.run_id }}
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: widget }
+      - id: deploy
+        uses: actions/deploy-pages@v4
