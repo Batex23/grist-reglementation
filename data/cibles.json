@@ -1,0 +1,32 @@
+{
+ "LEGITEXT000020303557": {
+  "domaine": "ERP",
+  "dir": "global/code_et_TNC_en_vigueur/TNC_en_vigueur/JORF/TEXT/00/00/00/29/00/JORFTEXT000000290033",
+  "titre": "Arrêté du 25 juin 1980 portant approbation des dispositions générales du règlement de sécurité contre les risques d'incendie et de panique dans les établissements recevant du public (ERP)."
+ },
+ "LEGITEXT000006060088": {
+  "domaine": "CDT",
+  "dir": "global/code_et_TNC_en_vigueur/TNC_en_vigueur/JORF/TEXT/00/00/00/87/40/JORFTEXT000000874065",
+  "titre": "Arrêté du 5 août 1992 pris pour l'application des articles R. 235-4-8 et R. 235-4-15 du code du travail et fixant des dispositions pour la prévention des incendies et le désenfumage de certains lieux de travail"
+ },
+ "LEGITEXT000006074143": {
+  "domaine": "HAB",
+  "dir": "global/code_et_TNC_en_vigueur/TNC_en_vigueur/JORF/TEXT/00/00/00/47/40/JORFTEXT000000474032",
+  "titre": "Arrêté du 31 janvier 1986 relatif à la protection contre l'incendie des bâtiments d'habitation"
+ },
+ "LEGITEXT000025169092": {
+  "domaine": "IGH",
+  "dir": "global/code_et_TNC_en_vigueur/TNC_en_vigueur/JORF/TEXT/00/00/25/16/71/JORFTEXT000025167121",
+  "titre": "Arrêté du 30 décembre 2011 portant règlement de sécurité pour la construction des immeubles de grande hauteur et leur protection contre les risques d'incendie et de panique"
+ },
+ "LEGITEXT000006072050": {
+  "domaine": "CDT",
+  "dir": "global/code_et_TNC_en_vigueur/code_en_vigueur/LEGI/TEXT/00/00/06/07/20/LEGITEXT000006072050",
+  "titre": null
+ },
+ "LEGITEXT000006074096": {
+  "domaine": "CCH",
+  "dir": "global/code_et_TNC_en_vigueur/code_en_vigueur/LEGI/TEXT/00/00/06/07/40/LEGITEXT000006074096",
+  "titre": null
+ }
+}
