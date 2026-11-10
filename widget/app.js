@@ -78,7 +78,73 @@
     return out;
   }
 
+  // ------------------------------------------------------------------ agents (fiche du personnel, comme GPREV Connect)
+  const AGENTS = {
+    table: 'Personnel_du_GPREV', identite: 'Identite',
+    email: ['mail', 'Mail', 'Email', 'email', 'E_mail', 'Courriel'],
+    photo: ['Photo', 'URL_Avatar', 'Avatar', 'Photo_Agent', 'Photo_agent', 'Image'],
+    prenom: ['Prenom', 'Prénom', 'Pr_nom'], nom: ['NOM', 'Nom', 'nom'], grade: ['Grade', 'grade'],
+  };
+  const normEmail = (v) => String(v || '').trim().toLowerCase();
+  function refId(v) {
+    if (v == null || v === '') return null;
+    if (typeof v === 'number') return v || null;
+    if (Array.isArray(v)) return v[0] === 'R' ? +v[2] || null : (typeof v[0] === 'number' ? v[0] : null);
+    return /^\d+$/.test(String(v)) ? +v : null;
+  }
+  async function loadAgents() {
+    st.agents = new Map(); st.agentByEmail = new Map(); st.me = null;
+    let rows;
+    try { rows = await st.ad.fetch(AGENTS.table); } catch (e) { return; }
+    if (!rows.length) return;
+    const pick = (list, keys) => list.find((c) => keys.includes(c));
+    const cols = Object.keys(rows[0]);
+    const ce = pick(AGENTS.email, cols), cp = pick(AGENTS.photo, cols), cpr = pick(AGENTS.prenom, cols), cn = pick(AGENTS.nom, cols), cg = pick(AGENTS.grade, cols);
+    for (const r of rows) {
+      const a = {
+        id: r.id, prenom: String((cpr && r[cpr]) || '').trim(), nom: String((cn && r[cn]) || '').trim(), grade: String((cg && r[cg]) || '').trim(),
+        email: ce ? normEmail(r[ce]) : '', photo: cp ? r[cp] : null,
+      };
+      st.agents.set(a.id, a);
+      if (a.email) st.agentByEmail.set(a.email, a);
+    }
+    if (st.inGrist) { try { await token(); } catch (e) { /* photos en pièce jointe indisponibles */ } }
+    // agent connecté : la table Identite de GPREV ne montre à chacun que sa propre ligne
+    try {
+      const idr = await st.ad.fetch(AGENTS.identite);
+      if (idr.length === 1) {
+        const r = idr[0];
+        const em = normEmail(r[pick(AGENTS.email, Object.keys(r))]);
+        st.me = st.agents.get(refId(r.Personnel)) || st.agentByEmail.get(em) || null;
+      }
+    } catch (e) { /* pas de table Identite : l'auteur sera reconnu après publication */ }
+  }
+  const agentName = (a) => (a ? `${a.grade} ${a.prenom} ${a.nom}`.replace(/\s+/g, ' ').trim() : '');
+  function agentOf(c) { return (c.agentId && st.agents && st.agents.get(c.agentId)) || (c.email && st.agentByEmail && st.agentByEmail.get(c.email)) || null; }
+  function photoUrl(a) {
+    if (!a || a.photo == null || a.photo === '') return null;
+    const v = a.photo;
+    const ids = Array.isArray(v) ? (v[0] === 'L' ? v.slice(1) : v).filter((x) => typeof x === 'number') : typeof v === 'number' ? [v] : [];
+    if (ids.length) return st.token ? `${st.token.baseUrl}/attachments/${ids[0]}/download?auth=${encodeURIComponent(st.token.token)}` : null;
+    const s = String(v).trim();
+    const drive = s.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+    if (drive) return `https://drive.google.com/thumbnail?id=${drive[1]}&sz=w200`;
+    return /^(https?:\/\/|data:image\/)/i.test(s) ? s : null;
+  }
+  const AV_COLORS = ['#4f46e5', '#7c3aed', '#db2777', '#dc2626', '#ea580c', '#16a34a', '#0891b2', '#2563eb', '#9333ea', '#0d9488'];
+  /* Avatar : photo de l'agent, sinon ses initiales sur une couleur stable */
+  function avatar(a, fallbackName, size = 34) {
+    const nom = a ? `${a.prenom} ${a.nom}` : (fallbackName || '?');
+    const parts = nom.trim().split(/\s+/).filter(Boolean);
+    const ini = a ? ((a.prenom[0] || '') + (a.nom[0] || '')).toUpperCase() : ((parts[0] || '?')[0] + ((parts[1] || '')[0] || '')).toUpperCase();
+    let h = 0; for (const ch of nom) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    const url = photoUrl(a);
+    return `<span class="av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * 0.38)}px;background:${AV_COLORS[h % AV_COLORS.length]}" aria-hidden="true">${esc(ini || '?')}${url ? `<img src="${esc(url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</span>`;
+  }
+  const authorName = (c) => agentName(agentOf(c)) || c.auteur || 'Agent';
+
   async function fetchAll() {
+    await loadAgents();
     const get = async (name) => { try { return await st.ad.fetch(name); } catch (e) { console.warn(name, e); return []; } };
     const [reg, com, vei, syn, par] = await Promise.all([get('REG_Articles'), get('REG_Commentaires'), get('REG_Veille'), get('REG_Synonymes'), get('REG_Parametres')]);
     st.params = Object.fromEntries(par.map((p) => [p.Cle, p.Valeur]));
@@ -125,6 +191,7 @@
   function ingestComments(com) {
     st.comments = com.filter((c) => c.Article).map((c) => ({
       row: c.id, art: c.Article, type: c.Type || '', texte: c.Texte || '', images: gList(c.Images), auteur: c.Auteur || '',
+      email: normEmail(c.Auteur_email), agentId: refId(c.Agent),
       date: typeof c.Cree_le === 'number' ? new Date(c.Cree_le * 1000).toISOString() : (c.Cree_le || ''),
     })).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     st.cmtBy = new Map();
@@ -543,7 +610,7 @@
       <div class="cols">
         <section><h2>Changements à venir</h2>${fut.length ? `<ul class="list">${fut.slice(0, 12).map((n) => li(n, 'Nouvelle rédaction au ' + fmtDate(n.futDate))).join('')}</ul>` : '<p class="hint">Aucune modification programmée.</p>'}</section>
         <section><h2>Modifiés récemment</h2><ul class="list">${rec.map((n) => li(n, 'En vigueur depuis le ' + fmtDate(n.depuis))).join('')}</ul></section>
-        <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, esc(c.auteur || '') + ' : ' + esc(c.texte.slice(0, 90))) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
+        <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, `<span class="hwho">${avatar(agentOf(c), c.auteur, 20)}<b>${esc(authorName(c))}</b></span> ${esc(c.texte.slice(0, 90))}`) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
       </div></div>`;
     $('#read').scrollTop = 0;
   }
@@ -628,7 +695,7 @@
         </div>
         ${imgs.length ? `<div class="thumbs" data-imgs="${it.row}"></div>` : ''}
         <div class="acts">
-          <button data-focus="${it.id}" data-tab="cmt">💬 ${nc ? nc + ' commentaire' + (nc > 1 ? 's' : '') : 'Commenter'}</button>
+          <button data-focus="${it.id}" data-tab="cmt">💬 ${nc ? nc + ' commentaire' + (nc > 1 ? 's' : '') : 'Commenter'}${nc ? `<span class="stack">${[...new Map((st.cmtBy.get(it.row) || []).map((c) => [authorName(c), c])).values()].slice(0, 4).map((c) => avatar(agentOf(c), c.auteur, 20)).join('')}</span>` : ''}</button>
           <button data-pin="${it.id}">📌 Épingler</button>
           <button data-copy="${it.id}">Copier la référence</button>
           ${it.lien ? `<a href="${esc(it.lien)}" target="_blank" rel="noopener">Légifrance ↗</a>` : ''}
@@ -696,9 +763,11 @@
     if (st.sideTab === 'cmt') {
       body = `<div class="tags" aria-label="Mots-clés">${n.tags.map((t) => `<span class="tag">${esc(t)}<button data-untag="${esc(t)}" aria-label="Retirer ${esc(t)}">×</button></span>`).join('')}
         <input id="tagIn" type="text" placeholder="+ mot-clé" style="border:0;background:none;padding:2px 4px;width:110px;font-size:13px" aria-label="Ajouter un mot-clé"></div>
-        ${cm.length ? cm.map((c) => `<div class="cmt"><div class="who">${c.type ? `<span class="pill">${esc(c.type)}</span>` : ''}<b>${esc(c.auteur || 'Anonyme')}</b><span>${fmtDate(c.date)}</span></div>
-          ${c.texte ? `<div class="txt">${esc(c.texte)}</div>` : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div>`).join('') : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>'}
+        ${cm.length ? cm.map((c) => `<div class="cmt">${avatar(agentOf(c), c.auteur, 36)}<div class="cbody"><div class="cname">${esc(authorName(c))}</div>
+          <div class="who">${c.type ? `<span class="pill">${esc(c.type)}</span>` : ''}<span>${fmtDate(c.date)}</span></div>
+          ${c.texte ? `<div class="txt">${esc(c.texte)}</div>` : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div></div>`).join('') : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>'}
         <form class="form" id="cform">
+          ${st.me ? `<div class="asme">${avatar(st.me, '', 28)}<span>Publier en tant que <b>${esc(agentName(st.me))}</b></span></div>` : ''}
           <select name="type" aria-label="Type de commentaire">${['Interprétation', 'Retour terrain', 'Photo / schéma', 'Question', 'Jurisprudence', 'Doctrine / réponse ministérielle'].map((t) => `<option>${t}</option>`).join('')}</select>
           <textarea name="texte" placeholder="Votre interprétation, un retour de visite, une question…" aria-label="Commentaire"></textarea>
           <label class="drop" id="drop">Glissez des photos ou schémas ici, ou <u>choisissez des fichiers</u><input type="file" name="files" accept="image/*" multiple hidden></label>

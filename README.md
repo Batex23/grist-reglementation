@@ -96,6 +96,7 @@ Pour relier un commentaire à la fiche de l'agent, ajoutez dans `REG_Commentaire
 - Le plan des pages SiteSecurite (adresses uniquement, aucun contenu) est actualisé chaque matin.
 
 **Commenter, rechercher, veiller**
+- Chaque commentaire affiche la **photo, le grade et le nom de l'agent**, repris de la table `Personnel_du_GPREV` (colonne Agent de `REG_Commentaires`, sinon e-mail du compte Grist). L'agent connecté est reconnu par la table `Identite`, comme dans GPREV Connect : « Publier en tant que… ». Photos acceptées : pièce jointe Grist, lien web ou lien Google Drive.
 - **Mots-clés / Question** : le mode Question classe les articles selon ce qui est compris de la question (réglementation, type d'ERP, catégorie, notions) et montre les deux phrases les plus pertinentes de chaque article.
 - Cliquer sur la plaque d'un article ouvre ses commentaires, son historique (textes modificatifs) et la comparaison avec la version à venir.
 - Les images se déposent par glisser-déposer ou copier-coller dans le formulaire de commentaire ; elles sont redimensionnées avant envoi.
