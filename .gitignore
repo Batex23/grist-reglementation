@@ -1,0 +1,5 @@
+cache/
+sync/node_modules/
+sync/package*.json
+__pycache__/
+data/reglementation.json

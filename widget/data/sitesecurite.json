@@ -1,0 +1,3192 @@
+{
+"erp": {
+"GN": [
+{
+"code": "GN",
+"de": 1,
+"a": 3,
+"libelle": "GN 1 à 3",
+"section": "I. Classement des établissements",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn01a03.php?id=top"
+},
+{
+"code": "GN",
+"de": 4,
+"a": 10,
+"libelle": "GN 4 à 10",
+"section": "II. Adaptation des règles et cas particuliers",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn04a10.php?id=top"
+},
+{
+"code": "GN",
+"de": 11,
+"a": 12,
+"libelle": "GN 11 à 12",
+"section": "III. Contrôle des établissements",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn11a12.php?id=top"
+},
+{
+"code": "GN",
+"de": 13,
+"a": 13,
+"libelle": "GN 13",
+"section": "IV. Travaux",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn13.php?id=GN13"
+},
+{
+"code": "GN",
+"de": 14,
+"a": 14,
+"libelle": "GN 14",
+"section": "V. Normalisation",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn14.php?id=GN14"
+},
+{
+"code": "GN",
+"de": 15,
+"a": 15,
+"libelle": "GN 15",
+"section": "VI. Structures provisoires et démontables",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn15.php?id=GN15"
+},
+{
+"code": "GN",
+"de": 16,
+"a": 16,
+"libelle": "GN 16",
+"section": "VII - Terminologie Cet article est applicable à partir du 1 er juin 2027",
+"url": "https://sitesecurite.com/contenu/_erp/erpgn/gn16_5POI.php?id=GN16"
+}
+],
+"GE": [
+{
+"code": "GE",
+"de": 1,
+"a": 1,
+"libelle": "GE 1",
+"section": "Objet",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ge01.php?id=GE1"
+},
+{
+"code": "GE",
+"de": 2,
+"a": 5,
+"libelle": "GE 2 à 5",
+"section": "I. Contrôle des établissements",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ge02a05.php?id=top"
+},
+{
+"code": "GE",
+"de": 6,
+"a": 6,
+"libelle": "GE 6",
+"section": "II. Vérifications techniques",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ge06a10.php?id=GE6"
+},
+{
+"code": "GE",
+"de": 7,
+"a": 9,
+"libelle": "GE 7 à 9",
+"section": "1. par organismes agréés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ge06a10.php?id=top"
+},
+{
+"code": "GE",
+"de": 10,
+"a": 10,
+"libelle": "GE 10",
+"section": "2. par techniciens compétents",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ge06a10.php?id=GE10"
+}
+],
+"CO": [
+{
+"code": "CO",
+"de": 1,
+"a": 5,
+"libelle": "CO 1 à 5",
+"section": "I. Conception et desserte des bâtiments",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co01a05.php?id=top"
+},
+{
+"code": "CO",
+"de": 6,
+"a": 10,
+"libelle": "CO 6 à 10",
+"section": "II. Isolement par rapport aux tiers",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co06a10.php?id=top"
+},
+{
+"code": "CO",
+"de": 11,
+"a": 15,
+"libelle": "CO 11 à 15",
+"section": "III. Résistance au feu des structures",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co11a15.php?id=top"
+},
+{
+"code": "CO",
+"de": 16,
+"a": 18,
+"libelle": "CO 16 à 18",
+"section": "IV. Couvertures",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co16a18.php?id=top"
+},
+{
+"code": "CO",
+"de": 19,
+"a": 22,
+"libelle": "CO 19 à 22",
+"section": "V. Façades",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co19a22.php?id=top"
+},
+{
+"code": "CO",
+"de": 23,
+"a": 26,
+"libelle": "CO 23 à 26",
+"section": "VI. Distribution intérieure et compartimentage",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co23a26.php?id=top"
+},
+{
+"code": "CO",
+"de": 27,
+"a": 29,
+"libelle": "CO 27 à 29",
+"section": "VII. Locaux non accessibles au public, locaux à risques particuliers",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co27a29.php?id=top"
+},
+{
+"code": "CO",
+"de": 30,
+"a": 33,
+"libelle": "CO 30 à 33",
+"section": "VIII. Conduits et gaines",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co30a33.php?id=top"
+},
+{
+"code": "CO",
+"de": 34,
+"a": 42,
+"libelle": "CO 34 à 42",
+"section": "1. Dispositions générales",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co34a42.php?id=top"
+},
+{
+"code": "CO",
+"de": 43,
+"a": 48,
+"libelle": "CO 43 à 48",
+"section": "2. Sorties",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co43a48.php?id=top"
+},
+{
+"code": "CO",
+"de": 49,
+"a": 56,
+"libelle": "CO 49 à 56",
+"section": "3. Escaliers",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co49a56.php?id=top"
+},
+{
+"code": "CO",
+"de": 57,
+"a": 60,
+"libelle": "CO 57 à 60",
+"section": "4. Espaces d'attente sécurisés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co57a60.php?id=top"
+},
+{
+"code": "CO",
+"de": 61,
+"a": 61,
+"libelle": "CO 61",
+"section": "X. Tribunes",
+"url": "https://sitesecurite.com/contenu/_erp/erp/co61.php?id=CO61"
+}
+],
+"AM": [
+{
+"code": "AM",
+"de": 1,
+"a": 1,
+"libelle": "AM 1",
+"section": "Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am01.php?id=AM1"
+},
+{
+"code": "AM",
+"de": 2,
+"a": 8,
+"libelle": "AM 2 à 8",
+"section": "I. Produits et matériaux de parois",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am02a08.php?id=top"
+},
+{
+"code": "AM",
+"de": 9,
+"a": 10,
+"libelle": "AM 9 à 10",
+"section": "II. Eléments de décoration",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am09a10.php?id=top"
+},
+{
+"code": "AM",
+"de": 11,
+"a": 14,
+"libelle": "AM 11 à 14",
+"section": "III. Tentures, rideaux, voilages, cloisons coulissantes ou repliables",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am11a14.php?id=top"
+},
+{
+"code": "AM",
+"de": 15,
+"a": 18,
+"libelle": "AM 15 à 18",
+"section": "IV. Gros mobilier, agencement principal, planchers légers surélevés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am15a18.php?id=top"
+},
+{
+"code": "AM",
+"de": 19,
+"a": 20,
+"libelle": "AM 19 à 20",
+"section": "V. Éléments à vocation décorative",
+"url": "https://sitesecurite.com/contenu/_erp/erp/am19a20.php?id=top"
+}
+],
+"DF": [
+{
+"code": "DF",
+"de": 1,
+"a": 10,
+"libelle": "DF 1 à 10",
+"section": "DF - Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erp/df01a10.php?id=top"
+}
+],
+"CH": [
+{
+"code": "CH",
+"de": 1,
+"a": 4,
+"libelle": "CH 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch01a04.php?id=top"
+},
+{
+"code": "CH",
+"de": 5,
+"a": 1,
+"libelle": "CH 5 à 12-1",
+"section": "II. Implantation des appareils de production de chaleur et/ou de froid",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch05a12.php?id=top"
+},
+{
+"code": "CH",
+"de": 13,
+"a": 17,
+"libelle": "CH 13 à 17",
+"section": "III. Stockage des combustibles",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch13a17.php?id=top"
+},
+{
+"code": "CH",
+"de": 18,
+"a": 22,
+"libelle": "CH 18 à 22",
+"section": "IV. Distribution en phase liquide de butane ou de propane (Abrogée)",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch18a22.php?id=top"
+},
+{
+"code": "CH",
+"de": 23,
+"a": 25,
+"libelle": "CH 23 à 25",
+"section": "V. Chauffage à eau chaude, à vapeur et à air chaud",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch23a25.php?id=top"
+},
+{
+"code": "CH",
+"de": 26,
+"a": 27,
+"libelle": "CH 26 à 27",
+"section": "VI. Eau chaude sanitaire",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch26a27.php?id=top"
+},
+{
+"code": "CH",
+"de": 28,
+"a": 28,
+"libelle": "CH 28",
+"section": "VII. Traitement d'air et ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch28.php?id=CH28"
+},
+{
+"code": "CH",
+"de": 29,
+"a": 40,
+"libelle": "CH 29 à 40",
+"section": "1. Ventilation de confort",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch29a40.php?id=top"
+},
+{
+"code": "CH",
+"de": 41,
+"a": 43,
+"libelle": "CH 41 à 43",
+"section": "2. Ventilation mécanique contrôlée",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch41a43.php?id=top"
+},
+{
+"code": "CH",
+"de": 44,
+"a": 56,
+"libelle": "CH 44 à 56",
+"section": "VIII. Appareils indépendants de ventilation ou de production-émission de chaleur et/ou de froid",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch44a56.php?id=top"
+},
+{
+"code": "CH",
+"de": 57,
+"a": 58,
+"libelle": "CH 57 à 58",
+"section": "IX - Entretien et vérification",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ch57a58.php?id=top"
+}
+],
+"GZ": [
+{
+"code": "GZ",
+"de": 1,
+"a": 15,
+"libelle": "GZ 1 à 15",
+"section": "Installations aux gaz combustibles et aux hydrocarbures liquéfiés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gz01a15.php?id=top"
+}
+],
+"EL": [
+{
+"code": "EL",
+"de": 1,
+"a": 4,
+"libelle": "EL 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erp/el01a04.php?id=top"
+},
+{
+"code": "EL",
+"de": 5,
+"a": 11,
+"libelle": "EL 5 à 11",
+"section": "II. Règles d'installation",
+"url": "https://sitesecurite.com/contenu/_erp/erp/el05a11.php?id=top"
+},
+{
+"code": "EL",
+"de": 12,
+"a": 17,
+"libelle": "EL 12 à 17",
+"section": "III. Installations de sécurité",
+"url": "https://sitesecurite.com/contenu/_erp/erp/el12a17.php?id=top"
+},
+{
+"code": "EL",
+"de": 18,
+"a": 19,
+"libelle": "EL 18 à 19",
+"section": "IV. Maintenance, exploitation et vérification",
+"url": "https://sitesecurite.com/contenu/_erp/erp/el18a19.php?id=top"
+},
+{
+"code": "EL",
+"de": 20,
+"a": 23,
+"libelle": "EL 20 à 23",
+"section": "V. Installations temporaires",
+"url": "https://sitesecurite.com/contenu/_erp/erp/el20a23.php?id=top"
+}
+],
+"EC": [
+{
+"code": "EC",
+"de": 1,
+"a": 5,
+"libelle": "EC 1 à 5",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ec01a05.php?id=top"
+},
+{
+"code": "EC",
+"de": 6,
+"a": 6,
+"libelle": "EC 6",
+"section": "II. Eclairage normal",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ec06.php?id=EC6"
+},
+{
+"code": "EC",
+"de": 7,
+"a": 15,
+"libelle": "EC 7 à 15",
+"section": "III. Eclairage de sécurité",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ec07a15.php?id=top"
+}
+],
+"AS": [
+{
+"code": "AS",
+"de": 1,
+"a": 3,
+"libelle": "AS 1 à 3",
+"section": "I. Ascenseurs",
+"url": "https://sitesecurite.com/contenu/_erp/erp/as01a03.php?id=top"
+},
+{
+"code": "AS",
+"de": 4,
+"a": 5,
+"libelle": "AS 4 à 5",
+"section": "II. Dispositions particulières concernant les ascenseurs destinés à l'évacuation des handicapés physiques",
+"url": "https://sitesecurite.com/contenu/_erp/erp/as04a05.php?id=top"
+},
+{
+"code": "AS",
+"de": 6,
+"a": 7,
+"libelle": "AS 6 à 7",
+"section": "III. Escaliers mécaniques et trottoirs roulants",
+"url": "https://sitesecurite.com/contenu/_erp/erp/as06a07.php?id=top"
+},
+{
+"code": "AS",
+"de": 8,
+"a": 11,
+"libelle": "AS 8 à 11",
+"section": "IV. Entretien et vérifications",
+"url": "https://sitesecurite.com/contenu/_erp/erp/as08a11.php?id=top"
+}
+],
+"GC": [
+{
+"code": "GC",
+"de": 1,
+"a": 1,
+"libelle": "GC 1",
+"section": "Domaine d'application et définitions",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc01.php?id=GC1"
+},
+{
+"code": "GC",
+"de": 2,
+"a": 8,
+"libelle": "GC 2 à 8",
+"section": "I. Dispositions générales",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc02a08.php?id=top"
+},
+{
+"code": "GC",
+"de": 9,
+"a": 11,
+"libelle": "GC 9 à 11",
+"section": "II. Grandes cuisines",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc09a11.php?id=top"
+},
+{
+"code": "GC",
+"de": 12,
+"a": 14,
+"libelle": "GC 12 à 14",
+"section": "III. Offices de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc12a14.php?id=top"
+},
+{
+"code": "GC",
+"de": 15,
+"a": 17,
+"libelle": "GC 15 à 17",
+"section": "IV. Ilots de cuisson installés dans les salles de restauration",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc15a17.php?id=top"
+},
+{
+"code": "GC",
+"de": 18,
+"a": 18,
+"libelle": "GC 18",
+"section": "V. Modules ou conteneurs spécialisés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc18.php?id=GC18"
+},
+{
+"code": "GC",
+"de": 19,
+"a": 20,
+"libelle": "GC 19 à 20",
+"section": "VI. Appareils installés dans les locaux accessibles ou non au public",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc19a20.php?id=top"
+},
+{
+"code": "GC",
+"de": 21,
+"a": 22,
+"libelle": "GC 21 à 22",
+"section": "VII. Entretien et vérifications",
+"url": "https://sitesecurite.com/contenu/_erp/erp/gc21a22.php?id=top"
+}
+],
+"MS": [
+{
+"code": "MS",
+"de": 1,
+"a": 3,
+"libelle": "MS 1 à 3",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms01a03.php?id=top"
+},
+{
+"code": "MS",
+"de": 4,
+"a": 4,
+"libelle": "MS 4",
+"section": "II. Moyens d'extinction",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms04.php?id=MS4"
+},
+{
+"code": "MS",
+"de": 5,
+"a": 7,
+"libelle": "MS 5 à 7",
+"section": "1. Bouches et poteaux d'incendie privés et points d'eau",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms05a07.php?id=top"
+},
+{
+"code": "MS",
+"de": 8,
+"a": 13,
+"libelle": "MS 8 à 13",
+"section": "2. Branchements et canalisations",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms08a13.php?id=top"
+},
+{
+"code": "MS",
+"de": 14,
+"a": 17,
+"libelle": "MS 14 à 17",
+"section": "3. Robinets d'incendie armés",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms14a17.php?id=top"
+},
+{
+"code": "MS",
+"de": 18,
+"a": 21,
+"libelle": "MS 18 à 21",
+"section": "4. Colonnes sèches",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms18a21.php?id=top"
+},
+{
+"code": "MS",
+"de": 22,
+"a": 24,
+"libelle": "MS 22 à 24",
+"section": "5. Colonnes en charges (dites colonnes humides)",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms22a24.php?id=top"
+},
+{
+"code": "MS",
+"de": 25,
+"a": 30,
+"libelle": "MS 25 à 30",
+"section": "6. Installations d'extinction automatique ou à commande manuelle",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms25a30.php?id=top"
+},
+{
+"code": "MS",
+"de": 31,
+"a": 34,
+"libelle": "MS 31 à 34",
+"section": "7. Déversoirs ponctuels",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms31a34.php?id=top"
+},
+{
+"code": "MS",
+"de": 35,
+"a": 37,
+"libelle": "MS 35 à 37",
+"section": "8. Eléments de construction irrigués",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms35a37.php?id=top"
+},
+{
+"code": "MS",
+"de": 38,
+"a": 40,
+"libelle": "MS 38 à 40",
+"section": "9. Appareils mobiles et moyens divers",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms38a40.php?id=top"
+},
+{
+"code": "MS",
+"de": 41,
+"a": 44,
+"libelle": "MS 41 à 44",
+"section": "III. Dispositions visant à faciliter l'action des sapeurs-pompiers",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms41a44.php?id=top"
+},
+{
+"code": "MS",
+"de": 45,
+"a": 52,
+"libelle": "MS 45 à 52",
+"section": "IV. Service de sécurité incendie",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms45a52.php?id=top"
+},
+{
+"code": "MS",
+"de": 53,
+"a": 55,
+"libelle": "MS 53 à 55",
+"section": "V. Système de sécurité incendie",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms53a55.php?id=top"
+},
+{
+"code": "MS",
+"de": 56,
+"a": 58,
+"libelle": "MS 56 à 58",
+"section": "1. Système de détection incendie",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms56a58.php?id=top"
+},
+{
+"code": "MS",
+"de": 59,
+"a": 60,
+"libelle": "MS 59 à 60",
+"section": "2. Système de mise en sécurité incendie",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms59a60.php?id=top"
+},
+{
+"code": "MS",
+"de": 61,
+"a": 67,
+"libelle": "MS 61 à 67",
+"section": "3. Système d'alarme",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms61a67.php?id=top"
+},
+{
+"code": "MS",
+"de": 68,
+"a": 69,
+"libelle": "MS 68 à 69",
+"section": "4. Entretien et consignes d'exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms68a69.php?id=top"
+},
+{
+"code": "MS",
+"de": 70,
+"a": 71,
+"libelle": "MS 70 à 71",
+"section": "VI. Système d'alerte",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms70a71.php?id=top"
+},
+{
+"code": "MS",
+"de": 72,
+"a": 75,
+"libelle": "MS 72 à 75",
+"section": "VII. Entretien, vérifications et contrôles",
+"url": "https://sitesecurite.com/contenu/_erp/erp/ms72a75.php?id=top"
+}
+],
+"J": [
+{
+"code": "J",
+"de": 1,
+"a": 4,
+"libelle": "J 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j01a04.php?id=top"
+},
+{
+"code": "J",
+"de": 5,
+"a": 16,
+"libelle": "J 5 à 16",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j05a16.php?id=top"
+},
+{
+"code": "J",
+"de": 17,
+"a": 21,
+"libelle": "J 17 à 21",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j17a21.php?id=top"
+},
+{
+"code": "J",
+"de": 22,
+"a": 24,
+"libelle": "J 22 à 24",
+"section": "IV. Aménagements intérieurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j22a24.php?id=top"
+},
+{
+"code": "J",
+"de": 25,
+"a": 25,
+"libelle": "J 25",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j25.php?id=J25"
+},
+{
+"code": "J",
+"de": 26,
+"a": 26,
+"libelle": "J 26",
+"section": "VI. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j26.php?id=J26"
+},
+{
+"code": "J",
+"de": 27,
+"a": 28,
+"libelle": "J 27 à 28",
+"section": "VII. Appareils de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j27a28.php?id=top"
+},
+{
+"code": "J",
+"de": 29,
+"a": 29,
+"libelle": "J 29",
+"section": "VIII. Electricité",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j29.php?id=J29"
+},
+{
+"code": "J",
+"de": 30,
+"a": 30,
+"libelle": "J 30",
+"section": "IX. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j30.php?id=J30"
+},
+{
+"code": "J",
+"de": 31,
+"a": 31,
+"libelle": "J 31",
+"section": "X. Ascenseurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j31.php?id=J31"
+},
+{
+"code": "J",
+"de": 32,
+"a": 33,
+"libelle": "J 32 à 33",
+"section": "XI. Fluides médicaux",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j32a33.php?id=top"
+},
+{
+"code": "J",
+"de": 34,
+"a": 40,
+"libelle": "J 34 à 40",
+"section": "XII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpj/j34a40.php?id=top"
+}
+],
+"L": [
+{
+"code": "L",
+"de": 1,
+"a": 5,
+"libelle": "L 1 à 5",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l01a05.php?id=top"
+},
+{
+"code": "L",
+"de": 6,
+"a": 9,
+"libelle": "L 6 à 9",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l06a09.php?id=top"
+},
+{
+"code": "L",
+"de": 10,
+"a": 11,
+"libelle": "L 10 à 11",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l10a11.php?id=top"
+},
+{
+"code": "L",
+"de": 12,
+"a": 12,
+"libelle": "L 12",
+"section": "IV. Chauffage et ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l12.php?id=L12"
+},
+{
+"code": "L",
+"de": 13,
+"a": 13,
+"libelle": "L 13",
+"section": "V. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l13.php?id=L13"
+},
+{
+"code": "L",
+"de": 14,
+"a": 17,
+"libelle": "L 14 à 17",
+"section": "VI. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l14a17.php?id=top"
+},
+{
+"code": "L",
+"de": 18,
+"a": 19,
+"libelle": "L 18 à 19",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l18a19.php?id=top"
+},
+{
+"code": "L",
+"de": 20,
+"a": 25,
+"libelle": "L 20 à 25",
+"section": "II. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l20a25.php?id=top"
+},
+{
+"code": "L",
+"de": 26,
+"a": 29,
+"libelle": "L 26 à 29",
+"section": "III. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l26a29.php?id=top"
+},
+{
+"code": "L",
+"de": 30,
+"a": 30,
+"libelle": "L 30",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l30.php?id=L30"
+},
+{
+"code": "L",
+"de": 31,
+"a": 31,
+"libelle": "L 31",
+"section": "V. Chauffage et gaz",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l31.php?id=L31"
+},
+{
+"code": "L",
+"de": 32,
+"a": 34,
+"libelle": "L 32 à 34",
+"section": "VI. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l32a34.php?id=top"
+},
+{
+"code": "L",
+"de": 35,
+"a": 35,
+"libelle": "L 35",
+"section": "VII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l35.php?id=L35"
+},
+{
+"code": "L",
+"de": 36,
+"a": 38,
+"libelle": "L 36 à 38",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l36a38.php?id=top"
+},
+{
+"code": "L",
+"de": 39,
+"a": 44,
+"libelle": "L 39 à 44",
+"section": "II. Installations en régie ou local de projection",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l39a44.php?id=top"
+},
+{
+"code": "L",
+"de": 45,
+"a": 48,
+"libelle": "L 45 à 48",
+"section": "III.Installations dans la salle",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l45a48.php?id=top"
+},
+{
+"code": "L",
+"de": 49,
+"a": 58,
+"libelle": "L 49 à 58",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l49a58.php?id=top"
+},
+{
+"code": "L",
+"de": 59,
+"a": 71,
+"libelle": "L 59 à 71",
+"section": "II. Espace scénique isolable de la salle",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l59a71.php?id=top"
+},
+{
+"code": "L",
+"de": 72,
+"a": 75,
+"libelle": "L 72 à 75",
+"section": "III. Espaces scéniques intégrés à la salle",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l72a75.php?id=top"
+},
+{
+"code": "L",
+"de": 76,
+"a": 79,
+"libelle": "L 76 à 79",
+"section": "IV. Espaces scéniques adossées fixes",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l76a79.php?id=top"
+},
+{
+"code": "L",
+"de": 80,
+"a": 80,
+"libelle": "L 80",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l80.php?id=L80"
+},
+{
+"code": "L",
+"de": 81,
+"a": 81,
+"libelle": "L 81",
+"section": "II.Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l81.php?id=L81"
+},
+{
+"code": "L",
+"de": 82,
+"a": 82,
+"libelle": "L 82",
+"section": "III. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l82.php?id=L82"
+},
+{
+"code": "L",
+"de": 83,
+"a": 83,
+"libelle": "L 83",
+"section": "IV. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l83.php?id=L83"
+},
+{
+"code": "L",
+"de": 84,
+"a": 84,
+"libelle": "L 84",
+"section": "V. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l84.php?id=L84"
+},
+{
+"code": "L",
+"de": 85,
+"a": 85,
+"libelle": "L 85",
+"section": "VI. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpl/l85.php?id=L85"
+}
+],
+"M": [
+{
+"code": "M",
+"de": 1,
+"a": 2,
+"libelle": "M 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m01a02.php?id=top"
+},
+{
+"code": "M",
+"de": 3,
+"a": 7,
+"libelle": "M 3 à 7",
+"section": "II. Construction, isolement, distribution",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m03a07.php?id=top"
+},
+{
+"code": "M",
+"de": 8,
+"a": 14,
+"libelle": "M 8 à 14",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m08a14.php?id=top"
+},
+{
+"code": "M",
+"de": 15,
+"a": 17,
+"libelle": "M 15 à 17",
+"section": "IV. Aménagements intérieurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m15a17.php?id=top"
+},
+{
+"code": "M",
+"de": 18,
+"a": 19,
+"libelle": "M 18 à 19",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m18a19.php?id=top"
+},
+{
+"code": "M",
+"de": 20,
+"a": 22,
+"libelle": "M 20 à 22",
+"section": "VI. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m20a22.php?id=top"
+},
+{
+"code": "M",
+"de": 23,
+"a": 24,
+"libelle": "M 23 à 24",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m23a24.php?id=top"
+},
+{
+"code": "M",
+"de": 25,
+"a": 33,
+"libelle": "M 25 à 33",
+"section": "VIII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m25a33.php?id=top"
+},
+{
+"code": "M",
+"de": 34,
+"a": 37,
+"libelle": "M 34 à 37",
+"section": "IX. Dispositions spéciales à certaines présentations ou manifestations",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m34a37.php?id=top"
+},
+{
+"code": "M",
+"de": 38,
+"a": 43,
+"libelle": "M 38 à 43",
+"section": "X. Dispositions spéciales aux articles et produits dangereux",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m38a43.php?id=top"
+},
+{
+"code": "M",
+"de": 44,
+"a": 44,
+"libelle": "M 44",
+"section": "XI. Consignes particulières",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m44.php?id=M44"
+},
+{
+"code": "M",
+"de": 45,
+"a": 58,
+"libelle": "M 45 à 58",
+"section": "XII. Mesures particulières aux locaux non accessibles au public",
+"url": "https://sitesecurite.com/contenu/_erp/erpm/m45a58.php?id=top"
+}
+],
+"N": [
+{
+"code": "N",
+"de": 1,
+"a": 2,
+"libelle": "N 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n01a02.php?id=top"
+},
+{
+"code": "N",
+"de": 3,
+"a": 5,
+"libelle": "N 3 à 5",
+"section": "II. Constructions",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n03a05.php?id=top"
+},
+{
+"code": "N",
+"de": 6,
+"a": 8,
+"libelle": "N 6 à 8",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n06a08.php?id=top"
+},
+{
+"code": "N",
+"de": 9,
+"a": 9,
+"libelle": "N 9",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n09.php?id=N9"
+},
+{
+"code": "N",
+"de": 10,
+"a": 10,
+"libelle": "N 10",
+"section": "V. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n10.php?id=N10"
+},
+{
+"code": "N",
+"de": 11,
+"a": 11,
+"libelle": "N 11",
+"section": "VI. Installations spécifiques",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n11.php?id=N11"
+},
+{
+"code": "N",
+"de": 12,
+"a": 13,
+"libelle": "N 12 à 13",
+"section": "VII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n12a13.php?id=top"
+},
+{
+"code": "N",
+"de": 14,
+"a": 15,
+"libelle": "N 14 à 15",
+"section": "VIII. Appareils de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n14a15.php?id=top"
+},
+{
+"code": "N",
+"de": 16,
+"a": 20,
+"libelle": "N 16 à 20",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpn/n16a20.php?id=top"
+}
+],
+"O": [
+{
+"code": "O",
+"de": 1,
+"a": 2,
+"libelle": "O 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o01a02.php?id=top"
+},
+{
+"code": "O",
+"de": 3,
+"a": 5,
+"libelle": "O 3 à 5",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o03a05.php?id=top"
+},
+{
+"code": "O",
+"de": 6,
+"a": 9,
+"libelle": "O 6 à 9",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o06a09.php?id=top"
+},
+{
+"code": "O",
+"de": 10,
+"a": 10,
+"libelle": "O 10",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o10.php?id=O10"
+},
+{
+"code": "O",
+"de": 11,
+"a": 11,
+"libelle": "O 11",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o11.php?id=O11"
+},
+{
+"code": "O",
+"de": 12,
+"a": 12,
+"libelle": "O 12",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o12.php?id=O12"
+},
+{
+"code": "O",
+"de": 13,
+"a": 13,
+"libelle": "O 13",
+"section": "VII. Installations au gaz",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o13.php?id=O13"
+},
+{
+"code": "O",
+"de": 14,
+"a": 15,
+"libelle": "O 14 à 15",
+"section": "VIII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o14a15.php?id=top"
+},
+{
+"code": "O",
+"de": 16,
+"a": 16,
+"libelle": "O 16",
+"section": "IX. Appareils de cuisson",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o16.php?id=O16"
+},
+{
+"code": "O",
+"de": 17,
+"a": 21,
+"libelle": "O 17 à 21",
+"section": "X. Moyens de secours et consignes",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o17a21.php?id=top"
+},
+{
+"code": "O",
+"de": 22,
+"a": 24,
+"libelle": "O 22 à 24",
+"section": "XI. Établissements existants reclassés « établissement recevant du public »",
+"url": "https://sitesecurite.com/contenu/_erp/erpo/o22a24.php?id=top"
+}
+],
+"P": [
+{
+"code": "P",
+"de": 1,
+"a": 3,
+"libelle": "P 1 à 3",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p01a03.php?id=top"
+},
+{
+"code": "P",
+"de": 4,
+"a": 6,
+"libelle": "P 4 à 6",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p04a06.php?id=top"
+},
+{
+"code": "P",
+"de": 7,
+"a": 11,
+"libelle": "P 7 à 11",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p07a11.php?id=top"
+},
+{
+"code": "P",
+"de": 12,
+"a": 13,
+"libelle": "P 12 à 13",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p12a13.php?id=top"
+},
+{
+"code": "P",
+"de": 14,
+"a": 14,
+"libelle": "P 14",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p14.php?id=P14"
+},
+{
+"code": "P",
+"de": 15,
+"a": 15,
+"libelle": "P 15",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p15.php?id=P15"
+},
+{
+"code": "P",
+"de": 16,
+"a": 16,
+"libelle": "P 16",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p16.php?id=P16"
+},
+{
+"code": "P",
+"de": 17,
+"a": 19,
+"libelle": "P 17 à 19",
+"section": "VIII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p17a19.php?id=top"
+},
+{
+"code": "P",
+"de": 20,
+"a": 24,
+"libelle": "P 20 à 24",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpp/p20a24.php?id=top"
+}
+],
+"R": [
+{
+"code": "R",
+"de": 1,
+"a": 5,
+"libelle": "R 1 à 5",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r01a05.php?id=top"
+},
+{
+"code": "R",
+"de": 6,
+"a": 12,
+"libelle": "R 6 à 12",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r06a12.php?id=top"
+},
+{
+"code": "R",
+"de": 13,
+"a": 17,
+"libelle": "R 13 à 17",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r13a17.php?id=top"
+},
+{
+"code": "R",
+"de": 18,
+"a": 18,
+"libelle": "R 18",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r18.php?id=R18"
+},
+{
+"code": "R",
+"de": 19,
+"a": 19,
+"libelle": "R 19",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r19.php?id=R19"
+},
+{
+"code": "R",
+"de": 20,
+"a": 23,
+"libelle": "R 20 à 23",
+"section": "VI. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r20a23.php?id=top"
+},
+{
+"code": "R",
+"de": 24,
+"a": 25,
+"libelle": "R 24 à 25",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r24a25.php?id=top"
+},
+{
+"code": "R",
+"de": 26,
+"a": 27,
+"libelle": "R 26 à 27",
+"section": "VIII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r26a27.php?id=top"
+},
+{
+"code": "R",
+"de": 28,
+"a": 29,
+"libelle": "R 28 à 29",
+"section": "IX. Appareils de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r28a29.php?id=top"
+},
+{
+"code": "R",
+"de": 30,
+"a": 33,
+"libelle": "R 30 à 33",
+"section": "X. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpr/r30a33.php?id=top"
+}
+],
+"S": [
+{
+"code": "S",
+"de": 1,
+"a": 2,
+"libelle": "S 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s01a02.php?id=top"
+},
+{
+"code": "S",
+"de": 3,
+"a": 8,
+"libelle": "S 3 à 8",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s03a08.php?id=top"
+},
+{
+"code": "S",
+"de": 9,
+"a": 10,
+"libelle": "S 9 à 10",
+"section": "III. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s09a10.php?id=top"
+},
+{
+"code": "S",
+"de": 11,
+"a": 11,
+"libelle": "S 11",
+"section": "IV. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s11.php?id=S11"
+},
+{
+"code": "S",
+"de": 12,
+"a": 12,
+"libelle": "S 12",
+"section": "V. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s12.php?id=S12"
+},
+{
+"code": "S",
+"de": 13,
+"a": 14,
+"libelle": "S 13 à 14",
+"section": "VI. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s13a14.php?id=top"
+},
+{
+"code": "S",
+"de": 15,
+"a": 19,
+"libelle": "S 15 à 19",
+"section": "VII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erps/s15a19.php?id=top"
+}
+],
+"T": [
+{
+"code": "T",
+"de": 1,
+"a": 9,
+"libelle": "T 1 à 9",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t01a09.php?id=top"
+},
+{
+"code": "T",
+"de": 10,
+"a": 17,
+"libelle": "T 10 à 17",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t10a17.php?id=top"
+},
+{
+"code": "T",
+"de": 18,
+"a": 20,
+"libelle": "T 18 à 20",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t18a20.php?id=top"
+},
+{
+"code": "T",
+"de": 21,
+"a": 24,
+"libelle": "T 21 à 24",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t21a24.php?id=top"
+},
+{
+"code": "T",
+"de": 25,
+"a": 26,
+"libelle": "T 25 à 26",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t25a26.php?id=top"
+},
+{
+"code": "T",
+"de": 27,
+"a": 27,
+"libelle": "T 27",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t27.php?id=T27"
+},
+{
+"code": "T",
+"de": 28,
+"a": 31,
+"libelle": "T 28 à 31",
+"section": "VII. Installations gaz",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t28a31.php?id=top"
+},
+{
+"code": "T",
+"de": 32,
+"a": 36,
+"libelle": "T 32 à 36",
+"section": "VIII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t32a36.php?id=top"
+},
+{
+"code": "T",
+"de": 37,
+"a": 38,
+"libelle": "T 37 à 38",
+"section": "IX. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t37a38.php?id=top"
+},
+{
+"code": "T",
+"de": 38,
+"a": 46,
+"libelle": "T 38-1 à 46",
+"section": "X. Dispositions spéciales à certaines présentations",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t39a46.php?id=top"
+},
+{
+"code": "T",
+"de": 47,
+"a": 52,
+"libelle": "T 47 à 52",
+"section": "XI. Moyens de secours - Consignes",
+"url": "https://sitesecurite.com/contenu/_erp/erpt/t47a52.php?id=top"
+}
+],
+"V": [
+{
+"code": "V",
+"de": 1,
+"a": 2,
+"libelle": "V 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v01a02.php?id=top"
+},
+{
+"code": "V",
+"de": 3,
+"a": 4,
+"libelle": "V 3 à 4",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v03a04.php?id=top"
+},
+{
+"code": "V",
+"de": 5,
+"a": 5,
+"libelle": "V 5",
+"section": "III. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v05.php?id=V5"
+},
+{
+"code": "V",
+"de": 6,
+"a": 6,
+"libelle": "V 6",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v06.php?id=V6"
+},
+{
+"code": "V",
+"de": 7,
+"a": 8,
+"libelle": "V 7 à 8",
+"section": "V. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v07a08.php?id=top"
+},
+{
+"code": "V",
+"de": 9,
+"a": 10,
+"libelle": "V 9 à 10",
+"section": "VI. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v09a10.php?id=top"
+},
+{
+"code": "V",
+"de": 11,
+"a": 13,
+"libelle": "V 11 à 13",
+"section": "VII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpv/v11a13.php?id=top"
+}
+],
+"W": [
+{
+"code": "W",
+"de": 1,
+"a": 2,
+"libelle": "W 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w01a02.php?id=top"
+},
+{
+"code": "W",
+"de": 3,
+"a": 7,
+"libelle": "W 3 à 7",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w03a07.php?id=top"
+},
+{
+"code": "W",
+"de": 8,
+"a": 8,
+"libelle": "W 8",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w08.php?id=W8"
+},
+{
+"code": "W",
+"de": 9,
+"a": 9,
+"libelle": "W 9",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w09.php?id=W9"
+},
+{
+"code": "W",
+"de": 10,
+"a": 10,
+"libelle": "W 10",
+"section": "V. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w10.php?id=W10"
+},
+{
+"code": "W",
+"de": 11,
+"a": 16,
+"libelle": "W 11 à 16",
+"section": "VI. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpw/w11a16.php?id=top"
+}
+],
+"X": [
+{
+"code": "X",
+"de": 1,
+"a": 3,
+"libelle": "X 1 à 3",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x01a03.php?id=top"
+},
+{
+"code": "X",
+"de": 4,
+"a": 10,
+"libelle": "X 4 à 10",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x04a10.php?id=top"
+},
+{
+"code": "X",
+"de": 11,
+"a": 14,
+"libelle": "X 11 à 14",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x11a14.php?id=top"
+},
+{
+"code": "X",
+"de": 15,
+"a": 18,
+"libelle": "X 15 à 18",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x15a18.php?id=top"
+},
+{
+"code": "X",
+"de": 19,
+"a": 19,
+"libelle": "X 19",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x19.php?id=X19"
+},
+{
+"code": "X",
+"de": 20,
+"a": 20,
+"libelle": "X 20",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x20.php?id=X20"
+},
+{
+"code": "X",
+"de": 21,
+"a": 21,
+"libelle": "X 21",
+"section": "VII. Installations au gaz",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x21.php?id=X21"
+},
+{
+"code": "X",
+"de": 22,
+"a": 23,
+"libelle": "X 22 à 23",
+"section": "VIII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x22a23.php?id=top"
+},
+{
+"code": "X",
+"de": 24,
+"a": 27,
+"libelle": "X 24 à 27",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpx/x24a27.php?id=top"
+}
+],
+"Y": [
+{
+"code": "Y",
+"de": 1,
+"a": 2,
+"libelle": "Y 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y01a02.php?id=top"
+},
+{
+"code": "Y",
+"de": 3,
+"a": 8,
+"libelle": "Y 3 à 8",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y03a08.php?id=top"
+},
+{
+"code": "Y",
+"de": 9,
+"a": 9,
+"libelle": "Y 9",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y09.php?id=Y9"
+},
+{
+"code": "Y",
+"de": 10,
+"a": 12,
+"libelle": "Y 10 à 12",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y10a12.php?id=top"
+},
+{
+"code": "Y",
+"de": 13,
+"a": 14,
+"libelle": "Y 13 à 14",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y13a14.php?id=top"
+},
+{
+"code": "Y",
+"de": 15,
+"a": 15,
+"libelle": "Y 15",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y15.php?id=Y15"
+},
+{
+"code": "Y",
+"de": 16,
+"a": 16,
+"libelle": "Y 16",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y16.php?id=Y16"
+},
+{
+"code": "Y",
+"de": 17,
+"a": 17,
+"libelle": "Y 17",
+"section": "VIII. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y17.php?id=Y17"
+},
+{
+"code": "Y",
+"de": 18,
+"a": 22,
+"libelle": "Y 18 à 22",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpy/y18a22.php?id=top"
+}
+],
+"PE": [
+{
+"code": "PE",
+"de": 1,
+"a": 4,
+"libelle": "PE 1 à 4",
+"section": "I. Dispositions générales",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe01a04.php?id=top"
+},
+{
+"code": "PE",
+"de": 5,
+"a": 12,
+"libelle": "PE 5 à 12",
+"section": "I. Construction, Dégagements, gaines",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe05a12.php?id=top"
+},
+{
+"code": "PE",
+"de": 13,
+"a": 13,
+"libelle": "PE 13",
+"section": "II. Aménagements intérieurs",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe13.php?id=PE13"
+},
+{
+"code": "PE",
+"de": 14,
+"a": 14,
+"libelle": "PE 14",
+"section": "III. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe14.php?id=PE14"
+},
+{
+"code": "PE",
+"de": 15,
+"a": 19,
+"libelle": "PE 15 à 19",
+"section": "IV. Installations d'appareils de cuisson destinés à la restauration",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe15a19.php?id=top"
+},
+{
+"code": "PE",
+"de": 20,
+"a": 23,
+"libelle": "PE 20 à 23",
+"section": "V. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe20a23.php?id=top"
+},
+{
+"code": "PE",
+"de": 24,
+"a": 24,
+"libelle": "PE 24",
+"section": "VI. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe24.php?id=PE24"
+},
+{
+"code": "PE",
+"de": 25,
+"a": 25,
+"libelle": "PE 25",
+"section": "VII. Ascenseurs, escaliers mécaniques, trottoirs roulants",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe25.php?id=PE25"
+},
+{
+"code": "PE",
+"de": 26,
+"a": 27,
+"libelle": "PE 26 à 27",
+"section": "VIII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe26a27.php?id=top"
+},
+{
+"code": "PE",
+"de": 28,
+"a": 37,
+"libelle": "PE 28 à 37",
+"section": "III. Règles complémentaires pour les établissements comportant des locaux réservés au sommeil",
+"url": "https://sitesecurite.com/contenu/_erp/erppe/pe28a37.php?id=top"
+}
+],
+"PO": [
+{
+"code": "PO",
+"de": 1,
+"a": 7,
+"libelle": "PO 1 à 7",
+"section": "Prescriptions applicables aux établissements à construire ou à modifier",
+"url": "https://sitesecurite.com/contenu/_erp/erppo/po01a07.php?id=top"
+},
+{
+"code": "PO",
+"de": 8,
+"a": 13,
+"libelle": "PO 8 à 13",
+"section": "Prescriptions applicables aux établissements existants",
+"url": "https://sitesecurite.com/contenu/_erp/erppo/po08a13.php?id=top"
+}
+],
+"PU": [
+{
+"code": "PU",
+"de": 1,
+"a": 6,
+"libelle": "PU 1 à 6",
+"section": "Règles spécifiques aux petits établissements de soins - PU 1 à 6",
+"url": "https://sitesecurite.com/contenu/_erp/erppu/pu01a06.php?id=top"
+}
+],
+"PX": [
+{
+"code": "PX",
+"de": 1,
+"a": 1,
+"libelle": "PX 1",
+"section": "Règles spécifiques aux établissements sportifs - PX 1",
+"url": "https://sitesecurite.com/contenu/_erp/erppx/px01.php?id=PX1"
+}
+],
+"PA": [
+{
+"code": "PA",
+"de": 1,
+"a": 2,
+"libelle": "PA 1 à 2",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa01a02.php?id=top"
+},
+{
+"code": "PA",
+"de": 3,
+"a": 6,
+"libelle": "PA 3 à 6",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa03a06.php?id=top"
+},
+{
+"code": "PA",
+"de": 7,
+"a": 8,
+"libelle": "PA 7 à 8",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa07a08.php?id=top"
+},
+{
+"code": "PA",
+"de": 9,
+"a": 9,
+"libelle": "PA 9",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa09.php?id=PA9"
+},
+{
+"code": "PA",
+"de": 10,
+"a": 11,
+"libelle": "PA 10 à 11",
+"section": "V. Electricité",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa10a11.php?id=top"
+},
+{
+"code": "PA",
+"de": 12,
+"a": 14,
+"libelle": "PA 12 à 14",
+"section": "VI. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erppa/pa12a14.php?id=top"
+}
+],
+"CTS": [
+{
+"code": "CTS",
+"de": 1,
+"a": 6,
+"libelle": "CTS 1 à 6",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts01a06.php?id=top"
+},
+{
+"code": "CTS",
+"de": 7,
+"a": 9,
+"libelle": "CTS 7 à 9",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts07a09.php?id=top"
+},
+{
+"code": "CTS",
+"de": 10,
+"a": 11,
+"libelle": "CTS 10 à 11",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts10a11.php?id=top"
+},
+{
+"code": "CTS",
+"de": 12,
+"a": 14,
+"libelle": "CTS 12 à 14",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts12a14.php?id=top"
+},
+{
+"code": "CTS",
+"de": 15,
+"a": 15,
+"libelle": "CTS 15",
+"section": "V. Installations de chauffage ou de cuisson",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts15.php?id=CTS15"
+},
+{
+"code": "CTS",
+"de": 16,
+"a": 20,
+"libelle": "CTS 16 à 20",
+"section": "VI. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts16a20.php?id=top"
+},
+{
+"code": "CTS",
+"de": 21,
+"a": 24,
+"libelle": "CTS 21 à 24",
+"section": "VII. Éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts21a24.php?id=top"
+},
+{
+"code": "CTS",
+"de": 25,
+"a": 25,
+"libelle": "CTS 25",
+"section": "VIII. Équipements spéciaux",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts25.php?id=top"
+},
+{
+"code": "CTS",
+"de": 26,
+"a": 29,
+"libelle": "CTS 26 à 29",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts26a29.php?id=top"
+},
+{
+"code": "CTS",
+"de": 30,
+"a": 36,
+"libelle": "CTS 30 à 36",
+"section": "X. Exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts30a36.php?id=top"
+},
+{
+"code": "CTS",
+"de": 37,
+"a": 37,
+"libelle": "CTS 37",
+"section": "XI. Petits Établissements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts37.php?id=CTS37"
+},
+{
+"code": "CTS",
+"de": 38,
+"a": 39,
+"libelle": "CTS 38 à 39",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts38a39.php?id=top"
+},
+{
+"code": "CTS",
+"de": 40,
+"a": 40,
+"libelle": "CTS 40",
+"section": "II. Constructions",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts40.php?id=CTS40"
+},
+{
+"code": "CTS",
+"de": 41,
+"a": 41,
+"libelle": "CTS 41",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts41.php?id=CTS41"
+},
+{
+"code": "CTS",
+"de": 42,
+"a": 45,
+"libelle": "CTS 42 à 45",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts42a45.php?id=top"
+},
+{
+"code": "CTS",
+"de": 46,
+"a": 46,
+"libelle": "CTS 46",
+"section": "V. Installations de chauffage ou de cuisson",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts46.php?id=CTS46"
+},
+{
+"code": "CTS",
+"de": 47,
+"a": 48,
+"libelle": "CTS 47 à 48",
+"section": "VI. Éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts47a48.php?id=top"
+},
+{
+"code": "CTS",
+"de": 49,
+"a": 50,
+"libelle": "CTS 49 à 50",
+"section": "VII. Exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts49a50.php?id=top"
+},
+{
+"code": "CTS",
+"de": 51,
+"a": 51,
+"libelle": "CTS 51",
+"section": "Établissement fixe par conception",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts51.php?id=CTS51"
+},
+{
+"code": "CTS",
+"de": 52,
+"a": 52,
+"libelle": "CTS 52",
+"section": "Exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts52.php?id=CTS52"
+},
+{
+"code": "CTS",
+"de": 53,
+"a": 57,
+"libelle": "CTS 53 à 57",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts53a57.php?id=top"
+},
+{
+"code": "CTS",
+"de": 58,
+"a": 61,
+"libelle": "CTS 58 à 61",
+"section": "II. Constructions",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts58a61.php?id=top"
+},
+{
+"code": "CTS",
+"de": 62,
+"a": 63,
+"libelle": "CTS 62 à 63",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts62a63.php?id=top"
+},
+{
+"code": "CTS",
+"de": 64,
+"a": 67,
+"libelle": "CTS 64 à 67",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts64a67.php?id=top"
+},
+{
+"code": "CTS",
+"de": 68,
+"a": 68,
+"libelle": "CTS 68",
+"section": "V. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts68.php?id=CTS68"
+},
+{
+"code": "CTS",
+"de": 69,
+"a": 69,
+"libelle": "CTS 69",
+"section": "VI. Installation de chauffage ou de cuisson",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts69.php?id=CTS69"
+},
+{
+"code": "CTS",
+"de": 70,
+"a": 70,
+"libelle": "CTS 70",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts70.php?id=CTS70"
+},
+{
+"code": "CTS",
+"de": 71,
+"a": 71,
+"libelle": "CTS 71",
+"section": "VIII. Éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts71.php?id=CTS71"
+},
+{
+"code": "CTS",
+"de": 72,
+"a": 75,
+"libelle": "CTS 72 à 75",
+"section": "IX. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts72a75.php?id=top"
+},
+{
+"code": "CTS",
+"de": 76,
+"a": 81,
+"libelle": "CTS 76 à 81",
+"section": "X. Exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erpcts/cts76a81.php?id=top"
+}
+],
+"SG": [
+{
+"code": "SG",
+"de": 1,
+"a": 4,
+"libelle": "SG 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg01a04.php?id=top"
+},
+{
+"code": "SG",
+"de": 5,
+"a": 5,
+"libelle": "SG 5",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg05.php?id=SG5"
+},
+{
+"code": "SG",
+"de": 6,
+"a": 10,
+"libelle": "SG 6 à 10",
+"section": "III. Pressurisation",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg06a10.php?id=top"
+},
+{
+"code": "SG",
+"de": 11,
+"a": 13,
+"libelle": "SG 11 à 13",
+"section": "IV. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg11a13.php?id=top"
+},
+{
+"code": "SG",
+"de": 14,
+"a": 17,
+"libelle": "SG 14 à 17",
+"section": "V. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg14a17.php?id=top"
+},
+{
+"code": "SG",
+"de": 18,
+"a": 18,
+"libelle": "SG 18",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg18.php?id=SG18"
+},
+{
+"code": "SG",
+"de": 19,
+"a": 21,
+"libelle": "SG 19 à 21",
+"section": "VII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg19a21.php?id=top"
+},
+{
+"code": "SG",
+"de": 22,
+"a": 25,
+"libelle": "SG 22 à 25",
+"section": "VIII. Vérifications et contrôles",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg22a25.php?id=top"
+},
+{
+"code": "SG",
+"de": 1,
+"a": 1,
+"libelle": "Annexe 1",
+"section": "Annexe 1",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg22a25.php?id=SG22"
+},
+{
+"code": "SG",
+"de": 2,
+"a": 2,
+"libelle": "Annexe 2",
+"section": "Annexe 2",
+"url": "https://sitesecurite.com/contenu/_erp/erpsg/sg05anx.php?id=top"
+}
+],
+"OA": [
+{
+"code": "OA",
+"de": 1,
+"a": 4,
+"libelle": "OA 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa01a04.php?id=top"
+},
+{
+"code": "OA",
+"de": 5,
+"a": 10,
+"libelle": "OA 5 à 10",
+"section": "II. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa05a10.php?id=top"
+},
+{
+"code": "OA",
+"de": 11,
+"a": 14,
+"libelle": "OA 11 à 14",
+"section": "III. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa11a14.php?id=top"
+},
+{
+"code": "OA",
+"de": 15,
+"a": 15,
+"libelle": "OA 15",
+"section": "IV. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa15.php?id=OA15"
+},
+{
+"code": "OA",
+"de": 16,
+"a": 16,
+"libelle": "OA 16",
+"section": "VI. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa16.php?id=OA16"
+},
+{
+"code": "OA",
+"de": 17,
+"a": 17,
+"libelle": "OA 17",
+"section": "VI. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa17.php?id=OA17"
+},
+{
+"code": "OA",
+"de": 18,
+"a": 19,
+"libelle": "OA 18 à 19",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa18a19.php?id=top"
+},
+{
+"code": "OA",
+"de": 20,
+"a": 21,
+"libelle": "OA 20 à 21",
+"section": "VIII. Éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa20a21.php?id=top"
+},
+{
+"code": "OA",
+"de": 22,
+"a": 22,
+"libelle": "OA 22",
+"section": "IX. Appareils de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa22.php?id=OA22"
+},
+{
+"code": "OA",
+"de": 23,
+"a": 29,
+"libelle": "OA 23 à 29",
+"section": "X. Moyens de secours et consignes",
+"url": "https://sitesecurite.com/contenu/_erp/erpoa/oa23a29.php?id=top"
+}
+],
+"REF": [
+{
+"code": "REF",
+"de": 1,
+"a": 7,
+"libelle": "REF 1 à 7",
+"section": "Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref01a07.php?id=top"
+},
+{
+"code": "REF",
+"de": 8,
+"a": 9,
+"libelle": "REF 8 à 9",
+"section": "I. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref08a09.php?id=top"
+},
+{
+"code": "REF",
+"de": 10,
+"a": 13,
+"libelle": "REF 10 à 13",
+"section": "II. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref10a13.php?id=top"
+},
+{
+"code": "REF",
+"de": 14,
+"a": 14,
+"libelle": "REF 14",
+"section": "III. Chauffage",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref14.php?id=REF14"
+},
+{
+"code": "REF",
+"de": 15,
+"a": 15,
+"libelle": "REF 15",
+"section": "IV. Installations électriques et d'éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref15.php?id=REF15"
+},
+{
+"code": "REF",
+"de": 16,
+"a": 20,
+"libelle": "REF 16 à 20",
+"section": "VI. Moyens de secours et consignes",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref16a20.php?id=top"
+},
+{
+"code": "REF",
+"de": 21,
+"a": 25,
+"libelle": "REF 21 à 25",
+"section": "I. Construction",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref21a25.php?id=top"
+},
+{
+"code": "REF",
+"de": 26,
+"a": 27,
+"libelle": "REF 26 à 27",
+"section": "II. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref26a27.php?id=top"
+},
+{
+"code": "REF",
+"de": 28,
+"a": 29,
+"libelle": "REF 28 à 29",
+"section": "III. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref28a29.php?id=top"
+},
+{
+"code": "REF",
+"de": 30,
+"a": 30,
+"libelle": "REF 30",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref30.php?id=REF30"
+},
+{
+"code": "REF",
+"de": 31,
+"a": 32,
+"libelle": "REF 31 à 32",
+"section": "V. Installation au gaz",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref31a32.php?id=top"
+},
+{
+"code": "REF",
+"de": 33,
+"a": 35,
+"libelle": "REF 33 à 35",
+"section": "VI. Installations électriques et éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref33a35.php?id=top"
+},
+{
+"code": "REF",
+"de": 36,
+"a": 37,
+"libelle": "REF 36 à 37",
+"section": "VII. Installations de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref36a37.php?id=top"
+},
+{
+"code": "REF",
+"de": 38,
+"a": 39,
+"libelle": "REF 38 à 39",
+"section": "VIII. Moyens de secours et consignes",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref38a39.php?id=top"
+},
+{
+"code": "REF",
+"de": 40,
+"a": 44,
+"libelle": "REF 40 à 44",
+"section": "IV - Prescriptions applicables aux refuges de montagne existants",
+"url": "https://sitesecurite.com/contenu/_erp/erpref/ref40a44.php?id=top"
+}
+],
+"PS": [
+{
+"code": "PS",
+"de": 1,
+"a": 4,
+"libelle": "PS 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps01a04.php?id=top"
+},
+{
+"code": "PS",
+"de": 5,
+"a": 15,
+"libelle": "PS 5 à 15",
+"section": "II. Dispositions constructives",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps05a15.php?id=top"
+},
+{
+"code": "PS",
+"de": 16,
+"a": 17,
+"libelle": "PS 16 à 17",
+"section": "III. Aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps16a17.php?id=top"
+},
+{
+"code": "PS",
+"de": 18,
+"a": 24,
+"libelle": "PS 18 à 24",
+"section": "IV. Installations techniques et électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps18a24.php?id=top"
+},
+{
+"code": "PS",
+"de": 25,
+"a": 30,
+"libelle": "PS 25 à 30",
+"section": "V. Secours contre l'incendie",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps25a30.php?id=top"
+},
+{
+"code": "PS",
+"de": 31,
+"a": 31,
+"libelle": "PS 31",
+"section": "VI. Qualité de l'air",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps31.php?id=PS31"
+},
+{
+"code": "PS",
+"de": 32,
+"a": 33,
+"libelle": "PS 32 à 33",
+"section": "VII. Contrôles et visites",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps32a33.php?id=top"
+},
+{
+"code": "PS",
+"de": 34,
+"a": 34,
+"libelle": "PS 34",
+"section": "VIII. Établissements existants",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps34.php?id=PS34"
+},
+{
+"code": "PS",
+"de": 35,
+"a": 39,
+"libelle": "PS 35 à 39",
+"section": "1. Parcs de stationnement couverts à rangement automatisé",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps35a43.php?id=top"
+},
+{
+"code": "PS",
+"de": 40,
+"a": 43,
+"libelle": "PS 40 à 43",
+"section": "2. Parcs de stationnement couverts accessibles aux véhicules de transport en commun",
+"url": "https://sitesecurite.com/contenu/_erp/erpps/ps35a43.php?id=PS40"
+}
+],
+"GA": [
+{
+"code": "GA",
+"de": 24,
+"a": 7,
+"libelle": "Arrêté du 24/12/07",
+"section": "Arrêté du 24 décembre 2007",
+"url": "https://sitesecurite.com/contenu/_txt/txt_erpga/a2007_12_24.php?id=top"
+},
+{
+"code": "GA",
+"de": 1,
+"a": 5,
+"libelle": "GA 1 à 5",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga01a05.php?id=top"
+},
+{
+"code": "GA",
+"de": 6,
+"a": 10,
+"libelle": "GA 6 à 10",
+"section": "• 1. Contrôle des gares",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga06a10.php?id=top"
+},
+{
+"code": "GA",
+"de": 11,
+"a": 13,
+"libelle": "GA 11 à 13",
+"section": "• 2. Vérifications techniques dans les établissements de type GA des 1 re , 2 e , 3 e et 4 e catégories",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga11a13.php?id=top"
+},
+{
+"code": "GA",
+"de": 14,
+"a": 22,
+"libelle": "GA 14 à 22",
+"section": "I. Dispositions constructives",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga14a22.php?id=top"
+},
+{
+"code": "GA",
+"de": 23,
+"a": 26,
+"libelle": "GA 23 à 26",
+"section": "II. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga23a26.php?id=top"
+},
+{
+"code": "GA",
+"de": 27,
+"a": 27,
+"libelle": "GA 27",
+"section": "III. Aménagements intérieurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga27.php?id=GA27"
+},
+{
+"code": "GA",
+"de": 28,
+"a": 29,
+"libelle": "GA 28 à 29",
+"section": "IV. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga28a29.php?id=top"
+},
+{
+"code": "GA",
+"de": 30,
+"a": 30,
+"libelle": "GA 30",
+"section": "V. Installations de chauffage, ventilation, réfrigération, climatisation, conditionnement d'air et installations d'eau chaude sanitaire",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga30.php?id=GA30"
+},
+{
+"code": "GA",
+"de": 31,
+"a": 31,
+"libelle": "GA 31",
+"section": "VI. Installations aux gaz combustibles et aux hydrocarbures liquéfiés",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga31.php?id=GA31"
+},
+{
+"code": "GA",
+"de": 32,
+"a": 34,
+"libelle": "GA 32 à 34",
+"section": "VII. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga32a34.php?id=top"
+},
+{
+"code": "GA",
+"de": 35,
+"a": 35,
+"libelle": "GA 35",
+"section": "VIII. Éclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga35.php?id=GA35"
+},
+{
+"code": "GA",
+"de": 36,
+"a": 36,
+"libelle": "GA 36",
+"section": "IX. Ascenseurs, escaliers mécaniques et trottoirs roulants",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga36.php?id=GA36"
+},
+{
+"code": "GA",
+"de": 37,
+"a": 37,
+"libelle": "GA 37",
+"section": "X. Installations d'appareils de cuisson destinées à la restauration",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga37.php?id=GA37"
+},
+{
+"code": "GA",
+"de": 38,
+"a": 44,
+"libelle": "GA 38 à 44",
+"section": "XI. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga38a44.php?id=top"
+},
+{
+"code": "GA",
+"de": 45,
+"a": 48,
+"libelle": "GA 45 à 48",
+"section": "XII. Obligations complémentaires relatives à l'exploitation",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga45a48.php?id=top"
+},
+{
+"code": "GA",
+"de": 49,
+"a": 49,
+"libelle": "GA 49",
+"section": "III - Dispositions applicables aux établissements de type GA de 5 e catégorie",
+"url": "https://sitesecurite.com/contenu/_erp/erpga/ga49.php?id=GA49"
+}
+],
+"EF": [
+{
+"code": "EF",
+"de": 9,
+"a": 1990,
+"libelle": "Décret du 09/01/1990",
+"section": "Décret du 9 janvier 1990",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/d90_01_09ef.php?id=top"
+},
+{
+"code": "EF",
+"de": 9,
+"a": 1990,
+"libelle": "Arrêté du 09/01/1990",
+"section": "Arrêté du 9 janvier 1990",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/a90_01_09ef.php?id=top"
+},
+{
+"code": "EF",
+"de": 1,
+"a": 3,
+"libelle": "EF 1 à 3",
+"section": "I - Domaine d'application et règles de sécurité",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/ef01a03.php?id=top"
+},
+{
+"code": "EF",
+"de": 4,
+"a": 14,
+"libelle": "EF 4 à 14",
+"section": "II - Règles de construction et d'aménagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/ef04a14.php?id=top"
+},
+{
+"code": "EF",
+"de": 15,
+"a": 17,
+"libelle": "EF 15 à 17",
+"section": "III - Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/ef15a17.php?id=top"
+},
+{
+"code": "EF",
+"de": 18,
+"a": 18,
+"libelle": "EF 18",
+"section": "IV - Obligations de l'exploitant",
+"url": "https://sitesecurite.com/contenu/_erp/erpef/ef18.php?id=EF18"
+}
+],
+"GH": [
+{
+"code": "GH",
+"de": 1,
+"a": 5,
+"libelle": "GH 1 à 5",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh01a05.php"
+},
+{
+"code": "GH",
+"de": 6,
+"a": 8,
+"libelle": "GH 6 à 8",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh06a08.php"
+},
+{
+"code": "GH",
+"de": 9,
+"a": 11,
+"libelle": "GH 9 à 11",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh09a11.php"
+},
+{
+"code": "GH",
+"de": 12,
+"a": 14,
+"libelle": "GH 12 à 14",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh12a14.php"
+},
+{
+"code": "GH",
+"de": 15,
+"a": 22,
+"libelle": "GH 15 à 22",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh15a22.php"
+},
+{
+"code": "GH",
+"de": 23,
+"a": 29,
+"libelle": "GH 23 à 29",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh23a29.php"
+},
+{
+"code": "GH",
+"de": 30,
+"a": 34,
+"libelle": "GH 30 à 34",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh30a34.php"
+},
+{
+"code": "GH",
+"de": 35,
+"a": 39,
+"libelle": "GH 35 à 39",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh35a39.php"
+},
+{
+"code": "GH",
+"de": 40,
+"a": 48,
+"libelle": "GH 40 à 48",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh40a48.php"
+},
+{
+"code": "GH",
+"de": 49,
+"a": 56,
+"libelle": "GH 49 à 56",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh49a56.php"
+},
+{
+"code": "GH",
+"de": 57,
+"a": 65,
+"libelle": "GH 57 à 65",
+"url": "https://sitesecurite.com/contenu/_igh/igh/gh57a65.php"
+}
+],
+"U": [
+{
+"code": "U",
+"de": 1,
+"a": 4,
+"libelle": "U 1 à 4",
+"section": "I. Généralités",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u01a04.php?id=top"
+},
+{
+"code": "U",
+"de": 5,
+"a": 7,
+"libelle": "U 5 à 7",
+"section": "II. Isolement et implantation",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u05a07.php?id=top"
+},
+{
+"code": "U",
+"de": 8,
+"a": 15,
+"libelle": "U 8 à 15",
+"section": "III. Constructions",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u08a15.php?id=top"
+},
+{
+"code": "U",
+"de": 16,
+"a": 22,
+"libelle": "U 16 à 22",
+"section": "IV. Dégagements",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u16a22.php?id=top"
+},
+{
+"code": "U",
+"de": 23,
+"a": 25,
+"libelle": "U 23 à 25",
+"section": "V. Aménagements intérieurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u23a25.php?id=top"
+},
+{
+"code": "U",
+"de": 26,
+"a": 26,
+"libelle": "U 26",
+"section": "VI. Désenfumage",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u26.php?id=U26"
+},
+{
+"code": "U",
+"de": 27,
+"a": 27,
+"libelle": "U 27",
+"section": "VII. Chauffage, ventilation",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u27.php?id=U27"
+},
+{
+"code": "U",
+"de": 28,
+"a": 29,
+"libelle": "U 28 à 29",
+"section": "VIII. Appareils de cuisson et de remise en température",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u28a29.php?id=top"
+},
+{
+"code": "U",
+"de": 30,
+"a": 30,
+"libelle": "U 30",
+"section": "IX. Installations électriques",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u30.php?id=U30"
+},
+{
+"code": "U",
+"de": 31,
+"a": 32,
+"libelle": "U 31 à 32",
+"section": "X. Eclairage",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u31a32.php?id=top"
+},
+{
+"code": "U",
+"de": 33,
+"a": 35,
+"libelle": "U 33 à 35",
+"section": "XI. Dispositons spéciales applicables aux locaux anesthésie inflammables autorisés (AIA)",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u33a35.php?id=top"
+},
+{
+"code": "U",
+"de": 36,
+"a": 40,
+"libelle": "U 36 à 40",
+"section": "XII. Ascenseurs",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u36a40.php?id=top"
+},
+{
+"code": "U",
+"de": 41,
+"a": 48,
+"libelle": "U 41 à 48",
+"section": "XIII. Moyens de secours",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u41a48.php?id=top"
+},
+{
+"code": "U",
+"de": 49,
+"a": 50,
+"libelle": "U 49 à 50",
+"section": "XIV. Hopitaux de jour - Locaux médicaux de thermalisme",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u49a50.php?id=top"
+},
+{
+"code": "U",
+"de": 51,
+"a": 51,
+"libelle": "U 51",
+"section": "XVI - Conditions d'installation des gaz médicaux",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u51a64.php?id=U51"
+},
+{
+"code": "U",
+"de": 52,
+"a": 55,
+"libelle": "U 52 à 55",
+"section": "1. Magasins et centrales de stockage",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u51a64.php?id=ss1"
+},
+{
+"code": "U",
+"de": 56,
+"a": 59,
+"libelle": "U 56 à 59",
+"section": "2. Réseaux de distribution",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u51a64.php?id=ss2"
+},
+{
+"code": "U",
+"de": 60,
+"a": 61,
+"libelle": "U 60 à 61",
+"section": "3. Distribution par récipients mobiles",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u51a64.php?id=ss3"
+},
+{
+"code": "U",
+"de": 62,
+"a": 64,
+"libelle": "U 62 à 64",
+"section": "4. Consignes - Entretien - Vérifications techniques",
+"url": "https://sitesecurite.com/contenu/_erp/erpu/u51a64.php?id=ss4"
+}
+]
+},
+"chapitres": {
+"GN": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-communes.php?id=accdct_GN",
+"titre": "GN - Dispositions communes - GN 1 à 15 - (Chapitre unique)"
+},
+"GE": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_GE",
+"titre": "GE - Généralités - GE 1 à 10 - (Chapitre I)"
+},
+"CO": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_CO",
+"titre": "CO - Construction CO 1 à 61 - (Chapitre II)"
+},
+"AM": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_AM",
+"titre": "AM - Aménagements intérieurs, décoration et mobilier - AM 1 à 20 - (Chapitre III)"
+},
+"DF": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_DF",
+"titre": "DF - Désenfumage - DF 1 à 10 - (Chapitre IV)"
+},
+"CH": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_CH",
+"titre": "CH - Chauffage, ventilation, réfrigération, climatisation, conditionnement d'air et installation d'eau chaude sanitaire, chaufferie - CH 1 à 58 - (Chapitre V)"
+},
+"GZ": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_GZ",
+"titre": "GZ - Installations aux gaz combustibles et aux hydrocarbures liquéfiés - GZ 1 à 15 - (Chapitre VI)"
+},
+"EL": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_EL",
+"titre": "EL - Installations électriques - EL 1 à 23 - (Chapitre VII)"
+},
+"EC": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_EC",
+"titre": "EC - Eclairage - EC 1 à 15 - (Chapitre VIII)"
+},
+"AS": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_AS",
+"titre": "AS - Ascenseurs, escaliers mécaniques et trottoirs roulants - AS 1 à 11 (Chapitre IX)"
+},
+"GC": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_GC",
+"titre": "GC - Installations d'appareils de cuisson destinés à la restauration - GC 1 à 22 - (Chapitre X)"
+},
+"MS": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-generales.php?id=accdct_MS",
+"titre": "MS - Moyens de secours contre l'incendie - MS 1 à 75 - (Chapitre XI)"
+},
+"J": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_J",
+"titre": "Type J - Structures d'accueil pour personnes âgées et personnes handicapées - J 1 à 40 - (Chapitre XIV)"
+},
+"L": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_L",
+"titre": "Type L - Salles d'auditions, de conférences, de réunions, de spectacles ou polyvalentes - L 1 à 85 - (Chapitre I)"
+},
+"M": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_M",
+"titre": "Type M - Magasins de vente, centres commerciaux - M 1 à 58 - (Chapitre II)"
+},
+"N": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_N",
+"titre": "Type N - Restaurants et débits de boissons - N 1 à 20 - (Chapitre III)"
+},
+"O": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_O",
+"titre": "Type O - Hôtels et autres établissements d'hébergement - O 1 à 24 - (Chapitre IV)"
+},
+"P": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_P",
+"titre": "Type P - Salles de danse et salles de jeux - P 1 à 24 - (Chapitre V)"
+},
+"R": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_R",
+"titre": "Type R - Établissements d'enseignement, colonies de vacances - R 1 à 33 - (Chapitre VI)"
+},
+"S": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_S",
+"titre": "Type S - Bibliothèques, centres de documentation et de consultation d'archives - S 1 à 19 - (Chapitre VII)"
+},
+"T": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_T",
+"titre": "Type T - Salles d'expositions - T 1 à 52 - (Chapitre VIII)"
+},
+"V": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_V",
+"titre": "Type V - Établissements de culte - V 1 à 13 - (Chapitre X)"
+},
+"W": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_W",
+"titre": "Type W - Administrations, banques, bureaux - W 1 à 16 - (Chapitre XI)"
+},
+"X": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_X",
+"titre": "Type X - Établissements sportifs couverts - X 1 à 27 - (Chapitre XII)"
+},
+"Y": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_Y",
+"titre": "Type Y - Musées - Y 1 à 22 - (Chapitre XIII)"
+},
+"PE": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-5e-categorie.php?id=accdct_PE",
+"titre": "PE - Dispositions générales, règles techniques et règles complémentaires - PE 1 à 37 - (Chapitres I - II - III)"
+},
+"PO": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-5e-categorie.php?id=accdct_PO",
+"titre": "PO - Dispositions particulières applicables aux hôtels - PO 1 à 13 - (Chapitre IV)"
+},
+"PU": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-5e-categorie.php?id=accdct_PU",
+"titre": "PU - Dispositions particulières applicables aux établissements de soins - PU 1 à 6 - (Chapitre V)"
+},
+"PX": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-5e-categorie.php?id=accdct_PX",
+"titre": "PX - Dispositions particulières applicables aux établissements sportifs - PX 1 - (Chapitre VI)"
+},
+"PA": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_PA",
+"titre": "Type PA - Établissements de plein air - PA 1 à 14 - (Chapitre I)"
+},
+"CTS": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_CTS",
+"titre": "Type CTS - Chapiteaux, Tentes et Structures - CTS 1 à 81 - (Chapitre II)"
+},
+"SG": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_SG",
+"titre": "Type SG - Structures gonflables - SG 1 à 25 - (Chapitre III)"
+},
+"OA": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_OA",
+"titre": "Type OA - Hôtels-Restaurants d'altitude - OA 1 à 29 - (Chapitre IV)"
+},
+"REF": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_REF",
+"titre": "Type REF - Refuges de montagne - REF 1 à 44 - (Chapitre V)"
+},
+"PS": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_PS",
+"titre": "Type PS - Parcs de stationnement couverts - PS 1 à 43 - (Chapitre VI)"
+},
+"GA": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_GA",
+"titre": "Type GA - Gares accessibles au public - GA 1 à 49 - (Chapitre VII)"
+},
+"EF": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-speciales.php?id=accdct_EF",
+"titre": "Type EF - Établissements flottants - EF 1 à 18"
+},
+"U": {
+"url": "https://sitesecurite.com/contenu/portail/erp/erp-dispositions-particulieres.php?id=accdct_U",
+"titre": "Type U - Établissements de soins - U 1 à 64 - (Chapitre IX)"
+}
+},
+"portails": {
+"ERP": "https://sitesecurite.com/portail-erp.php",
+"IGH": "https://sitesecurite.com/portail-igh.php",
+"HAB": "https://sitesecurite.com/portail-hab.php",
+"CDT": "https://sitesecurite.com/portail-bup.php",
+"CCH": "https://sitesecurite.com/contenu/portail/code/code-construction-2021.php"
+}
+}

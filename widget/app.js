@@ -256,6 +256,7 @@
     $('#tree').classList.remove('open');
     $('#btnVeille').setAttribute('aria-current', view.v === 'veille' ? 'page' : 'false');
     if (view.v === 'home') renderHome();
+    else if (view.v === 'board') renderBoard(view.dom);
     else if (view.v === 'read') renderRead(view.id, view.focus);
     else if (view.v === 'search') renderSearch(view.q);
     else if (view.v === 'ask') renderAsk(view.q);
@@ -287,6 +288,194 @@
     return out;
   }
 
+  // ------------------------------------------------------------------ plan par codes
+  const ERP_TXT = 'LEGITEXT000020303557';
+  const ERP_GROUPES = [
+    ['Dispositions communes', [['GN', 'Dispositions communes à tous les ERP']]],
+    ['Dispositions générales', [['GE', 'Généralités et contrôle'], ['CO', 'Construction'], ['AM', 'Aménagements, décoration, mobilier'], ['DF', 'Désenfumage'],
+      ['CH', 'Chauffage, ventilation, climatisation'], ['GZ', 'Gaz et hydrocarbures liquéfiés'], ['EL', 'Installations électriques'], ['EC', 'Éclairage'],
+      ['AS', 'Ascenseurs, escaliers mécaniques'], ['GC', 'Grandes cuisines'], ['MS', 'Moyens de secours']]],
+    ["Types d'établissements", [['J', 'Personnes âgées, handicapées'], ['L', 'Salles de réunion, spectacles'], ['M', 'Magasins, centres commerciaux'],
+      ['N', 'Restaurants, débits de boissons'], ['O', 'Hôtels, hébergement'], ['P', 'Salles de danse et de jeux'], ['R', 'Enseignement, colonies'],
+      ['S', 'Bibliothèques, archives'], ['T', 'Salles d’expositions'], ['U', 'Établissements de soins'], ['V', 'Établissements de culte'],
+      ['W', 'Administrations, banques, bureaux'], ['X', 'Établissements sportifs couverts'], ['Y', 'Musées']]],
+    ['5e catégorie', [['PE', 'Dispositions générales'], ['PO', 'Hôtels'], ['PU', 'Établissements de soins'], ['PX', 'Établissements sportifs']]],
+    ['Établissements spéciaux', [['PA', 'Plein air'], ['CTS', 'Chapiteaux, tentes, structures'], ['SG', 'Structures gonflables'], ['OA', 'Hôtels-restaurants d’altitude'],
+      ['REF', 'Refuges de montagne'], ['PS', 'Parcs de stationnement couverts'], ['GA', 'Gares'], ['EF', 'Établissements flottants']]],
+  ];
+  const prefixOf = (n) => ((n.num || '').match(/^([A-Z]+)\s?\d/) || [])[1] || '';
+  const firstInt = (n) => +(((n.num || '').match(/\d+/) || [0])[0]);
+
+  /* Tuiles de navigation d'une réglementation : [{groupe, tuiles:[{code, label, node, arts, de, a, fut, ss}]}] */
+  function buildPlans() {
+    st.plans = {}; st.tileOf = new Map();
+    const lca = (arts) => {
+      const chains = arts.map((a) => ancestors(a));
+      let out = null;
+      for (let i = 0; ; i++) {
+        const x = chains[0][i]; if (!x || chains.some((c) => c[i] !== x)) break;
+        out = x;
+      }
+      return out;
+    };
+    const stat = (arts) => {
+      const nums = arts.map(firstInt).filter(Boolean);
+      return { arts: arts.length, de: nums.length ? Math.min(...nums) : 0, a: nums.length ? Math.max(...nums) : 0, fut: arts.filter((x) => x.futDate).length };
+    };
+    // ERP : par codes, comme le règlement et SiteSecurite
+    const byCode = new Map();
+    for (const n of st.nodes) if (n.type === 'Article' && n.legitext === ERP_TXT) { const p = prefixOf(n); if (p) { if (!byCode.has(p)) byCode.set(p, []); byCode.get(p).push(n); } }
+    const erp = ERP_GROUPES.map(([groupe, codes]) => ({
+      groupe, tuiles: codes.map(([code, label]) => {
+        const arts = byCode.get(code) || [];
+        const node = arts.length ? lca(arts) : null;
+        const t = { code, label, node: node && node.id, ...stat(arts), ss: ssChapter(code) };
+        if (node) st.tileOf.set(node.id, t);
+        return t;
+      }),
+    }));
+    const cchErp = st.byId.get('LEGITEXT000006074096#ERP');
+    if (cchErp) {
+      const t = { code: 'CCH', label: 'Code de la construction (R. 143)', node: cchErp.id, ...stat(descendants(cchErp).filter((x) => x.type === 'Article')), ss: null };
+      st.tileOf.set(cchErp.id, t);
+      erp.push({ groupe: 'Code de la construction', tuiles: [t] });
+    }
+    st.plans.ERP = erp;
+    // autres réglementations : chapitres du texte, en sautant les niveaux à un seul enfant
+    const secsOf = (x) => (st.kids.get(x.id) || []).filter((k) => k.type === 'Section');
+    const deep = (x) => { for (;;) { const k = st.kids.get(x.id) || []; const sc = k.filter((y) => y.type === 'Section'); if (sc.length === 1 && !k.some((y) => y.type === 'Article')) x = sc[0]; else return x; } };
+    const tile = (sec, txt) => {
+      const arts = (sec === txt ? descendants(txt) : [sec, ...descendants(sec)]).filter((x) => x.type === 'Article');
+      const p = arts.length ? prefixOf(arts[0]) : '';
+      const codeArt = arts.length && (arts[0].num || '').match(/^([LR])(\d{3,4})-/);
+      const cls = sec.titre.match(/:\s*(GH ?[A-Z]{1,2}|GHTC|ITGH)\s*:\s*(.*)$/);
+      const m = sec.titre.match(/^(titre|chapitre|section|sous-section|livre)\s+([ivxlcdm]+|\d+)(?:er)?\b\s*:?\s*(.*)$/i);
+      let code = m ? m[2].toUpperCase() : (p || '§');
+      let label = (m ? m[3] : sec.titre).replace(/\.$/, '') || sec.titre;
+      if (cls) { code = cls[1].replace(/\s/g, ' '); label = cls[2]; }
+      else if (codeArt) code = `${codeArt[1]}. ${codeArt[2]}`;
+      const t = { code, label, node: sec.id, ...stat(arts), prefix: codeArt ? '' : p, ss: p ? ssChapter(p) : null };
+      if (codeArt) t.range = arts.length > 1 ? `${dispNum(arts[0])} à ${dispNum(arts[arts.length - 1])}` : dispNum(arts[0]);
+      st.tileOf.set(sec.id, t);
+      return t;
+    };
+    /* dans un groupe, des tuiles au même code (« R. 4216 ») prennent leur premier numéro d'article */
+    const distinct = (tuiles) => {
+      const n = new Map(); tuiles.forEach((t) => n.set(t.code, (n.get(t.code) || 0) + 1));
+      tuiles.forEach((t) => { if (n.get(t.code) > 1 && t.range) { const a = st.byId.get(t.node); const first = [a, ...descendants(a)].find((x) => x.type === 'Article'); if (first) t.code = first.num.replace(/^[LR]/, ''); } });
+      return tuiles;
+    };
+    for (const dom of ORDRE_DOM) {
+      if (dom === 'ERP') continue;
+      const groupes = [];
+      for (const txt of st.nodes.filter((n) => n.type === 'Texte' && n.dom === dom)) {
+        let top = txt;
+        while (secsOf(top).length === 1) top = secsOf(top)[0];
+        const court = txt.titre.replace(/ portant .*| relatif .*| pris pour .*/i, '').replace(/^Code de la construction et de l'habitation — .*/, 'Code de la construction et de l\'habitation');
+        const secs = secsOf(top);
+        if (!secs.length) { groupes.push({ groupe: court, tuiles: [tile(txt, txt)] }); continue; }
+        if (secs.length >= 5) { groupes.push({ groupe: court, tuiles: secs.map((x) => tile(deep(x), txt)) }); continue; }
+        const seuls = [];
+        for (const sec0 of secs) {
+          const sec = deep(sec0);
+          const sub = secsOf(sec).map(deep);
+          if (sub.length > 1) groupes.push({ groupe: secs.length > 1 && /^partie/i.test(sec0.titre) ? `${court} — ${sec0.titre.toLowerCase()}` : sec.titre, tuiles: sub.map((x) => tile(x, txt)) });
+          else seuls.push(tile(sec, txt));
+        }
+        if (seuls.length) groupes.push({ groupe: court, tuiles: seuls });
+      }
+      groupes.forEach((g) => distinct(g.tuiles));
+      st.plans[dom] = groupes;
+    }
+  }
+
+  /* Liens SiteSecurite (plan des pages, sans contenu) */
+  function ssChapter(code) { const c = st.ss && st.ss.chapitres && st.ss.chapitres[code]; return c ? c.url : null; }
+  function ssPortal(dom) { return (st.ss && st.ss.portails && st.ss.portails[dom]) || 'https://sitesecurite.com/' + (SITESECURITE[dom] || ''); }
+  function ssLink(n) {
+    const p = prefixOf(n), k = firstInt(n);
+    const pages = st.ss && st.ss.erp && st.ss.erp[p];
+    if (pages) { const r = pages.find((x) => x.de <= k && k <= x.a); if (r) return { url: r.url, label: r.libelle }; }
+    if (ssChapter(p)) return { url: ssChapter(p), label: p };
+    return { url: ssPortal(n.dom), label: null };
+  }
+  /* Tuile (chapitre/code) qui contient un nœud */
+  function tileFor(n) {
+    if (!n) return null;
+    if (st.tileOf.has(n.id)) return st.tileOf.get(n.id);
+    for (const a of ancestors(n).reverse()) if (st.tileOf.has(a.id)) return st.tileOf.get(a.id);
+    return null;
+  }
+  const rangeTxt = (t) => t.range || (t.de ? `${t.prefix || (/^[A-Z]+$/.test(t.code) && t.code !== 'CCH' ? t.code : 'Art.')} ${t.de}${t.a !== t.de ? ' à ' + t.a : ''}` : '');
+
+  // ------------------------------------------------------------------ tableau des codes
+  function renderBoard(dom) {
+    setSide(false);
+    const plan = st.plans[dom] || [];
+    $('#read').className = 'pane readpane dom-' + dom;
+    $('#read').innerHTML = `<div class="board">
+      <div class="boardhead"><h1>${esc(DOMAINES[dom].label)}</h1>
+      <a class="sslink" href="${esc(ssPortal(dom))}" target="_blank" rel="noopener">Portail ${esc(DOMAINES[dom].court)} sur SiteSecurite ↗</a></div>
+      <p class="hint">Cliquez un ${dom === 'ERP' ? 'code' : 'chapitre'} pour lire tous ses articles à la suite. Raccourci : tapez ${dom === 'ERP' ? '« CO », « L » ou « CO 15 »' : 'un numéro d’article'} dans la recherche puis Entrée.</p>
+      ${plan.map((g) => `<section class="bgroup"><h2>${esc(g.groupe)}</h2><div class="tiles">${g.tuiles.map((t) => tileHTML(t, dom)).join('')}</div></section>`).join('')}
+    </div>`;
+    $('#read').scrollTop = 0;
+  }
+  function tileHTML(t, dom) {
+    const open = t.node ? `data-open="${t.node}"` : (t.ss ? `data-href="${esc(t.ss)}"` : 'disabled');
+    return `<button class="tile dom-${dom}" ${open} title="${esc(t.label)}">
+      <span class="tcode${t.code.length > 3 ? ' long' : ''}">${esc(t.code)}</span>
+      <span class="tlabel">${esc(t.label)}</span>
+      <span class="tmeta">${t.node ? `${esc(rangeTxt(t))}${t.fut ? ` · <b class="tfut">${t.fut} à venir</b>` : ''}` : 'Sur SiteSecurite ↗'}</span></button>`;
+  }
+
+  /* Barre des codes, toujours visible pendant la lecture */
+  function railHTML(dom, current) {
+    const plan = st.plans[dom] || []; if (!plan.length) return '';
+    return `<nav class="rail" aria-label="Accès rapide aux chapitres"><button class="rhome" data-board="${dom}" title="Tous les ${dom === 'ERP' ? 'codes' : 'chapitres'}">▦</button>${plan.map((g) =>
+      `<span class="rg" title="${esc(g.groupe)}"></span>` + g.tuiles.filter((t) => t.node).map((t) => `<button class="rp${current && current.node === t.node ? ' on' : ''}" data-open="${t.node}" title="${esc(t.code + ' — ' + t.label)}">${esc(t.code)}</button>`).join('')).join('')}</nav>`;
+  }
+
+  /* En-tête de chapitre : sommaire en tuiles + grille des numéros + accès SiteSecurite */
+  function chapHeadHTML(n, t) {
+    const secs = (st.kids.get(n.id) || []).filter((x) => x.type === 'Section');
+    const arts = [n, ...descendants(n)].filter((x) => x.type === 'Article');
+    const pref = t.prefix || (/^[A-Z]+$/.test(t.code) ? t.code : '');
+    const ssPages = pref && st.ss && st.ss.erp ? st.ss.erp[pref] || [] : [];
+    const toc = secs.map((sec) => {
+      const a = [sec, ...descendants(sec)].filter((x) => x.type === 'Article');
+      const nums = a.map(firstInt).filter(Boolean);
+      const lo = Math.min(...nums), hi = Math.max(...nums);
+      const pages = ssPages.filter((p) => p.de <= hi && p.a >= lo);
+      return `<div class="tocitem"><button data-gosec="${sec.id}"><span class="trange">${a.length ? esc((pref ? pref + ' ' : '') + lo + (hi !== lo ? '–' + hi : '')) : ''}</span>${esc(sec.titre.replace(/^(section|sous-section|chapitre)\s+[^:]*:\s*/i, ''))}</button>${pages.length === 1 ? `<a href="${esc(pages[0].url)}" target="_blank" rel="noopener" class="ssmini" title="Ouvrir ${esc(pages[0].libelle)} sur SiteSecurite">SS ↗</a>` : ''}</div>`;
+    }).join('');
+    return `<header class="chap">
+      <div class="chaptop"><span class="bigplate">${esc(t.code)}</span>
+        <div class="chaptitle"><h1>${esc(t.label)}</h1>
+          <p class="hint">${esc(n.titre)} · ${arts.length} article${arts.length > 1 ? 's' : ''}${t.fut ? ` · <b class="tfut">${t.fut} modifié${t.fut > 1 ? 's' : ''} prochainement</b>` : ''}</p>
+          <div class="chapacts">
+            ${t.ss ? `<a class="btn ghost" href="${esc(t.ss)}" target="_blank" rel="noopener">Ouvrir ${esc(t.code)} sur SiteSecurite ↗</a>` : ''}
+            ${n.lien ? `<a class="btn ghost" href="${esc(n.lien)}" target="_blank" rel="noopener">Légifrance ↗</a>` : ''}
+            <label class="goto">Aller à ${pref ? esc(pref) : 'l’article'} <input id="gotoNum" inputmode="numeric" placeholder="n°" aria-label="Numéro d'article"></label>
+          </div></div></div>
+      ${toc ? `<div class="toc">${toc}</div>` : ''}
+      <div class="numgrid big">${arts.map((a) => `<button data-goart="${a.id}" class="${a.futDate ? 'chg' : ''}" title="${esc(dispNum(a))}${a.futDate ? ' — modifié le ' + fmtDate(a.futDate) : ''}">${esc(dispNum(a).replace(/^Art\. /, ''))}</button>`).join('')}</div>
+    </header>`;
+  }
+
+  function scrollToItem(id, isSection) {
+    if (!readCtx) return;
+    const i = readCtx.items.findIndex((x) => x.id === id);
+    if (i < 0) { openNode(id); return; }
+    if (i >= readCtx.shown) renderMore(i + 25);
+    const el = document.getElementById((isSection ? 's-' : 'a-') + id);
+    if (!el) return;
+    st.pinActive = Date.now() + 1200;
+    el.scrollIntoView({ block: 'start' });
+    if (!isSection) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); setActive(st.byId.get(id)); }
+    else { const first = readCtx.items.slice(i).find((x) => x.type === 'Article'); if (first) setActive(first); }
+  }
+
   // ------------------------------------------------------------------ arbre
   const chev = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m9 6 6 6-6 6"/></svg>';
   function renderTree() {
@@ -297,12 +486,22 @@
     for (const d of ORDRE_DOM) {
       if (!st.domOn.has(d)) continue;
       const tx = texts.filter((t) => t.dom === d); if (!tx.length) continue;
-      h += `<div class="dom-${d}"><div class="tdom"><span class="bar"></span>${esc(DOMAINES[d].label)}</div><ul class="tree" role="tree">`;
+      const cur = tileFor(sel);
+      h += `<div class="dom-${d}"><button class="tdom" data-board="${d}"><span class="bar"></span>${esc(DOMAINES[d].label)}</button>`;
+      for (const g of st.plans[d] || []) {
+        h += `<div class="tgroup">${esc(g.groupe)}</div><ul class="codelist">`;
+        for (const t of g.tuiles) {
+          h += `<li><button class="ci${cur && cur.node === t.node && t.node ? ' sel' : ''}" ${t.node ? `data-open="${t.node}"` : (t.ss ? `data-href="${esc(t.ss)}"` : 'disabled')}><span class="cc${t.code.length > 4 ? ' long' : ''}">${esc(t.code)}</span><span class="cl">${esc(t.label)}</span><span class="cnt">${t.node ? t.arts : '↗'}</span></button></li>`;
+        }
+        h += '</ul>';
+      }
+      h += `<details class="plan"${sel && sel.dom === d && !cur ? ' open' : ''}><summary>Plan officiel des textes</summary><ul class="tree" role="tree">`;
       for (const t of tx) h += treeItem(t, sel);
-      h += '</ul></div>';
+      h += '</ul></details></div>';
     }
     $('#tree').innerHTML = h || '<p class="empty">Aucune réglementation sélectionnée.</p>';
-    const s = $('#tree .tn.sel'); if (s) s.scrollIntoView({ block: 'nearest' });
+    const s = $('#tree .ci.sel') || $('#tree .tn.sel') || (st.view && st.view.v === 'board' && $(`#tree [data-board="${st.view.dom}"]`));
+    if (s) s.scrollIntoView({ block: st.view && st.view.v === 'board' ? 'start' : 'nearest' });
   }
   function treeItem(n, sel) {
     const kids = (st.kids.get(n.id) || []);
@@ -332,7 +531,7 @@
       const last = a.reduce((m, n) => (n.depuis > m ? n.depuis : m), '');
       const nf = a.filter((n) => n.futDate).length;
       const txt = st.nodes.find((n) => n.type === 'Texte' && n.dom === d);
-      return `<button class="sign dom-${d}" data-open="${txt.id}"><b>${esc(DOMAINES[d].court)}</b>
+      return `<button class="sign dom-${d}" data-board="${d}"><b>${esc(DOMAINES[d].court)}</b>
         <span>${esc(DOMAINES[d].label)}</span>
         <small>${a.length.toLocaleString('fr-FR')} articles · dernière modification ${fmtDate(last)}${nf ? ` · ${nf} à venir` : ''}</small></button>`;
     }).join('');
@@ -351,6 +550,7 @@
 
   // ------------------------------------------------------------------ lecture continue
   let readCtx = null;
+  const stickObs = new ResizeObserver((es) => { for (const e of es) document.documentElement.style.setProperty('--stick-h', Math.round(e.target.getBoundingClientRect().height) + 'px'); });
   function renderRead(id, focus) {
     const n = st.byId.get(id); if (!n) return renderHome();
     const items = descendants(n);
@@ -358,11 +558,24 @@
     const crumbs = [...anc, n].map((a, i, arr) => `<button data-open="${a.id}">${esc(a.type === 'Texte' ? DOMAINES[a.dom].label : a.titre)}</button>${i < arr.length - 1 ? '<span class="sep">›</span>' : ''}`).join('');
     const own = n.type === 'Article' ? [n] : [];
     readCtx = { root: n, items: own.concat(items), shown: 0 };
+    const tile = tileFor(n);
+    const isChap = tile && tile.node === n.id;
     $('#read').className = 'pane readpane dom-' + n.dom;
-    $('#read').innerHTML = `<div class="crumbs">${crumbs}</div><div class="reading">
-      <div class="sechead l1"><h2>${esc(n.type === 'Texte' ? n.titre : n.titre)}</h2>
-      <p class="hint" style="margin:6px 0 0">${n.count || 0} article${n.count > 1 ? 's' : ''}${n.lien ? ` · <a href="${esc(n.lien)}" target="_blank" rel="noopener">version officielle sur Légifrance</a>` : ''}</p></div>
+    $('#read').innerHTML = `<div class="stick">${railHTML(n.dom, tile)}<div class="crumbs">${crumbs}</div></div><div class="reading">
+      ${isChap ? chapHeadHTML(n, tile) : `<div class="sechead l1"><h2>${esc(n.titre)}</h2>
+      <p class="hint" style="margin:6px 0 0">${n.count || 0} article${n.count > 1 ? 's' : ''}${n.lien ? ` · <a href="${esc(n.lien)}" target="_blank" rel="noopener">version officielle sur Légifrance</a>` : ''}</p></div>`}
       <div id="flow"></div></div>`;
+    stickObs.disconnect(); stickObs.observe($('.stick'));
+    const rp = $('.rail .rp.on'); if (rp) rp.scrollIntoView({ block: 'nearest', inline: 'center' });
+    const gi = $('#gotoNum');
+    if (gi) gi.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const v = gi.value.trim().toUpperCase(); if (!v) return;
+      const pref = tile.prefix || (/^[A-Z]+$/.test(tile.code) ? tile.code : '');
+      const want = S.normNum((/^\d/.test(v) && pref ? pref : '') + v);
+      const hit = readCtx.items.find((x) => x.type === 'Article' && S.normNum(x.num) === want);
+      if (hit) { gi.value = ''; scrollToItem(hit.id); } else toast(`Pas d'article ${(/^\d/.test(v) && pref ? pref + ' ' : '') + v} dans ce chapitre`);
+    });
     let target = focus ? readCtx.items.findIndex((x) => x.id === focus) : -1;
     renderMore(Math.max(60, target + 25));
     if (target >= 0) {
@@ -419,7 +632,7 @@
           <button data-pin="${it.id}">📌 Épingler</button>
           <button data-copy="${it.id}">Copier la référence</button>
           ${it.lien ? `<a href="${esc(it.lien)}" target="_blank" rel="noopener">Légifrance ↗</a>` : ''}
-          <button data-ss="${it.id}">SiteSecurite ↗</button>
+          ${(() => { const l = ssLink(it); return l.label ? `<a class="ss" href="${esc(l.url)}" target="_blank" rel="noopener" title="Ouvrir la page SiteSecurite qui contient cet article">SiteSecurite · ${esc(l.label)} ↗</a>` : `<button data-ss="${it.id}">SiteSecurite ↗</button>`; })()}
         </div>
       </div></article>`;
   }
@@ -577,6 +790,12 @@
 
   // ------------------------------------------------------------------ recherche
   function domFilter(i) { return st.domOn.has(st.idxRows[i].dom); }
+  function codeHit(q) {
+    const m = q.trim().match(/^(?:type\s+)?([a-z]{1,3})$/i); if (!m) return null;
+    const c = m[1].toUpperCase();
+    for (const dom of ORDRE_DOM) for (const g of st.plans[dom] || []) for (const t of g.tuiles) if (t.code === c && t.node && (dom === 'ERP' || /^[A-Z]{2,}$/.test(c))) return t;
+    return null;
+  }
   function directHit(q) {
     const m = q.match(/^\s*(?:art(?:icle)?\.?\s*)?([LRD]\.?\s?\d{3,4}(?:-\d+){1,2}|[A-Z]{1,3}\s?\d{1,3}(?:\s?bis)?|\d{1,3})\s*$/i);
     if (!m) return [];
@@ -603,9 +822,11 @@
     $('#read').className = 'pane readpane';
     if (!q.trim()) return renderHome();
     const direct = directHit(q);
+    const ch = codeHit(q);
     const r = rank(q);
     const shown = r.ids.slice(0, 50);
     $('#read').innerHTML = `<div class="results">
+      ${ch ? `<div class="jump dom-ERP"><span class="bigplate sm">${esc(ch.code)}</span><div><b>${esc(ch.label)}</b><div class="hint" style="margin:0">${esc(rangeTxt(ch))} · ${ch.arts} articles</div></div><button class="btn" data-open="${ch.node}" style="margin-left:auto">Ouvrir le chapitre</button></div>` : ''}
       ${direct.map((n) => `<div class="jump dom-${n.dom}"><button class="plate" style="position:static;width:auto" data-open="${n.id}">${esc(dispNum(n))}</button><div><b>${esc(DOMAINES[n.dom].label)}</b><div class="hint" style="margin:0">${esc(n.chemin.split(' › ').slice(-1)[0])}</div></div><button class="btn" data-open="${n.id}" style="margin-left:auto">Ouvrir</button></div>`).join('')}
       <h1>${r.ids.length ? r.ids.length.toLocaleString('fr-FR') + ' résultat' + (r.ids.length > 1 ? 's' : '') : 'Aucun résultat'} pour « ${esc(q)} »</h1>
       <p class="hint">${r.recognized.length ? 'Termes associés inclus : ' + r.recognized.map((x) => esc(x.group.key)).join(', ') + '. ' : ''}Passez en mode « Question » pour une réponse guidée.</p>
@@ -769,6 +990,10 @@
     if (t.matches('img[data-zoom]')) { const lb = $('#lightbox'); $('img', lb).src = t.src; lb.classList.add('show'); return; }
     if (t.matches('.lightbox')) { t.classList.remove('show'); return; }
     if (d.ref && !d.open) { e.preventDefault(); showPop(t); return; }
+    if (d.board) { go({ v: 'board', dom: d.board }); return; }
+    if (d.gosec) { scrollToItem(d.gosec, true); return; }
+    if (d.goart) { scrollToItem(d.goart); return; }
+    if (d.href) { window.open(d.href, '_blank', 'noopener'); return; }
     if (d.open) { hidePop(); openNode(d.open); return; }
     if (d.tog) { st.expanded.has(d.tog) ? st.expanded.delete(d.tog) : st.expanded.add(d.tog); renderTree(); return; }
     if (d.focus) { st.pinActive = Date.now() + 1500; setActive(st.byId.get(d.focus), d.tab || st.sideTab); $('#side').classList.add('open'); if (d.tab === 'cmt') setTimeout(() => { const ta = $('#cform textarea'); ta && ta.focus(); }, 50); return; }
@@ -777,7 +1002,7 @@
     if (d.unpin) { st.pins = st.pins.filter((x) => x !== d.unpin); renderSide(); return; }
     if (d.untag) { const n = st.active; const tags = n.tags.filter((x) => x !== d.untag); if (await act([['UpdateRecord', 'REG_Articles', n.row, { Mots_cles: ['L', ...tags] }]])) { n.tags = tags; renderSide(); refreshArticle(n); } return; }
     if (d.copy) { const n = st.byId.get(d.copy); const ref = `${dispNum(n)} — ${n.chemin.split(' › ')[0]}`; try { await navigator.clipboard.writeText(ref); toast('Référence copiée'); } catch (err) { toast(ref); } return; }
-    if (d.ss) { const n = st.byId.get(d.ss); try { await navigator.clipboard.writeText(dispNum(n)); } catch (err) { /* presse-papiers indisponible */ } window.open('https://sitesecurite.com/' + (SITESECURITE[n.dom] || ''), '_blank', 'noopener'); toast(`${dispNum(n)} copié : collez-le dans la recherche SiteSecurite`); return; }
+    if (d.ss) { const n = st.byId.get(d.ss); try { await navigator.clipboard.writeText(dispNum(n)); } catch (err) { /* presse-papiers indisponible */ } window.open(ssPortal(n.dom), '_blank', 'noopener'); toast(`${dispNum(n)} copié : collez-le dans la recherche SiteSecurite`); return; }
     if (d.vf) { st.vf[d.vf] = d.val; renderVeille(); return; }
     if (d.vset) { setVeille(+d.vset, { Statut: d.s }); return; }
     if (d.vdiff) { const v = st.veille.find((x) => x.row === +d.vdiff); const box = $('.vx', t.closest('.vitem')); box.innerHTML = box.innerHTML ? '' : `<div class="diff legal">${v.ancien && v.nouveau ? diffHTML(v.ancien, v.nouveau) : v.nouveau ? `<ins>${esc(v.nouveau)}</ins>` : `<del>${esc(v.ancien)}</del>`}</div>`; return; }
@@ -805,6 +1030,8 @@
     e.preventDefault();
     live.cancel();
     if (!q.value.trim()) return;
+    const ch = st.mode === 'search' ? codeHit(q.value) : null;
+    if (ch) { openNode(ch.node); return; }
     const direct = st.mode === 'search' ? directHit(q.value) : [];
     if (direct.length === 1) { openNode(direct[0].id); return; }
     go({ v: st.mode === 'ask' ? 'ask' : 'search', q: q.value });
@@ -858,6 +1085,7 @@
     const data = await fetchAll();
     const keep = st.active && st.active.id;
     ingest(data);
+    buildPlans();
     if (keep) st.active = st.byId.get(keep);
     updateBadge(); renderChips();
     if (st.view && st.view.v === 'read' && st.active) { renderSide(); refreshArticle(st.active); } else if (st.view && st.view.v === 'veille') renderVeille();
@@ -899,7 +1127,9 @@
   }
 
   async function boot() {
+    if (!st.ss) st.ss = await fetch('data/sitesecurite.json').then((r) => r.json()).catch(() => null);
     ingest(await fetchAll());
+    buildPlans();
     renderChips(); updateBadge();
     go({ v: 'home' }, false);
     try { history.replaceState({ v: 'home' }, ''); } catch (e) { /* ignoré */ }

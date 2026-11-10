@@ -78,9 +78,25 @@ Pour relier un commentaire à la fiche de l'agent, ajoutez dans `REG_Commentaire
 
 ## Utilisation
 
-- **/** ou **Ctrl+K** : rechercher. Un numéro (« CO 15 », « R. 4227-28 ») ouvre directement l'article.
+**Naviguer par codes, comme dans le règlement**
+- L'accueil propose un panneau par réglementation. Le panneau **ERP** ouvre le **tableau des codes** : GN, dispositions générales (GE, CO, AM, DF, CH, GZ, EL, EC, AS, GC, MS), types (J à Y), 5e catégorie (PE, PO, PU, PX) et établissements spéciaux (PA, CTS, SG, OA, REF, PS, GA…). Chaque tuile indique la plage d'articles et le nombre d'articles modifiés prochainement.
+- Pendant la lecture, la **barre des codes** reste affichée en haut : un clic passe de CO à GZ ou au type L.
+- L'en-tête d'un chapitre donne son **sommaire en tuiles** (« CO 11–15 Résistance au feu des structures »), la **grille de tous les numéros** et un champ **Aller à** : tapez « 43 » dans le chapitre CO pour arriver sur CO 43.
+- La barre de gauche reprend la même liste de codes ; le plan officiel des textes reste accessible en dessous.
+- IGH, habitation et Code du travail ont le même principe, avec leurs chapitres (GH, classes GH A à ITGH, titres de l'arrêté de 1986, R. 4216 / R. 4227).
+
+**Aller vite**
+- **/** ou **Ctrl+K** : rechercher. « CO 15 » ou « R. 4227-28 » ouvre l'article ; « CO », « GZ », « L » ou « type L » ouvre le chapitre.
+- **j / k** : article suivant / précédent.
+- Survoler une référence citée (« article CO 13 ») affiche l'article sans quitter la page ; on peut l'épingler pour comparer.
+
+**SiteSecurite en un clic**
+- Chaque article a un bouton **SiteSecurite · CO 11 à 15 ↗** qui ouvre directement la page SiteSecurite contenant cet article (avec votre abonnement).
+- Chaque chapitre a son bouton **Ouvrir CO sur SiteSecurite ↗**, et chaque partie du sommaire son lien **SS ↗**.
+- Le plan des pages SiteSecurite (adresses uniquement, aucun contenu) est actualisé chaque matin.
+
+**Commenter, rechercher, veiller**
 - **Mots-clés / Question** : le mode Question classe les articles selon ce qui est compris de la question (réglementation, type d'ERP, catégorie, notions) et montre les deux phrases les plus pertinentes de chaque article.
-- **j / k** : article suivant / précédent pendant la lecture.
 - Cliquer sur la plaque d'un article ouvre ses commentaires, son historique (textes modificatifs) et la comparaison avec la version à venir.
 - Les images se déposent par glisser-déposer ou copier-coller dans le formulaire de commentaire ; elles sont redimensionnées avant envoi.
 - La page d'accueil indique la date de la base Légifrance chargée ; une petite notification signale les mises à jour appliquées.

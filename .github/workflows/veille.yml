@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: "17 5 * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["widget/**", "sync/**", "data/cibles.json", ".github/workflows/**"]
 
 permissions:
   contents: read
@@ -62,6 +65,10 @@ jobs:
 
       - name: Préparer les données du widget
         run: python -I sync/grist_sync.py publier
+
+      - name: Mettre à jour le plan des pages SiteSecurite (liens uniquement)
+        run: python -I sync/sitesecurite_liens.py widget/data/sitesecurite.json
+        continue-on-error: true
 
       - name: Sauvegarder le cache
         uses: actions/cache/save@v4
