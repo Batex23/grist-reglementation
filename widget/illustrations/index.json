@@ -681,6 +681,64 @@
    "ordre": 42
   },
   {
+   "id": "J10_zones-transfert-horizontal",
+   "titre": "Type J : zones et transfert horizontal",
+   "articles": [
+    "ERP:J 10",
+    "ERP:J 3",
+    "ERP:J 19",
+    "ERP:J 25",
+    "ERP:J 17",
+    "ERP:J 18"
+   ],
+   "fiche": "",
+   "legende": "Chaque niveau (sauf de plain-pied sur l'extérieur) est recoupé au moins une fois, de façade à façade, par une cloison CF : deux zones de capacité équivalente. Au début de l'incendie, les résidents sont transférés horizontalement vers la zone contiguë ; l'évacuation verticale n'est envisagée qu'en dernier recours.",
+   "ecarts": [
+    "Portes entre zones et portes de recoupement à fermeture automatique asservie à la détection (J 10, J 19, J 36) ; circulations communes de 2 UP (J 17) ; 40 m jusqu'à un escalier, 30 m en cul-de-sac (J 18).",
+    "Circulations communes désenfumées mécaniquement quelle que soit leur longueur, sauf bâtiments R+1 et halls (J 25) ; commandes automatiques asservies à la détection."
+   ],
+   "image": "J10_zones-transfert-horizontal.png?v=8c3f51ae1b",
+   "ordre": 43
+  },
+  {
+   "id": "M2_magasins",
+   "titre": "Type M : magasins de vente",
+   "articles": [
+    "ERP:M 2",
+    "ERP:M 16",
+    "ERP:M 49",
+    "ERP:M 12",
+    "ERP:M 13",
+    "ERP:M 26"
+   ],
+   "fiche": "",
+   "legende": "Effectif : 1 personne pour 3 m² en sous-sol, rez-de-chaussée et 1er étage, 6 m² au 2e, 15 m² au-delà (9 m² en faible densité). Réserves d'approche non isolées : 300 m³ (500 sprinklé), 6 m de côté, 8 m entre elles, 1/10 de la surface de vente. Réserves : communication directe possible par portes CF 1 h à fermeture automatique.",
+   "ecarts": [
+    "Volume unitaire des réserves : 1 500 m³ (3 000 m³ si le public n'a pas accès au-dessus et l'établissement occupe tout le bâtiment), 5 000 / 10 000 m³ si sprinklées (M 49).",
+    "Défense : au-delà de 3 000 m² de vente, extinction automatique à eau et RIA (M 26)."
+   ],
+   "image": "M2_magasins.png?v=375e10584f",
+   "ordre": 44
+  },
+  {
+   "id": "M7_centres-commerciaux",
+   "titre": "Type M : centres commerciaux",
+   "articles": [
+    "ERP:M 7",
+    "ERP:M 18",
+    "ERP:M 5",
+    "ERP:M 1",
+    "ERP:M 6"
+   ],
+   "fiche": "",
+   "legende": "Centre commercial : magasins tributaires de mails clos pour accès et évacuation. Exploitations séparées entre elles par des parois incombustibles CF (½ h au moins), sans exigence vers le mail. Mail désenfumé comme un local de plus de 1 000 m² ; boutiques de moins de 300 m² non désenfumées. Sas de 6 m² et portes CF 1 h à 3 m l'une de l'autre vers un parc de stationnement.",
+   "ecarts": [
+    "Effectif : 1 personne pour 5 m² de mail ; boutiques de moins de 300 m² : 1 pour 6 m² quel que soit le niveau (M 2). Hall réunissant le rez-de-chaussée et 4 niveaux admis seulement dans le mail, avec extinction automatique (M 6 § 1 bis)."
+   ],
+   "image": "M7_centres-commerciaux.png?v=b8bcb6ed4a",
+   "ordre": 45
+  },
+  {
    "id": "MS18_colonnes-seches-points-eau",
    "titre": "Colonnes sèches et points d'eau",
    "articles": [
@@ -698,7 +756,7 @@
     "Colonnes en charge (humides) : prévues par les dispositions particulières de certains types et en IGH ; elles ne figurent pas dans les dispositions générales MS."
    ],
    "image": "MS18_colonnes-seches-points-eau.png?v=448e814736",
-   "ordre": 43
+   "ordre": 46
   },
   {
    "id": "MS39_ria-extincteurs",
@@ -718,7 +776,7 @@
     "Diamètres des RIA : DN 19/6, 25/8 ou 33/12 (ancienne fiche : DN 19, 25 ou 40)."
    ],
    "image": "MS39_ria-extincteurs.png?v=5167bb9e9c",
-   "ordre": 44
+   "ordre": 47
   },
   {
    "id": "MS53_categories-ssi",
@@ -737,7 +795,60 @@
     "Alarme perceptible par les personnes en situation de handicap (MS 64 § 3) : diffuseurs lumineux en complément du signal sonore."
    ],
    "image": "MS53_categories-ssi.png?v=aa6834f7d1",
-   "ordre": 45
+   "ordre": 48
+  },
+  {
+   "id": "O9_hotels",
+   "titre": "Type O : hôtels",
+   "articles": [
+    "ERP:O 9",
+    "ERP:O 6",
+    "ERP:O 5",
+    "ERP:O 1",
+    "ERP:O 3"
+   ],
+   "fiche": "",
+   "legende": "Circulations de 2 UP entre escaliers et sorties ; toutes les portes donnant sur les dégagements des chambres à ferme-porte. Escaliers protégés, sauf R+1 (ou escalier du hall ne desservant qu'un étage, après avis) avec 100 personnes au plus à l'étage. Chambres adaptées pouvant être traitées en espaces d'attente sécurisés.",
+   "ecarts": [
+    "Assujettis : hôtels de 100 personnes et plus ; autres hébergements à exploitation collective homogène au-delà de 15 personnes (O 1). Locaux de déchets > 50 m² : risques importants ; ≤ 50 m², réserves, lingeries, bagageries : risques moyens (O 5)."
+   ],
+   "image": "O9_hotels.png?v=d7e5f5aa88",
+   "ordre": 49
+  },
+  {
+   "id": "R6_enseignement",
+   "titre": "Type R : établissements d'enseignement",
+   "articles": [
+    "ERP:R 6",
+    "ERP:R 15",
+    "ERP:R 1",
+    "ERP:R 33"
+   ],
+   "fiche": "",
+   "legende": "Compartiments autorisés (sauf niveau avec local à risques importants ou bâtiment avec sommeil) : 600 m² au plus, issues à 30 m au plus, sans local à risques moyens. Escalier protégé à 40 m au plus (30 m en cul-de-sac) ; escaliers non protégés seulement en R+1 avec 150 personnes au plus à l'étage. Portes des cages à fermeture automatique avec une alarme de type 1 ou 2.",
+   "ecarts": [
+    "Crèches, maternelles, jardins d'enfants : interdits en sous-sol ; assujettis en étage quel que soit l'effectif (20 si l'établissement n'a qu'un niveau situé en étage), 100 en rez-de-chaussée (R 1).",
+    "Exercices d'évacuation pendant l'année, le premier dans le mois qui suit la rentrée, de nuit s'il y a des locaux à sommeil (R 33)."
+   ],
+   "image": "R6_enseignement.png?v=222e2deed6",
+   "ordre": 50
+  },
+  {
+   "id": "U10_zones-protegees",
+   "titre": "Type U : zones protégées et zones de mise à l'abri",
+   "articles": [
+    "ERP:U 10",
+    "ERP:U 16",
+    "ERP:U 26"
+   ],
+   "fiche": "",
+   "legende": "Niveaux avec locaux à sommeil recoupés par une cloison CF 1 h de façade à façade : au moins deux zones protégées de capacité comparable. Au-delà de 20 lits, chaque zone protégée est divisée en zones de mise à l'abri de 20 lits au plus (cloison CF 1 h, blocs-portes PF ½ h à ferme-porte ou fermeture automatique).",
+   "ecarts": [
+    "Portes des chambres d'au moins 1,10 m (hors psychiatrie) et circulations de 2 UP entre escaliers et sorties (U 16).",
+    "Circulations des niveaux à sommeil désenfumées mécaniquement quelle que soit leur longueur (naturel possible en R+1 après avis), asservies à la détection de la zone sinistrée (U 26)."
+   ],
+   "image": "U10_zones-protegees.png?v=e735cbdadc",
+   "ordre": 51
   },
   {
    "id": "HAB3_familles",
@@ -753,7 +864,7 @@
     "Collectif R+3 dont le plancher bas du logement le plus haut est à plus de 8 m : escaliers encloisonnés, sauf escaliers extérieurs (art. 3, 2°)."
    ],
    "image": "HAB3_familles.png?v=c230ee0677",
-   "ordre": 46
+   "ordre": 52
   },
   {
    "id": "HAB4_voie-echelles",
@@ -768,7 +879,7 @@
     "Ce sont ces valeurs (1 à 8 m, 100 kN sur Ø 20 cm) que l'ancienne fiche ERP C.3 reprenait : elles sont propres à l'habitation. Voie engins habitation : 130 kN (40 + 90 kN, essieux à 4,50 m), hauteur libre 3,50 m (3,30 + 0,20)."
    ],
    "image": "HAB4_voie-echelles.png?v=9d51f69cd1",
-   "ordre": 47
+   "ordre": 53
   },
   {
    "id": "GH7_volume-protection",
@@ -784,7 +895,7 @@
     "Planche ajoutée : l'ancien recueil ne traitait pas les IGH. Structure de l'IGH : SF 2 h ou R 120 (GH 9)."
    ],
    "image": "GH7_volume-protection.png?v=42c9e72ae7",
-   "ordre": 48
+   "ordre": 54
   }
  ]
 }
