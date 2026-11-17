@@ -275,6 +275,48 @@ class Scene:
             self.boite(b["x"], b["y"], b["z"], b["dx"], b["dy"], b["dz"], b.get("pal", BEIGE), b.get("ep", 1.6), b.get("opacite", 1.0))
 
 
+    # ------------------------------------------------------------------ coupes 2D
+    def coupe(self, x0, sol, k):
+        """Active un repère de coupe : x en mètres vers la droite depuis x0 (px), z en mètres vers le haut depuis sol (px)."""
+        self._c = (x0, sol, k)
+
+    def c_rect(self, x, z, dx, dz, fill, trait=TRAIT, ep=2.0, opacite=1.0, tirets=None):
+        x0, sol, k = self._c
+        dash = f' stroke-dasharray="{tirets}"' if tirets else ""
+        st = f'stroke="{trait}" stroke-width="{ep}"' if trait else 'stroke="none"'
+        self.items.append(f'<rect x="{x0 + x * k:.1f}" y="{sol - (z + dz) * k:.1f}" width="{dx * k:.1f}" height="{dz * k:.1f}" fill="{fill}" fill-opacity="{opacite}" {st}{dash}/>')
+
+    def c_pt(self, x, z):
+        x0, sol, k = self._c
+        return x0 + x * k, sol - z * k
+
+    def c_texte(self, x, z, t, taille=17, couleur=TRAIT, gras=False, ancre="middle"):
+        u, v = self.c_pt(x, z)
+        self.texte(u, v, t, taille, couleur, gras, ancre)
+
+    def c_cote_v(self, x, z1, z2, t, couleur="#C1121F", dx=12):
+        (u, v1), (_, v2) = self.c_pt(x, z1), self.c_pt(x, z2)
+        mid = f"cv{len(self.defs)}"
+        self.defs.append(f'<marker id="{mid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{couleur}"/></marker>')
+        self.items.append(f'<line x1="{u:.1f}" y1="{v1:.1f}" x2="{u:.1f}" y2="{v2:.1f}" stroke="{couleur}" stroke-width="3" marker-start="url(#{mid})" marker-end="url(#{mid})"/>')
+        if t:
+            self.etiquette(u + dx, (v1 + v2) / 2, t, couleur, 16, ancre="start" if dx >= 0 else "end")
+
+    def c_repere(self, x, z, t, du, dv, couleur=TRAIT, taille=16):
+        u, v = self.c_pt(x, z)
+        self.items.append(f'<line x1="{u:.1f}" y1="{v:.1f}" x2="{u + du:.1f}" y2="{v + dv:.1f}" stroke="{couleur}" stroke-width="1.6"/><circle cx="{u:.1f}" cy="{v:.1f}" r="4" fill="{couleur}"/>')
+        self.etiquette(u + du, v + dv, t, couleur, taille, gras=False)
+
+    def c_image(self, nom, x, z, largeur_px, ancre=(0.5, 1.0)):
+        from PIL import Image
+        chemin = os.path.join(SPRITES, nom + ".png")
+        with Image.open(chemin) as im:
+            w, h = im.size
+        hauteur = largeur_px * h / w
+        u, v = self.c_pt(x, z)
+        data = base64.b64encode(open(chemin, "rb").read()).decode()
+        self.items.append(f'<image x="{u - ancre[0] * largeur_px:.1f}" y="{v - ancre[1] * hauteur:.1f}" width="{largeur_px:.1f}" height="{hauteur:.1f}" href="data:image/png;base64,{data}"/>')
+
     # ------------------------------------------------------------------ cartouche
     def cartouche(self, titre, sous_titre, refs, credit=True):
         self.items.append(f'<rect x="0" y="0" width="{self.w}" height="86" fill="#1F2A37"/>')
