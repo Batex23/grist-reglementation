@@ -103,6 +103,18 @@ Pour relier un commentaire à la fiche de l'agent, ajoutez dans `REG_Commentaire
 - La page d'accueil indique la date de la base Légifrance chargée ; une petite notification signale les mises à jour appliquées.
 - **Réglages** (roue dentée) : activer la recherche sémantique (téléchargement unique d'environ 120 Mo, puis en cache), brancher un LLM compatible OpenAI si vous en obtenez l'accès plus tard (la clé reste dans votre navigateur).
 
+## Doctrine & guides
+
+L'onglet **Doctrine & guides** réunit guides pratiques et doctrines, découpés en fiches comme les articles :
+
+- chaque fiche suit les titres du document (« 2.1 Dégagements et issues de secours »), avec son texte cherchable, l'image des pages du PDF (schémas et tableaux conservés, clic pour agrandir) et un lien vers le PDF à la bonne page ;
+- les articles cités dans une fiche (« Article M 2 ») s'ouvrent au survol, et chaque article du règlement affiche en tête **Commenté dans : M §1.4…** ;
+- les fiches se commentent et s'illustrent comme les articles ; la veille signale chaque nouveau document ou nouvelle version.
+
+**Ajouter un document** : déposer le PDF dans le dossier `documents/` du dépôt (Add file → Upload files). La publication se relance seule et le document apparaît après quelques minutes. Facultatif : une entrée dans `documents/catalogue.json` pour fixer son code (affiché sur la tuile), son titre, sa catégorie, sa date d'édition et sa source. Les PDF scannés sont lus par OCR ; si le découpage automatique ne convient pas, `sections` dans le catalogue l'impose (voir l'exemple de la doctrine bois).
+
+Documents actuels : guide pratique type M (DGSCGC, déc. 2017), guide pratique type PS (DGSCGC, janv. 2018), doctrine CCDSA Gironde bâtiments bois > 8 m (nov. 2020), principes opérationnels à l'usage des exploitants (SDIS 33).
+
 ## Ce qui est suivi
 
 | Domaine | Texte |

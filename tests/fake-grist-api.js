@@ -17,6 +17,7 @@
           const [op, tb] = a;
           if (op === 'AddTable') { db.T[tb] = []; ret.push(null); }
           else if (op === 'ModifyColumn') ret.push(null);
+          else if (op === 'AddColumn') { (db.added = db.added || []).push(tb + '.' + a[2]); ret.push(null); }
           else if (op === 'AddRecord') { check(tb, a[3]); const id = db.next++; const r = { id, ...a[3] }; if (tb === 'REG_Commentaires') { r.Auteur = 'Agent Test'; r.Auteur_email = 'agent@test'; r.Cree_le = Date.now() / 1000; } db.T[tb].push(r); ret.push(id); }
           else if (op === 'BulkAddRecord') { const ids = []; a[2].forEach((_, i) => { const id = db.next++; const r = { id }; for (const k in a[3]) r[k] = a[3][k][i]; check(tb, r); db.T[tb].push(r); ids.push(id); }); ret.push(ids); }
           else if (op === 'UpdateRecord') { check(tb, a[3]); Object.assign(db.T[tb].find((r) => r.id === a[2]), a[3]); ret.push(null); }

@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["widget/**", "sync/**", "data/cibles.json", ".github/workflows/**"]
+    paths: ["widget/**", "sync/**", "documents/**", "data/cibles.json", ".github/workflows/**"]
 
 permissions:
   contents: read
@@ -35,6 +35,9 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install lxml
 
+      - name: Outils PDF et OCR (doctrine & guides)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-fra >/dev/null
+
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
       - run: npm install --prefix sync @huggingface/transformers@3
@@ -58,6 +61,9 @@ jobs:
 
       - name: Appliquer les publications du Journal officiel
         run: python -I sync/grist_sync.py extraire
+
+      - name: Ajouter la doctrine et les guides (dossier documents/)
+        run: python -I sync/documents.py fusionner data/reglementation.json --images widget/documents
 
       - name: Calculer les vecteurs sémantiques des articles modifiés
         working-directory: sync

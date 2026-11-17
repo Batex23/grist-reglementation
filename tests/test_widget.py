@@ -6,6 +6,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp"
 FAKE = open(os.path.join(ROOT, "tests", "fake-grist-api.js")).read()
 DATA = json.load(open(os.path.join(ROOT, "widget", "data", "reglementation.json"), encoding="utf-8"))
+SANS_DOC = [n for n in DATA if n.get("Domaine") != "DOC"]  # installation d'avant la doctrine
 
 def jo(data):
     d = copy.deepcopy(data)
@@ -27,7 +28,7 @@ async def main():
         pg = await b.new_page(viewport={"width": 1440, "height": 900})
         errs = []
         pg.on("pageerror", lambda e: errs.append(str(e)))
-        state = {"v": None, "data": None}
+        state = {"v": {"version": "20261110-000000-ancien", "base": "2026-11-10"}, "data": SANS_DOC}
         async def api(route): await route.fulfill(body=FAKE, content_type="application/javascript")
         async def version(route):
             if state["v"]: await route.fulfill(body=json.dumps(state["v"]), content_type="application/json")
@@ -46,7 +47,7 @@ async def main():
         await fr.locator(".sign").first.wait_for(timeout=180000)
         db = lambda: pg.evaluate("({a: __db.T.REG_Articles.length, v: __db.T.REG_Veille.length, c: __db.T.REG_Commentaires.length, s: __db.T.REG_Synonymes.length, p: __db.T.REG_Parametres.map(x=>x.Cle+'='+x.Valeur)})")
         s1 = await db(); print(s1)
-        ok(s1["a"] == len(DATA), f"{s1['a']} articles/sections installés")
+        ok(s1["a"] == len(SANS_DOC), f"{s1['a']} articles/sections installés")
         ok(s1["s"] > 50, "synonymes installés")
         await pg.screenshot(path=f"{OUT}/w2-home.png")
         # rechargement sans nouvelle version : rien ne bouge
@@ -56,7 +57,9 @@ async def main():
         s2 = await db()
         ok(s2["v"] == s1["v"] and s2["a"] == s1["a"], "aucun changement au rechargement")
         ok(await pg.evaluate("__db.actions") - n_act <= 4, "pas de réécriture inutile")
-        # nouveau Journal officiel publié
+        # installation ancienne : pas de colonne Pages ni de version de schéma
+        await pg.evaluate("__db.T.REG_Articles.forEach(r => delete r.Pages); __db.T.REG_Parametres = __db.T.REG_Parametres.filter(p => p.Cle !== 'schema')")
+        # nouveau Journal officiel publié + ajout de la doctrine
         state["v"] = {"version": "20261112-999999-test", "base": "2026-11-12"}
         state["data"] = jo(DATA)
         await pg.evaluate("document.getElementById('w').contentWindow.location.reload()")
@@ -68,6 +71,10 @@ async def main():
         print(nat)
         ok(any("Modification /" in x and "CO 15" in x for x in nat), "modification de CO 15 dans la veille")
         ok(any("Abrogation" in x and "GN 15" in x for x in nat), "abrogation de GN 15 dans la veille")
+        ndocs = sum(1 for n in DATA if n.get("Domaine") == "DOC" and n["Type"] == "Texte")
+        ok(sum(1 for x in nat if x.startswith("Nouveau document")) == ndocs, f"{ndocs} nouveaux documents signalés une seule fois chacun")
+        ok(not any(x.startswith("Nouvel article") and "§" in x for x in nat), "pas d'alerte par fiche de doctrine")
+        ok("REG_Articles.Pages" in (await pg.evaluate("__db.added || []")), "colonne Pages ajoutée à l'installation existante")
         co15 = await pg.evaluate("__db.T.REG_Articles.filter(r => r.Numero === 'CO 15').map(r => [r.id, r.Identifiant])")
         ok(len(co15) == 1 and co15[0][1] == "LEGIARTI999999999001", "CO 15 mis à jour sur la même ligne")
         await fr.locator("#btnVeille").click(); await pg.wait_for_timeout(500)

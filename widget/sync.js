@@ -4,7 +4,8 @@
   'use strict';
 
   const ch = (...v) => JSON.stringify({ choices: v });
-  const DOMS = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH'];
+  const DOMS = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH', 'DOC'];
+  const NATURES = ['Modification', 'Nouvel article', 'Abrogation', 'Modification à venir', 'Parution SiteSecurite', 'Nouveau document', 'Document mis à jour'];
 
   // [id, type, widgetOptions?, formule déclencheur?]
   const SCHEMA = {
@@ -16,7 +17,7 @@
       ['En_vigueur_depuis', 'Date'], ['Fin_de_vigueur', 'Date'], ['Historique', 'Text'],
       ['Version_a_venir', 'Text'], ['Version_a_venir_HTML', 'Text'], ['Date_a_venir', 'Date'], ['A_venir_par', 'Text'],
       ['Texte_officiel', 'Text'], ['Derniere_modif_texte', 'Date'], ['Lien_Legifrance', 'Text'],
-      ['Mots_cles', 'ChoiceList', ch()], ['Vecteur', 'Text'], ['Mis_a_jour', 'Date'],
+      ['Mots_cles', 'ChoiceList', ch()], ['Vecteur', 'Text'], ['Mis_a_jour', 'Date'], ['Pages', 'Text'],
     ],
     REG_Commentaires: [
       ['Article', 'Ref:REG_Articles'],
@@ -27,7 +28,7 @@
     ],
     REG_Veille: [
       ['Date', 'Date'], ['Domaine', 'Choice', ch(...DOMS, 'Divers')],
-      ['Nature', 'Choice', ch('Modification', 'Nouvel article', 'Abrogation', 'Modification à venir', 'Parution SiteSecurite')],
+      ['Nature', 'Choice', ch(...NATURES)],
       ['Titre', 'Text'], ['Article', 'Ref:REG_Articles'], ['Ancien_texte', 'Text'], ['Nouveau_texte', 'Text'],
       ['Source', 'Text'], ['Lien', 'Text'], ['Date_effet', 'Date'],
       ['Statut', 'Choice', ch('À lire', 'Lu', 'Impact analysé')], ['Analyse', 'Text'], ['Cle', 'Text'],
@@ -38,8 +39,9 @@
   const DATE_COLS = new Set(['En_vigueur_depuis', 'Fin_de_vigueur', 'Date_a_venir', 'Derniere_modif_texte', 'Mis_a_jour', 'Date', 'Date_effet']);
   const SYNC_FIELDS = ['Identifiant', 'Parent', 'Type', 'Domaine', 'Numero', 'Titre', 'Chemin', 'Niveau', 'Ordre', 'Texte', 'Texte_HTML',
     'Nota', 'Etat', 'En_vigueur_depuis', 'Fin_de_vigueur', 'Historique', 'Version_a_venir', 'Version_a_venir_HTML', 'Date_a_venir',
-    'A_venir_par', 'Texte_officiel', 'Derniere_modif_texte', 'Lien_Legifrance', 'Vecteur'];
-  const COMPARE = ['Texte', 'Etat', 'Version_a_venir', 'Titre', 'Chemin', 'Ordre', 'Parent', 'Vecteur', 'Texte_HTML', 'Historique'];
+    'A_venir_par', 'Texte_officiel', 'Derniere_modif_texte', 'Lien_Legifrance', 'Vecteur', 'Pages'];
+  const COMPARE = ['Texte', 'Etat', 'Version_a_venir', 'Titre', 'Chemin', 'Ordre', 'Parent', 'Vecteur', 'Texte_HTML', 'Historique', 'Pages', 'Lien_Legifrance', 'Nota'];
+  const SCHEMA_VERSION = '2';
 
   const ts = (iso) => { if (!iso) return null; const [y, m, d] = iso.slice(0, 10).split('-').map(Number); return Date.UTC(y, m - 1, d) / 1000; };
   const iso = (v) => (v == null || v === '' ? '' : typeof v === 'number' ? new Date(v * 1000).toISOString().slice(0, 10) : String(v).slice(0, 10));
@@ -62,15 +64,17 @@
       return new Set(t.tableId);
     },
     async fetch(name) { return rowsOf(await grist.docApi.fetchTable(name)); },
+    async columns(name) { return new Set(Object.keys(await grist.docApi.fetchTable(name))); },
     async apply(actions) { return grist.docApi.applyUserActions(actions); },
   };
 
   /* Document en mémoire : démonstration hors Grist et tests */
   function MemoryAdapter() {
-    const T = {}; let next = 1;
+    const T = {}, C = {}; let next = 1;
     const A = {
       T,
       async tables() { return new Set(Object.keys(T)); },
+      async columns(name) { return new Set(['id', ...(C[name] || []), ...T[name].flatMap(Object.keys)]); },
       async fetch(name) {
         if (!T[name]) throw new Error('table inconnue ' + name);
         return T[name].map((r) => ({ ...r }));
@@ -79,7 +83,8 @@
         const ret = [];
         for (const a of actions) {
           const [op, tb] = a;
-          if (op === 'AddTable') { T[tb] = []; ret.push(null); } else if (op === 'ModifyColumn') ret.push(null);
+          if (op === 'AddTable') { T[tb] = []; C[tb] = a[2].map((c) => c.id); ret.push(null); } else if (op === 'ModifyColumn') ret.push(null);
+          else if (op === 'AddColumn') { (C[tb] = C[tb] || []).push(a[2]); ret.push(null); }
           else if (op === 'AddRecord') { const id = next++; const r = { id, ...a[3] }; if (tb === 'REG_Commentaires') { r.Auteur = r.Auteur || 'Vous'; r.Cree_le = r.Cree_le || Date.now() / 1000; } T[tb].push(r); ret.push(id); }
           else if (op === 'BulkAddRecord') { const ids = []; const cols = a[3]; a[2].forEach((_, i) => { const id = next++; const r = { id }; for (const k in cols) r[k] = cols[k][i]; T[tb].push(r); ids.push(id); }); ret.push(ids); }
           else if (op === 'UpdateRecord') { Object.assign(T[tb].find((r) => r.id === a[2]), a[3]); ret.push(null); }
@@ -112,11 +117,34 @@
       }
       if (mods.length) await ad.apply(mods);
     }
+    if (miss.includes('REG_Parametres')) await setParam(ad, 'schema', SCHEMA_VERSION);
     if (miss.includes('REG_Synonymes') && synonyms) {
       const keys = Object.keys(synonyms);
       await ad.apply([['BulkAddRecord', 'REG_Synonymes', keys.map(() => null), { Terme: keys, Equivalents: keys.map((k) => synonyms[k]) }]]);
     }
     return miss;
+  }
+
+  /* Mise à niveau d'une installation existante : colonnes ajoutées et nouveaux choix (ex. domaine DOC). */
+  async function migrate(ad) {
+    if ((await getParam(ad, 'schema')) === SCHEMA_VERSION) return false;
+    const have = await ad.tables();
+    for (const [t, cols] of Object.entries(SCHEMA)) {
+      if (!have.has(t)) continue;
+      const exist = await ad.columns(t);
+      const acts = [];
+      for (const [id, type, opts, trig] of cols) {
+        if (!exist.has(id)) {
+          acts.push(['AddColumn', t, id, { type, isFormula: false }]);
+          if (trig) acts.push(['ModifyColumn', t, id, { formula: trig, isFormula: false, recalcWhen: 0, recalcDeps: null }]);
+        }
+        // listes de choix : on complète sans retirer ce qui a pu être ajouté à la main
+        if (opts && type === 'Choice') acts.push(['ModifyColumn', t, id, { widgetOptions: opts }]);
+      }
+      if (acts.length) await ad.apply(acts);
+    }
+    await setParam(ad, 'schema', SCHEMA_VERSION);
+    return true;
   }
 
   /* ---------- paramètres ---------- */
@@ -179,6 +207,19 @@
     const initial = exist.size === 0;
     const veille = [], maj = new Map(), ajout = [];
     const note = (v) => { if (deja.has(v.Cle)) return; deja.add(v.Cle); veille.push({ Statut: 'À lire', Date: ts(day), ...v }); };
+    // Doctrine & guides : la veille se fait au niveau du document, pas de chaque fiche
+    const isDoc = (n) => n.Domaine === 'DOC';
+    const empreinte = (h) => { try { return (JSON.parse(h || '{}') || {}).empreinte || ''; } catch (e) { return ''; } };
+    const docsNouveaux = [];
+    for (const n of nouveaux) {
+      if (!isDoc(n) || n.Type !== 'Texte') continue;
+      const r = exist.get(n.Identifiant);
+      if (!r) docsNouveaux.push(n);
+      else if (!initial && empreinte(r.Historique) && empreinte(r.Historique) !== empreinte(n.Historique)) {
+        note({ Domaine: 'DOC', Nature: 'Document mis à jour', Titre: `${n.Titre} : nouvelle version`, Article: r.id,
+          Source: n.Nota, Lien: n.Lien_Legifrance, Date_effet: ts(n.En_vigueur_depuis), Cle: `docmaj:${n.Identifiant}:${empreinte(n.Historique)}` });
+      }
+    }
 
     for (const n of nouveaux) {
       const f = record(n, day);
@@ -188,7 +229,7 @@
         if (ancien && !nouveauxIds.has(ancien.Identifiant)) {
           maj.set(ancien.id, f); // même ligne : commentaires et mots-clés conservés
           exist.set(n.Identifiant, ancien);
-          if ((ancien.Texte || '') !== (n.Texte || '')) {
+          if (!isDoc(n) && (ancien.Texte || '') !== (n.Texte || '')) {
             const h = parse(n.Historique);
             note({ Domaine: n.Domaine, Nature: 'Modification', Titre: `Article ${n.Numero} modifié`, Article: ancien.id,
               Ancien_texte: ancien.Texte, Nouveau_texte: n.Texte, Source: h.length ? h[h.length - 1].texte : '',
@@ -200,7 +241,7 @@
       if (!r) { ajout.push(f); continue; }
       const changed = COMPARE.some((k) => String(val(r, k)) !== String(n[k] == null ? '' : n[k]));
       if (changed) maj.set(r.id, f);
-      if (!initial && n.Type === 'Article' && r.Texte && (r.Texte || '') !== (n.Texte || '')) {
+      if (!initial && !isDoc(n) && n.Type === 'Article' && r.Texte && (r.Texte || '') !== (n.Texte || '')) {
         note({ Domaine: n.Domaine, Nature: 'Modification', Titre: `Article ${n.Numero} modifié`, Article: r.id,
           Ancien_texte: r.Texte, Nouveau_texte: n.Texte, Lien: n.Lien_Legifrance, Date_effet: ts(n.En_vigueur_depuis),
           Cle: `modif:${n.Identifiant}:${n.En_vigueur_depuis}` });
@@ -209,6 +250,7 @@
     for (const [ident, r] of exist) {
       if (nouveauxIds.has(ident) || r.Type !== 'Article' || r.Etat === 'ABROGE' || maj.has(r.id)) continue;
       maj.set(r.id, { Etat: 'ABROGE', Fin_de_vigueur: ts(day), Mis_a_jour: ts(day) });
+      if (r.Domaine === 'DOC') continue; // fiche retirée d'un document : pas d'alerte
       note({ Domaine: r.Domaine, Nature: 'Abrogation', Titre: `Article ${r.Numero} abrogé`, Article: r.id,
         Ancien_texte: r.Texte, Lien: r.Lien_Legifrance, Cle: `abro:${ident}` });
     }
@@ -222,11 +264,17 @@
     ajout.forEach((f, i) => rows.set(f.Identifiant, ids[i]));
     if (!initial) {
       ajout.forEach((f, i) => {
-        if (f.Type === 'Article' && f.Etat !== 'A_VENIR') {
+        if (f.Type === 'Article' && f.Etat !== 'A_VENIR' && f.Domaine !== 'DOC') {
           note({ Domaine: f.Domaine, Nature: 'Nouvel article', Titre: `Nouvel article ${f.Numero}`, Article: ids[i],
             Nouveau_texte: f.Texte, Lien: f.Lien_Legifrance, Date_effet: f.En_vigueur_depuis, Cle: `nouv:${f.Identifiant}` });
         }
       });
+      for (const n of docsNouveaux) {
+        const nb = nouveaux.filter((x) => x.Texte_officiel === n.Identifiant && x.Type === 'Article').length;
+        note({ Domaine: 'DOC', Nature: 'Nouveau document', Titre: `Nouveau document : ${n.Titre}`, Article: rows.get(n.Identifiant) || null,
+          Source: [n.Nota, `${nb} fiche${nb > 1 ? 's' : ''}`].filter(Boolean).join(' — '), Lien: n.Lien_Legifrance,
+          Date_effet: ts(n.En_vigueur_depuis), Cle: `docnouv:${n.Identifiant}` });
+      }
     }
     for (const n of nouveaux) {
       if (n.Type !== 'Article' || !n.Version_a_venir) continue;
@@ -257,6 +305,7 @@
      Renvoie {etat: 'a_jour' | 'maj' | 'occupe' | 'lecture_seule', version, resultat} */
   async function update(ad, { onProgress, force } = {}) {
     const v = await getJSON('data/version.json');
+    try { await migrate(ad); } catch (e) { console.warn('mise à niveau des tables', e); }
     const locale = await getParam(ad, 'version_donnees');
     if (!force && locale === v.version) return { etat: 'a_jour', version: v };
     // verrou simple : un seul agent applique la mise à jour à la fois
@@ -274,5 +323,5 @@
     }
   }
 
-  global.RegSync = { SCHEMA, GristAdapter, MemoryAdapter, missingTables, install, update, apply, getParam };
+  global.RegSync = { SCHEMA, GristAdapter, MemoryAdapter, missingTables, install, migrate, update, apply, getParam };
 })(window);

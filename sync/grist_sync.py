@@ -39,7 +39,7 @@ UA = {"User-Agent": "grist-veille-incendie/1.0"}
 
 # --------------------------------------------------------------------------- schéma Grist
 
-CHOIX_DOMAINE = ["ERP", "IGH", "HAB", "CDT", "CCH"]
+CHOIX_DOMAINE = ["ERP", "IGH", "HAB", "CDT", "CCH", "DOC"]
 
 
 def choix(*vals):
@@ -74,6 +74,7 @@ SCHEMA = [
         ("Mots_cles", "ChoiceList", "Mots-clés (libres)", choix()),
         ("Vecteur", "Text", "Vecteur sémantique"),
         ("Mis_a_jour", "Date", "Synchronisé le"),
+        ("Pages", "Text", "Pages (documents)"),
     ]),
     ("REG_Commentaires", [
         ("Article", "Ref:REG_Articles", "Article"),
@@ -87,7 +88,7 @@ SCHEMA = [
     ("REG_Veille", [
         ("Date", "Date", "Date"),
         ("Domaine", "Choice", "Domaine", choix(*CHOIX_DOMAINE, "Divers")),
-        ("Nature", "Choice", "Nature", choix("Modification", "Nouvel article", "Abrogation", "Modification à venir", "Parution SiteSecurite")),
+        ("Nature", "Choice", "Nature", choix("Modification", "Nouvel article", "Abrogation", "Modification à venir", "Parution SiteSecurite", "Nouveau document", "Document mis à jour")),
         ("Titre", "Text", "Titre"),
         ("Article", "Ref:REG_Articles", "Article"),
         ("Ancien_texte", "Text", "Ancien texte"),
@@ -196,7 +197,7 @@ def cmd_init(g, _args):
 CHAMPS_SYNC = ["Identifiant", "Parent", "Type", "Domaine", "Numero", "Titre", "Chemin", "Niveau", "Ordre",
                "Texte", "Texte_HTML", "Nota", "Etat", "En_vigueur_depuis", "Fin_de_vigueur", "Historique",
                "Version_a_venir", "Version_a_venir_HTML", "Date_a_venir", "A_venir_par", "Texte_officiel",
-               "Derniere_modif_texte", "Lien_Legifrance", "Vecteur"]
+               "Derniere_modif_texte", "Lien_Legifrance", "Vecteur", "Pages"]
 
 
 def normalise(n, today):

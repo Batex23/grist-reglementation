@@ -11,8 +11,9 @@
     HAB: { label: "Bâtiments d'habitation", court: 'Habitation' },
     CDT: { label: 'Code du travail', court: 'Travail' },
     CCH: { label: 'Code de la construction', court: 'CCH' },
+    DOC: { label: 'Doctrine & guides', court: 'Doctrine & guides' },
   };
-  const ORDRE_DOM = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH'];
+  const ORDRE_DOM = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH', 'DOC'];
   const SITESECURITE = { ERP: 'portail-erp.php', IGH: 'portail-igh.php', HAB: 'portail-hab.php', CDT: 'portail-bup.php', CCH: '' };
 
   // ------------------------------------------------------------------ état
@@ -47,6 +48,11 @@
   function dispNum(n) {
     if (!n) return '';
     const num = n.num || '';
+    if (n.dom === 'DOC') {
+      if (n.type === 'Texte') return num;
+      const d = st.byId.get(n.legitext);
+      return `${d ? d.num + ' ' : ''}§${num.replace(/^p\. /, 'p.')}`;
+    }
     if (/^[LRD]\d{3,4}-/.test(num)) return num.replace(/^([LRD])(\d)/, '$1. $2');
     if (/^\d/.test(num)) return 'Art. ' + num;
     return num.replace(/^([A-Z]+)\s?(\d)/, '$1 $2');
@@ -158,15 +164,16 @@
       html: r.Texte_HTML || '', nota: r.Nota || '', etat: r.Etat || '', depuis: gDate(r.En_vigueur_depuis), fin: gDate(r.Fin_de_vigueur),
       hist: parseJSON(r.Historique, []), fut: r.Version_a_venir || '', futHtml: r.Version_a_venir_HTML || '', futDate: gDate(r.Date_a_venir),
       futPar: parseJSON(r.A_venir_par, []), legitext: r.Texte_officiel || '', lien: r.Lien_Legifrance || '',
-      tags: gList(r.Mots_cles), vec: r.Vecteur || '', derniere: gDate(r.Derniere_modif_texte),
+      tags: gList(r.Mots_cles), vec: r.Vecteur || '', derniere: gDate(r.Derniere_modif_texte), pages: r.Pages || '',
     })).filter((n) => n.etat !== 'ABROGE');
+    nodes.forEach((n) => { if (!Array.isArray(n.hist)) n.hist = []; });
     nodes.sort((a, b) => a.ordre - b.ordre);
     st.nodes = nodes; st.byId.clear(); st.byRow.clear(); st.pos.clear(); st.kids.clear(); st.refLocal.clear(); st.refGlobal.clear();
     nodes.forEach((n, i) => {
       st.byId.set(n.id, n); st.byRow.set(n.row, n); st.pos.set(n.id, i);
       if (!st.kids.has(n.parent)) st.kids.set(n.parent, []);
       st.kids.get(n.parent).push(n);
-      if (n.type === 'Article' && n.num) {
+      if (n.type === 'Article' && n.num && n.dom !== 'DOC') {
         const k = S.normNum(n.num);
         st.refLocal.set(n.legitext + '|' + k, n);
         if (!st.refGlobal.has(k)) st.refGlobal.set(k, []);
@@ -179,6 +186,7 @@
       const p = st.byId.get(n.parent); if (p) p.count = (p.count || 0) + n.count;
     }
     ingestComments(data.com);
+    buildCitations();
     st.veille = data.vei.map((v) => ({
       row: v.id, date: gDate(v.Date), dom: v.Domaine || 'Divers', nature: v.Nature || '', titre: v.Titre || '', art: v.Article || 0,
       ancien: v.Ancien_texte || '', nouveau: v.Nouveau_texte || '', source: v.Source || '', lien: v.Lien || '', effet: gDate(v.Date_effet),
@@ -187,6 +195,32 @@
     st.syn = new S.Synonyms(data.syn.filter((s) => s.Terme));
     buildIndex();
   }
+
+  /* Renvois doctrine → règlement : les articles cités par chaque fiche (« Article M 2 »),
+     pour afficher sur l'article « Commenté dans : Guide M §1.4 ». */
+  function buildCitations() {
+    st.citedBy = new Map();
+    for (const n of st.nodes) {
+      if (n.dom !== 'DOC' || n.type !== 'Article' || !n.texte) continue;
+      const vus = new Set();
+      REF_RX.lastIndex = 0;
+      let m;
+      while ((m = REF_RX.exec(n.texte))) {
+        const t = resolveRef(m, n);
+        if (!t || t.dom === 'DOC' || vus.has(t.id)) continue;
+        vus.add(t.id);
+        if (!st.citedBy.has(t.id)) st.citedBy.set(t.id, []);
+        st.citedBy.get(t.id).push(n);
+      }
+    }
+  }
+
+  /* Doctrine : adresse d'un PDF / d'une image de page, relative au widget */
+  const docSlug = (n) => (n.legitext || '').replace(/^DOC:/, '');
+  const pageRange = (n) => { const m = (n.pages || '').match(/^(\d+)(?:-(\d+))?/); return m ? [+m[1], +(m[2] || m[1])] : null; };
+  const pageImg = (n, p) => `documents/${encodeURIComponent(docSlug(n))}/p${String(p).padStart(3, '0')}.jpg`;
+  const pagesLabel = (n) => { const r = pageRange(n); return r ? (r[1] > r[0] ? `p. ${r[0]} à ${r[1]}` : `p. ${r[0]}`) : ''; };
+  const fmtMois = (d) => (d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '');
 
   function ingestComments(com) {
     st.comments = com.filter((c) => c.Article).map((c) => ({
@@ -408,6 +442,18 @@
       erp.push({ groupe: 'Code de la construction', tuiles: [t] });
     }
     st.plans.ERP = erp;
+    // Doctrine & guides : une tuile par document, groupées par catégorie
+    const docs = st.nodes.filter((n) => n.type === 'Texte' && n.dom === 'DOC');
+    const cats = [...new Set(docs.map((d) => d.chemin || 'Autres documents'))];
+    st.plans.DOC = cats.map((c) => ({
+      groupe: c, tuiles: docs.filter((d) => (d.chemin || 'Autres documents') === c).map((d) => {
+        const arts = descendants(d).filter((x) => x.type === 'Article');
+        const t = { code: d.num || '§', label: d.titre, node: d.id, arts: arts.length, de: 0, a: 0, fut: 0, ss: null,
+          range: [fmtMois(d.depuis), `${arts.length} fiche${arts.length > 1 ? 's' : ''}`].filter(Boolean).join(' · '), doc: true };
+        st.tileOf.set(d.id, t);
+        return t;
+      }),
+    }));
     // autres réglementations : chapitres du texte, en sautant les niveaux à un seul enfant
     const secsOf = (x) => (st.kids.get(x.id) || []).filter((k) => k.type === 'Section');
     const deep = (x) => { for (;;) { const k = st.kids.get(x.id) || []; const sc = k.filter((y) => y.type === 'Section'); if (sc.length === 1 && !k.some((y) => y.type === 'Article')) x = sc[0]; else return x; } };
@@ -433,7 +479,7 @@
       return tuiles;
     };
     for (const dom of ORDRE_DOM) {
-      if (dom === 'ERP') continue;
+      if (dom === 'ERP' || dom === 'DOC') continue;
       const groupes = [];
       for (const txt of st.nodes.filter((n) => n.type === 'Texte' && n.dom === dom)) {
         let top = txt;
@@ -482,9 +528,10 @@
     $('#read').className = 'pane readpane dom-' + dom;
     $('#read').innerHTML = `<div class="board">
       <div class="boardhead"><h1>${esc(DOMAINES[dom].label)}</h1>
-      <a class="sslink" href="${esc(ssPortal(dom))}" target="_blank" rel="noopener">Portail ${esc(DOMAINES[dom].court)} sur SiteSecurite ↗</a></div>
-      <p class="hint">Cliquez un ${dom === 'ERP' ? 'code' : 'chapitre'} pour lire tous ses articles à la suite. Raccourci : tapez ${dom === 'ERP' ? '« CO », « L » ou « CO 15 »' : 'un numéro d’article'} dans la recherche puis Entrée.</p>
-      ${plan.map((g) => `<section class="bgroup"><h2>${esc(g.groupe)}</h2><div class="tiles">${g.tuiles.map((t) => tileHTML(t, dom)).join('')}</div></section>`).join('')}
+      ${dom === 'DOC' ? '' : `<a class="sslink" href="${esc(ssPortal(dom))}" target="_blank" rel="noopener">Portail ${esc(DOMAINES[dom].court)} sur SiteSecurite ↗</a>`}</div>
+      <p class="hint">${dom === 'DOC' ? 'Guides et doctrines découpés en fiches : cliquez un document pour lire ses fiches à la suite, avec les pages du PDF. Les articles cités dans les fiches s’ouvrent au survol, et chaque article du règlement indique les fiches qui le commentent.' : `Cliquez un ${dom === 'ERP' ? 'code' : 'chapitre'} pour lire tous ses articles à la suite. Raccourci : tapez ${dom === 'ERP' ? '« CO », « L » ou « CO 15 »' : 'un numéro d’article'} dans la recherche puis Entrée.`}</p>
+      ${plan.map((g) => `<section class="bgroup"><h2>${esc(g.groupe)}</h2><div class="tiles${dom === 'DOC' ? ' docs' : ''}">${g.tuiles.map((t) => tileHTML(t, dom)).join('')}</div></section>`).join('')}
+      ${dom === 'DOC' ? '<p class="hint addoc">Pour ajouter un guide ou une doctrine : déposez le PDF dans le dossier <b>documents</b> du dépôt GitHub (et, si vous le souhaitez, une ligne dans <b>documents/catalogue.json</b> pour son code, sa catégorie et sa date). Il apparaîtra ici après la publication, découpé en fiches.</p>' : ''}
     </div>`;
     $('#read').scrollTop = 0;
   }
@@ -507,26 +554,28 @@
   function chapHeadHTML(n, t) {
     const secs = (st.kids.get(n.id) || []).filter((x) => x.type === 'Section');
     const arts = [n, ...descendants(n)].filter((x) => x.type === 'Article');
-    const pref = t.prefix || (/^[A-Z]+$/.test(t.code) ? t.code : '');
+    const isDoc = n.dom === 'DOC';
+    const pref = isDoc ? '' : t.prefix || (/^[A-Z]+$/.test(t.code) ? t.code : '');
     const ssPages = pref && st.ss && st.ss.erp ? st.ss.erp[pref] || [] : [];
     const toc = secs.map((sec) => {
       const a = [sec, ...descendants(sec)].filter((x) => x.type === 'Article');
       const nums = a.map(firstInt).filter(Boolean);
       const lo = Math.min(...nums), hi = Math.max(...nums);
       const pages = ssPages.filter((p) => p.de <= hi && p.a >= lo);
-      return `<div class="tocitem"><button data-gosec="${sec.id}"><span class="trange">${a.length ? esc((pref ? pref + ' ' : '') + lo + (hi !== lo ? '–' + hi : '')) : ''}</span>${esc(sec.titre.replace(/^(section|sous-section|chapitre)\s+[^:]*:\s*/i, ''))}</button>${pages.length === 1 ? `<a href="${esc(pages[0].url)}" target="_blank" rel="noopener" class="ssmini" title="Ouvrir ${esc(pages[0].libelle)} sur SiteSecurite">SS ↗</a>` : ''}</div>`;
+      const rng = isDoc ? (a.length ? `§${a[0].num}${a.length > 1 ? '–' + a[a.length - 1].num : ''}` : '') : (a.length ? (pref ? pref + ' ' : '') + lo + (hi !== lo ? '–' + hi : '') : '');
+      return `<div class="tocitem"><button data-gosec="${sec.id}"><span class="trange">${esc(rng)}</span>${esc(sec.titre.replace(/^(section|sous-section|chapitre)\s+[^:]*:\s*/i, ''))}</button>${pages.length === 1 ? `<a href="${esc(pages[0].url)}" target="_blank" rel="noopener" class="ssmini" title="Ouvrir ${esc(pages[0].libelle)} sur SiteSecurite">SS ↗</a>` : ''}</div>`;
     }).join('');
     return `<header class="chap">
       <div class="chaptop"><span class="bigplate">${esc(t.code)}</span>
         <div class="chaptitle"><h1>${esc(t.label)}</h1>
-          <p class="hint">${esc(n.titre)} · ${arts.length} article${arts.length > 1 ? 's' : ''}${t.fut ? ` · <b class="tfut">${t.fut} modifié${t.fut > 1 ? 's' : ''} prochainement</b>` : ''}</p>
+          <p class="hint">${isDoc ? esc([n.nota, fmtMois(n.depuis)].filter(Boolean).join(' · ')) + ` · ${arts.length} fiche${arts.length > 1 ? 's' : ''}` : `${esc(n.titre)} · ${arts.length} article${arts.length > 1 ? 's' : ''}`}${t.fut ? ` · <b class="tfut">${t.fut} modifié${t.fut > 1 ? 's' : ''} prochainement</b>` : ''}</p>
           <div class="chapacts">
             ${t.ss ? `<a class="btn ghost" href="${esc(t.ss)}" target="_blank" rel="noopener">Ouvrir ${esc(t.code)} sur SiteSecurite ↗</a>` : ''}
-            ${n.lien ? `<a class="btn ghost" href="${esc(n.lien)}" target="_blank" rel="noopener">Légifrance ↗</a>` : ''}
-            <label class="goto">Aller à ${pref ? esc(pref) : 'l’article'} <input id="gotoNum" inputmode="numeric" placeholder="n°" aria-label="Numéro d'article"></label>
+            ${n.lien ? `<a class="btn ghost" href="${esc(n.lien)}" target="_blank" rel="noopener">${isDoc ? 'Ouvrir le PDF ↗' : 'Légifrance ↗'}</a>` : ''}
+            <label class="goto">Aller à ${isDoc ? 'la fiche' : pref ? esc(pref) : 'l’article'} <input id="gotoNum" inputmode="decimal" placeholder="n°" aria-label="Numéro"></label>
           </div></div></div>
       ${toc ? `<div class="toc">${toc}</div>` : ''}
-      <div class="numgrid big">${arts.map((a) => `<button data-goart="${a.id}" class="${a.futDate ? 'chg' : ''}" title="${esc(dispNum(a))}${a.futDate ? ' — modifié le ' + fmtDate(a.futDate) : ''}">${esc(dispNum(a).replace(/^Art\. /, ''))}</button>`).join('')}</div>
+      <div class="numgrid big">${arts.map((a) => `<button data-goart="${a.id}" class="${a.futDate ? 'chg' : ''}" title="${esc(dispNum(a))}${a.futDate ? ' — modifié le ' + fmtDate(a.futDate) : ''}">${esc(isDoc ? a.num : dispNum(a).replace(/^Art\. /, ''))}</button>`).join('')}</div>
     </header>`;
   }
 
@@ -562,7 +611,7 @@
         }
         h += '</ul>';
       }
-      h += `<details class="plan"${sel && sel.dom === d && !cur ? ' open' : ''}><summary>Plan officiel des textes</summary><ul class="tree" role="tree">`;
+      h += `<details class="plan"${sel && sel.dom === d && !cur ? ' open' : ''}><summary>${d === 'DOC' ? 'Plan détaillé des documents' : 'Plan officiel des textes'}</summary><ul class="tree" role="tree">`;
       for (const t of tx) h += treeItem(t, sel);
       h += '</ul></details></div>';
     }
@@ -591,13 +640,18 @@
     setSide(false);
     const arts = st.nodes.filter((n) => n.type === 'Article' && st.domOn.has(n.dom));
     const fut = arts.filter((n) => n.futDate).sort((a, b) => a.futDate.localeCompare(b.futDate));
-    const rec = arts.filter((n) => n.depuis).sort((a, b) => b.depuis.localeCompare(a.depuis)).slice(0, 10);
+    const rec = arts.filter((n) => n.depuis && n.dom !== 'DOC').sort((a, b) => b.depuis.localeCompare(a.depuis)).slice(0, 10);
     const lastCm = st.comments.slice(0, 8);
     const signs = ORDRE_DOM.filter((d) => st.domOn.has(d)).map((d) => {
       const a = arts.filter((n) => n.dom === d); if (!a.length) return '';
       const last = a.reduce((m, n) => (n.depuis > m ? n.depuis : m), '');
       const nf = a.filter((n) => n.futDate).length;
       const txt = st.nodes.find((n) => n.type === 'Texte' && n.dom === d);
+      if (d === 'DOC') {
+        const nd = st.nodes.filter((n) => n.type === 'Texte' && n.dom === 'DOC').length;
+        return `<button class="sign dom-DOC" data-board="DOC"><b>Doctrine</b><span>Guides pratiques et doctrines</span>
+          <small>${nd} document${nd > 1 ? 's' : ''} · ${a.length} fiches · reliées aux articles cités</small></button>`;
+      }
       return `<button class="sign dom-${d}" data-board="${d}"><b>${esc(DOMAINES[d].court)}</b>
         <span>${esc(DOMAINES[d].label)}</span>
         <small>${a.length.toLocaleString('fr-FR')} articles · dernière modification ${fmtDate(last)}${nf ? ` · ${nf} à venir` : ''}</small></button>`;
@@ -638,7 +692,7 @@
     if (gi) gi.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter') return;
       const v = gi.value.trim().toUpperCase(); if (!v) return;
-      const pref = tile.prefix || (/^[A-Z]+$/.test(tile.code) ? tile.code : '');
+      const pref = n.dom === 'DOC' ? '' : tile.prefix || (/^[A-Z]+$/.test(tile.code) ? tile.code : '');
       const want = S.normNum((/^\d/.test(v) && pref ? pref : '') + v);
       const hit = readCtx.items.find((x) => x.type === 'Article' && S.normNum(x.num) === want);
       if (hit) { gi.value = ''; scrollToItem(hit.id); } else toast(`Pas d'article ${(/^\d/.test(v) && pref ? pref + ' ' : '') + v} dans ce chapitre`);
@@ -674,6 +728,30 @@
   }
   const moreObs = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { moreObs.unobserve(e.target); renderMore(); } }); }, { root: null, rootMargin: '600px' });
 
+  function docItemHTML(it, nc, imgs) {
+    const r = pageRange(it);
+    const pages = r ? Array.from({ length: Math.min(8, r[1] - r[0] + 1) }, (_, k) => r[0] + k) : [];
+    return `<article class="art doc dom-DOC" id="a-${it.id}" data-art="${it.id}">
+      <button class="plate" data-focus="${it.id}" aria-label="Commentaires de ${esc(dispNum(it))}">${esc(dispNum(it))}</button>
+      <div class="artbody">
+        <h3 class="doctitle">${esc(it.titre)}</h3>
+        <div class="legal">${safeHTML(it.html, it.texte)}</div>
+        ${pages.length ? `<div class="pdfpages" aria-label="Pages du document">${pages.map((p) => `<button data-page="${esc(pageImg(it, p))}" title="Agrandir la page ${p}"><img loading="lazy" src="${esc(pageImg(it, p))}" alt="Page ${p} du document"><span>p. ${p}</span></button>`).join('')}</div>` : ''}
+        <div class="meta">
+          ${pagesLabel(it) ? `<span class="pill">${esc(pagesLabel(it))}</span>` : ''}
+          ${it.depuis ? `<span class="pill">Édition ${esc(fmtMois(it.depuis))}</span>` : ''}
+          ${it.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}
+        </div>
+        ${imgs.length ? `<div class="thumbs" data-imgs="${it.row}"></div>` : ''}
+        <div class="acts">
+          <button data-focus="${it.id}" data-tab="cmt">💬 ${nc ? nc + ' commentaire' + (nc > 1 ? 's' : '') : 'Commenter'}${nc ? `<span class="stack">${[...new Map((st.cmtBy.get(it.row) || []).map((c) => [authorName(c), c])).values()].slice(0, 4).map((c) => avatar(agentOf(c), c.auteur, 20)).join('')}</span>` : ''}</button>
+          <button data-pin="${it.id}">📌 Épingler</button>
+          <button data-copy="${it.id}">Copier la référence</button>
+          ${it.lien ? `<a class="ss" href="${esc(it.lien)}" target="_blank" rel="noopener">PDF ${esc(pagesLabel(it))} ↗</a>` : ''}
+        </div>
+      </div></article>`;
+  }
+
   function itemHTML(it) {
     if (it.type !== 'Article') {
       const rel = it.niveau - readCtx.root.niveau;
@@ -682,9 +760,12 @@
     const nc = (st.cmtBy.get(it.row) || []).length;
     const imgs = (st.cmtBy.get(it.row) || []).flatMap((c) => c.images).slice(0, 6);
     const recent = it.depuis && it.depuis >= new Date(Date.now() - 365 * 864e5).toISOString().slice(0, 10);
+    if (it.dom === 'DOC') return docItemHTML(it, nc, imgs);
+    const cites = st.citedBy.get(it.id) || [];
     return `<article class="art dom-${it.dom}${it.etat === 'A_VENIR' ? ' abroge' : ''}" id="a-${it.id}" data-art="${it.id}">
       <button class="plate" data-focus="${it.id}" aria-label="Commentaires et historique de ${esc(dispNum(it))}">${esc(dispNum(it))}${it.etat === 'A_VENIR' ? '<small>à venir</small>' : ''}</button>
       <div class="artbody">
+        ${cites.length ? `<div class="cited top"><span>Commenté dans</span>${cites.slice(0, 6).map((c) => `<button class="docref dom-DOC" data-open="${c.id}" title="${esc(c.titre)}">${esc(dispNum(c))}<em>${esc(c.titre)}</em></button>`).join('')}${cites.length > 6 ? `<span class="hint">+${cites.length - 6}</span>` : ''}</div>` : ''}
         ${it.etat === 'A_VENIR' ? `<p class="pill warn">Entre en vigueur le ${fmtDate(it.futDate)}</p>` : `<div class="legal">${safeHTML(it.html, it.texte)}</div>`}
         ${it.nota ? `<div class="nota"><b>Nota :</b> ${esc(it.nota)}</div>` : ''}
         ${it.fut ? `<details class="future"${it.etat === 'A_VENIR' ? ' open' : ''}><summary><b>Nouvelle rédaction au ${fmtDate(it.futDate)}</b> — voir les changements</summary><div class="legal diff" data-diff="${it.id}"></div></details>` : ''}
@@ -774,6 +855,10 @@
           <div class="thumbs" id="preview"></div>
           <button class="btn" type="submit">Publier le commentaire</button>
         </form>`;
+    } else if (st.sideTab === 'hist' && n.dom === 'DOC') {
+      const d = st.byId.get(n.legitext) || {};
+      body = `<ul class="hist"><li><b>${esc(d.titre || '')}</b></li>${d.nota ? `<li>Source : ${esc(d.nota)}</li>` : ''}${d.depuis ? `<li>Édition ${esc(fmtMois(d.depuis))}</li>` : ''}<li>Fiche §${esc(n.num)}, ${esc(pagesLabel(n))}</li></ul>
+        <p style="margin-top:14px">${n.lien ? `<a href="${esc(n.lien)}" target="_blank" rel="noopener">Ouvrir le PDF à cette page ↗</a>` : ''}</p>`;
     } else if (st.sideTab === 'hist') {
       const hist = n.hist || [];
       body = `<ul class="hist">
@@ -860,7 +945,8 @@
   // ------------------------------------------------------------------ recherche
   function domFilter(i) { return st.domOn.has(st.idxRows[i].dom); }
   function codeHit(q) {
-    const m = q.trim().match(/^(?:type\s+)?([a-z]{1,3})$/i); if (!m) return null;
+    const m = q.trim().match(/^(?:type\s+)?([a-z]{1,3}|[A-Z]{4,6})$/i); if (!m) return null;
+    if (m[1].length > 3 && m[1] !== m[1].toUpperCase()) return null; // « bois » reste une recherche, « BOIS » ouvre le document
     const c = m[1].toUpperCase();
     for (const dom of ORDRE_DOM) for (const g of st.plans[dom] || []) for (const t of g.tuiles) if (t.code === c && t.node && (dom === 'ERP' || /^[A-Z]{2,}$/.test(c))) return t;
     return null;
@@ -882,7 +968,7 @@
     const nc = (st.cmtBy.get(n.row) || []).length;
     const body = n.type === 'Article' ? S.snippet(n.texte || n.fut, terms, 300, nSent) : S.highlight(n.titre, terms);
     return `<div class="hit dom-${n.dom}"><button class="plate" data-open="${n.id}">${n.type === 'Article' ? esc(dispNum(n)) : '§'}</button>
-      <div><div class="where">${esc(DOMAINES[n.dom].court)} › ${esc(n.chemin.split(' › ').slice(-2).join(' › '))}</div>
+      <div><div class="where">${esc(DOMAINES[n.dom].court)} › ${esc(n.chemin.split(' › ').slice(-2).join(' › '))}${n.dom === 'DOC' && n.type === 'Article' ? ` › <b>${esc(n.titre)}</b>` : ''}</div>
       <div class="snip">${body}</div>
       <div class="meta">${n.futDate ? `<span class="pill warn">Modifié au ${fmtDate(n.futDate)}</span>` : ''}${nc ? `<span class="pill">💬 ${nc}</span>` : ''}${n.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div></div></div>`;
   }
@@ -1012,7 +1098,7 @@
   function renderVeille() {
     setSide(false);
     $('#read').className = 'pane readpane';
-    const natures = ['Modification', 'Nouvel article', 'Abrogation', 'Modification à venir', 'Parution SiteSecurite'];
+    const natures = ['Modification', 'Nouvel article', 'Abrogation', 'Modification à venir', 'Parution SiteSecurite', 'Nouveau document', 'Document mis à jour'];
     const items = st.veille.filter((v) => (!st.vf.statut || v.statut === st.vf.statut) && (!st.vf.nature || v.nature === st.vf.nature) && (st.domOn.has(v.dom) || v.dom === 'Divers'));
     const counts = { 'À lire': st.veille.filter((v) => v.statut === 'À lire').length };
     let lastDay = '', h = '';
@@ -1059,6 +1145,7 @@
     if (t.matches('img[data-zoom]')) { const lb = $('#lightbox'); $('img', lb).src = t.src; lb.classList.add('show'); return; }
     if (t.matches('.lightbox')) { t.classList.remove('show'); return; }
     if (d.ref && !d.open) { e.preventDefault(); showPop(t); return; }
+    if (d.page) { const lb = $('#lightbox'); $('img', lb).src = d.page; lb.classList.add('show'); return; }
     if (d.board) { go({ v: 'board', dom: d.board }); return; }
     if (d.gosec) { scrollToItem(d.gosec, true); return; }
     if (d.goart) { scrollToItem(d.goart); return; }
@@ -1070,7 +1157,7 @@
     if (d.pin) { if (!st.pins.includes(d.pin)) st.pins.unshift(d.pin); hidePop(); st.sideTab = 'pins'; if (!st.active) st.active = st.byId.get(d.pin); setSide(true); renderSide(); $('#side').classList.add('open'); toast('Article épinglé'); return; }
     if (d.unpin) { st.pins = st.pins.filter((x) => x !== d.unpin); renderSide(); return; }
     if (d.untag) { const n = st.active; const tags = n.tags.filter((x) => x !== d.untag); if (await act([['UpdateRecord', 'REG_Articles', n.row, { Mots_cles: ['L', ...tags] }]])) { n.tags = tags; renderSide(); refreshArticle(n); } return; }
-    if (d.copy) { const n = st.byId.get(d.copy); const ref = `${dispNum(n)} — ${n.chemin.split(' › ')[0]}`; try { await navigator.clipboard.writeText(ref); toast('Référence copiée'); } catch (err) { toast(ref); } return; }
+    if (d.copy) { const n = st.byId.get(d.copy); const ref = n.dom === 'DOC' ? `${n.chemin.split(' › ')[0]}, §${n.num} ${n.titre} (${pagesLabel(n)})` : `${dispNum(n)} — ${n.chemin.split(' › ')[0]}`; try { await navigator.clipboard.writeText(ref); toast('Référence copiée'); } catch (err) { toast(ref); } return; }
     if (d.ss) { const n = st.byId.get(d.ss); try { await navigator.clipboard.writeText(dispNum(n)); } catch (err) { /* presse-papiers indisponible */ } window.open(ssPortal(n.dom), '_blank', 'noopener'); toast(`${dispNum(n)} copié : collez-le dans la recherche SiteSecurite`); return; }
     if (d.vf) { st.vf[d.vf] = d.val; renderVeille(); return; }
     if (d.vset) { setVeille(+d.vset, { Statut: d.s }); return; }
