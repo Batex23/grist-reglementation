@@ -506,6 +506,56 @@
    ],
    "image": "DF7_desenfumage-locaux.png?v=0e74c85761",
    "ordre": 32
+  },
+  {
+   "id": "EC8_eclairage-securite",
+   "titre": "Éclairage de sécurité",
+   "articles": [
+    "ERP:EC 8",
+    "ERP:EC 7",
+    "ERP:EC 9",
+    "ERP:EC 10",
+    "ERP:EC 12"
+   ],
+   "fiche": "EC 1",
+   "legende": "Évacuation : cheminements, sorties, balisage, obstacles éclairés, foyers à 15 m au plus dans les dégagements, 45 lumens, au moins deux blocs au-delà de 15 m. Ambiance : dès 100 personnes (50 en sous-sol), 5 lm/m², écartement/hauteur ≤ 4, au moins deux blocs par local.",
+   "ecarts": [
+    "Les « types A, B, C, D » d'éclairage de sécurité de l'ancienne fiche ont disparu avec l'arrêté du 19 novembre 2001 : l'éclairage de sécurité est réalisé par source centralisée à batterie (EC 11) ou par blocs autonomes (EC 12), avec une autonomie d'une heure.",
+    "Blocs d'évacuation à système de test automatique (SATI, NF C 71-820) ; mise au repos centralisée près de la commande générale de l'éclairage (EC 12 § 5)."
+   ],
+   "image": "EC8_eclairage-securite.png?v=3bd362512b",
+   "ordre": 33
+  },
+  {
+   "id": "EC12_alimentation-eclairage-securite",
+   "titre": "Alimentation de l'éclairage de sécurité",
+   "articles": [
+    "ERP:EC 12",
+    "ERP:EC 11",
+    "ERP:EC 14"
+   ],
+   "fiche": "EC 4",
+   "legende": "Blocs autonomes alimentés par une dérivation prise en aval de la protection et en amont de la commande de l'éclairage normal du local, avec une mise au repos centralisée près de la commande générale. Source centralisée : batterie (NF EN 50171), au moins deux circuits distincts par local et par dégagement de plus de 15 m.",
+   "ecarts": [
+    "Normes actualisées : blocs NF EN IEC 60598-2-22 (2022) et NF C 71-800/801/805 ; source centralisée NF EN 50171 (2021) ; câbles C ca-s2,d2,a2 (l'ancienne fiche citait les câbles C2)."
+   ],
+   "image": "EC12_alimentation-eclairage-securite.png?v=6f76ff2d7c",
+   "ordre": 34
+  },
+  {
+   "id": "EL5_locaux-service-electrique",
+   "titre": "Locaux de service électrique",
+   "articles": [
+    "ERP:EL 5",
+    "ERP:EL 11"
+   ],
+   "fiche": "EL 2",
+   "legende": "Local réservé aux personnes qualifiées, identifié et facile à atteindre par les secours ; isolement selon le matériel (CF 2 h et franchissement CF 1 h sans communication avec le public, ou CF 1 h et porte CF ½ h, ou local ordinaire) ; extincteur adapté, éclairage de sécurité et BAPI.",
+   "ecarts": [
+    "Mise hors tension générale : inaccessible au public, facile à atteindre par les secours, sans couper l'alimentation normale des installations de sécurité (EL 11 § 1)."
+   ],
+   "image": "EL5_locaux-service-electrique.png?v=ab4236f8ca",
+   "ordre": 35
   }
  ]
 }
