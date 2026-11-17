@@ -88,6 +88,36 @@
    "ordre": 4
   },
   {
+   "id": "CO1_distributions-par-type",
+   "titre": "Distributions intérieures autorisées par type",
+   "articles": [
+    "ERP:CO 1",
+    "ERP:CO 24",
+    "ERP:CO 25",
+    "ERP:J 11",
+    "ERP:L 6",
+    "ERP:M 3",
+    "ERP:N 3",
+    "ERP:O 3",
+    "ERP:P 4",
+    "ERP:R 6",
+    "ERP:S 3",
+    "ERP:T 10",
+    "ERP:U 10",
+    "ERP:W 3",
+    "ERP:X 4",
+    "ERP:Y 3"
+   ],
+   "fiche": "",
+   "legende": "Le cloisonnement traditionnel est toujours possible ; secteurs et compartiments seulement si les dispositions particulières du type les autorisent (CO 1 § 2). Surface maximale d'un compartiment : J 600 m², L 1 200 m², R 600 m², S 1 200 m², U 1 000 m², W 800 m², X 1 600 m², Y 1 200 m².",
+   "ecarts": [
+    "Type M : la référence est M 3 (CO 5 et CO 25 non applicables), M 7 traitant des parois entre exploitations des centres commerciaux.",
+    "Type J : secteurs non prévus ; cloisonnement traditionnel et compartiment peuvent être associés sur un même niveau, pas dans une même zone (J 10)."
+   ],
+   "image": "CO1_distributions-par-type.png?v=8273fb2436",
+   "ordre": 5
+  },
+  {
    "id": "CO2_espace-libre",
    "titre": "Espace libre",
    "articles": [
@@ -100,7 +130,7 @@
     "La page de l'ancienne fiche (C.4) était vierge : planche entièrement redessinée d'après le texte de CO 2 § 3."
    ],
    "image": "CO2_espace-libre.png?v=8e8232f1c6",
-   "ordre": 5
+   "ordre": 6
   },
   {
    "id": "CO2_voie-echelles",
@@ -115,7 +145,7 @@
     "Force portante de la voie engins : 160 kN (90 kN par essieu, essieux à 3,60 m), et non 130 kN."
    ],
    "image": "CO2_voie-echelles.png?v=cca5f67999",
-   "ordre": 6
+   "ordre": 7
   },
   {
    "id": "CO2_voie-engins",
@@ -130,7 +160,7 @@
     "Le panneau indiquant le tonnage limite autorisé est obligatoire en permanence (CO 2 § 4)."
    ],
    "image": "CO2_voie-engins.png?v=ed70664255",
-   "ordre": 7
+   "ordre": 8
   },
   {
    "id": "CO3_baies-accessibles",
@@ -142,7 +172,7 @@
    "legende": "Façade accessible : une sortie normale au niveau d'accès et des baies accessibles à chaque niveau. Baie ouvrante d'au moins 1,30 × 0,90 m ; en façade aveugle ou à châssis fixes, baies de 1,80 × 0,90 m tous les 10 à 20 m, décalées de 4 m d'un niveau à l'autre.",
    "ecarts": [],
    "image": "CO3_baies-accessibles.png?v=59c2817f6d",
-   "ordre": 8
+   "ordre": 9
   },
   {
    "id": "CO4_facades-accessibles",
@@ -154,7 +184,7 @@
    "legende": "Nombre de façades accessibles et largeur des voies qui les desservent selon la catégorie et l'effectif de l'établissement.",
    "ecarts": [],
    "image": "CO4_facades-accessibles.png?v=e0564acdba",
-   "ordre": 9
+   "ordre": 10
   },
   {
    "id": "CO7_isolement-facade-dominante",
@@ -169,7 +199,7 @@
     "Équivalences européennes (arrêté du 22 mars 2004) : CF 2 h = EI 120 (REI 120 si la paroi est porteuse), PF ½ h = E 30."
    ],
    "image": "CO7_isolement-facade-dominante.png?v=c86f56ddc5",
-   "ordre": 10
+   "ordre": 11
   },
   {
    "id": "CO7_isolement-meme-niveau-diedre",
@@ -183,7 +213,7 @@
     "La bande du dièdre peut être réduite à 1 m si le tiers comporte déjà un tel isolement ; elle n'est pas exigée pour un ERP dont le dernier niveau accessible est à moins de 8 m sans locaux à sommeil au-dessus du 1er étage."
    ],
    "image": "CO7_isolement-meme-niveau-diedre.png?v=cfe44d6d8d",
-   "ordre": 11
+   "ordre": 12
   },
   {
    "id": "CO8_vis-a-vis",
@@ -195,7 +225,7 @@
    "legende": "Façades séparées par moins de 8 m : l'une est PF 1 h (CF 1 h avec sommeil au-dessus du 1er étage), baies PF ½ h. Pas d'exigence à partir de 4 m si le dernier niveau accessible est à moins de 8 m et sans sommeil au-dessus du 1er étage.",
    "ecarts": [],
    "image": "CO8_vis-a-vis.png?v=860c70def1",
-   "ordre": 12
+   "ordre": 13
   },
   {
    "id": "CO9_superposition",
@@ -208,7 +238,7 @@
    "legende": "Le plancher séparatif est CF 1 h ou 2 h si le dernier niveau de l'ERP est à 8 m au plus, CF 2 h ou 3 h au-delà, selon que la partie inférieure est à risques courants ou particuliers ; la structure située dessous a la même stabilité au feu.",
    "ecarts": [],
    "image": "CO9_superposition.png?v=28577335f9",
-   "ordre": 13
+   "ordre": 14
   },
   {
    "id": "CO10_franchissement",
@@ -220,7 +250,7 @@
    "legende": "Communication entre l'ERP et un tiers : dispositif CF 2 h (CF ½ h dans les cas de CO 29, CO 35 et CO 41), portes à ferme-porte ou à fermeture automatique, non utilisable pour l'évacuation sauf exceptions, maintenance par l'exploitant de l'ERP.",
    "ecarts": [],
    "image": "CO10_franchissement.png?v=2ec0c621c9",
-   "ordre": 14
+   "ordre": 15
   },
   {
    "id": "CO12_stabilite-structures",
@@ -238,7 +268,7 @@
     "Exceptions sans exigence : bâtiments en rez-de-chaussée sous conditions (CO 14), certains bâtiments de 3 niveaux au plus en 3e et 4e catégories (CO 15)."
    ],
    "image": "CO12_stabilite-structures.png?v=bef1830acf",
-   "ordre": 15
+   "ordre": 16
   },
   {
    "id": "CO17_couvertures",
@@ -255,7 +285,7 @@
     "Éclairages zénithaux et exutoires : M 3 si moins de 25 % de la surface, M 4 si moins de 10 % (CO 18)."
    ],
    "image": "CO17_couvertures.png?v=30c57c98b0",
-   "ordre": 16
+   "ordre": 17
   },
   {
    "id": "CO21_C-plus-D",
@@ -272,7 +302,7 @@
     "Règle exigée : sommeil au-dessus du 1er étage, dernier niveau > 8 m avec secteurs ou compartiments, droit des planchers hauts des locaux à risques importants et des planchers d'isolement avec un tiers ; non exigée si l'ERP occupe tout le bâtiment et est sprinklé ou équipé d'un SSI A."
    ],
    "image": "CO21_C-plus-D.png?v=d43a5ef664",
-   "ordre": 17
+   "ordre": 18
   },
   {
    "id": "CO24_cloisonnement-traditionnel",
@@ -289,7 +319,7 @@
     "Parois construites de plancher à plancher ; combles et plénums recoupés en cellules de 300 m² au plus, 30 m de plus grande dimension (CO 26)."
    ],
    "image": "CO24_cloisonnement-traditionnel.png?v=644801bc4d",
-   "ordre": 18
+   "ordre": 19
   },
   {
    "id": "CO24_secteurs",
@@ -304,7 +334,7 @@
     "Établissements à risques particuliers : extinction automatique à eau ; locaux à sommeil : SSI de catégorie A (CO 24 § 2)."
    ],
    "image": "CO24_secteurs.png?v=de45b5b79a",
-   "ordre": 19
+   "ordre": 20
   },
   {
    "id": "CO25_compartiments",
@@ -318,7 +348,7 @@
     "Autorisés seulement lorsque les dispositions particulières du type d'établissement le prévoient (surface ou effectif maximal fixé par type)."
    ],
    "image": "CO25_compartiments.png?v=d148c22406",
-   "ordre": 20
+   "ordre": 21
   },
   {
    "id": "CO28_locaux-risques",
@@ -334,7 +364,7 @@
     "Équivalences : CF 2 h = EI 120 (REI 120 pour un plancher), CF 1 h = EI 60, porte CF 1 h = EI2 60-C, porte CF ½ h = EI2 30-C."
    ],
    "image": "CO28_locaux-risques.png?v=1fe5c7f2e0",
-   "ordre": 21
+   "ordre": 22
   },
   {
    "id": "CO31_conduits-gaines",
@@ -353,7 +383,7 @@
     "Les classements M de l'ancienne fiche sont conservés par le texte ; équivalences européennes : M 0 ≈ A2-s1, d0 ; M 1 ≈ B-s3, d0."
    ],
    "image": "CO31_conduits-gaines.png?v=a634c576e9",
-   "ordre": 22
+   "ordre": 23
   },
   {
    "id": "CO35_conception-degagements",
@@ -367,7 +397,7 @@
    "legende": "Une circulation principale par sortie ; circulations de 2 UP entre escaliers et sorties ; portes des locaux à 10 m au plus du débouché d'un cul-de-sac ; pas de marche isolée ; aucune saillie de plus de 0,10 m sous 1,10 m de haut.",
    "ecarts": [],
    "image": "CO35_conception-degagements.png?v=7cd70bedf6",
-   "ordre": 23
+   "ordre": 24
   },
   {
    "id": "CO36_unites-de-passage",
@@ -382,7 +412,23 @@
     "Escaliers mécaniques (≤ 30°) et trottoirs roulants (≤ 12°) : 50 % au plus peuvent compter ; 1 UP pour 0,80 m entre mains courantes (0,60 m entre limons), 2 UP pour 1,20 m (1 m entre limons)."
    ],
    "image": "CO36_unites-de-passage.png?v=6bae2fee74",
-   "ordre": 24
+   "ordre": 25
+  },
+  {
+   "id": "CO38_abaque-degagements",
+   "titre": "Abaque des dégagements (1er groupe)",
+   "articles": [
+    "ERP:CO 38",
+    "ERP:CO 36"
+   ],
+   "fiche": "",
+   "legende": "Nombre de dégagements et nombre total d'unités de passage selon l'effectif, de 1 à 2 500 personnes. Jusqu'à 500 personnes : 2 dégagements, 1 UP par 100 personnes ou fraction, majoré d'1 UP. Au-delà : 1 dégagement de plus par 500 personnes ou fraction, 1 UP par 100 personnes ou fraction.",
+   "ecarts": [
+    "Au-delà de 200 personnes, chaque dégagement normal a au moins 2 UP ; un dégagement d'1 UP reste admis s'il n'est compté qu'une fois, soit dans le nombre de dégagements, soit dans le nombre d'UP (CO 36 § 3).",
+    "Effectif à prendre pour les escaliers : niveau desservi et niveaux au-dessus (étages) ou au-dessous (sous-sols), CO 38 § 2."
+   ],
+   "image": "CO38_abaque-degagements.png?v=b55b5dd892",
+   "ordre": 26
   },
   {
    "id": "CO38_calcul-degagements",
@@ -394,7 +440,7 @@
    "legende": "De 1 à 19 personnes : 1 dégagement d'1 UP. De 20 à 50 : 2 dégagements (1 UP + accessoire). De 51 à 100 : 2 × 1 UP ou 2 UP + accessoire. Au-delà : 2 dégagements jusqu'à 500, +1 par 500 ; 1 UP par 100 personnes, +1 UP jusqu'à 500.",
    "ecarts": [],
    "image": "CO38_calcul-degagements.png?v=cf83af3d6a",
-   "ordre": 25
+   "ordre": 27
   },
   {
    "id": "CO39_sous-sol",
@@ -409,7 +455,25 @@
     "La majoration d'effectif sert au calcul des dégagements, pas au classement de l'établissement."
    ],
    "image": "CO39_sous-sol.png?v=2b556689dc",
-   "ordre": 26
+   "ordre": 28
+  },
+  {
+   "id": "CO43_distances-aide-memoire",
+   "titre": "Distances maximales à parcourir : aide-mémoire",
+   "articles": [
+    "ERP:CO 43",
+    "ERP:CO 49",
+    "ERP:CO 52",
+    "ERP:M 11",
+    "ERP:PS 13"
+   ],
+   "fiche": "",
+   "legende": "Étages et sous-sols : 40 m vers un escalier protégé (30 m depuis un cul-de-sac), 30 m vers un escalier non protégé. Rez-de-chaussée : 50 m vers une sortie s'il y a le choix, 30 m sinon ; débouché d'escalier protégé à 20 m d'une sortie, d'escalier non protégé à 50 / 30 m. Centres commerciaux et parcs de stationnement : règles propres.",
+   "ecarts": [
+    "Distances mesurées dans l'axe des circulations. Pour les parcs de stationnement, depuis l'axe de la place la plus éloignée jusqu'à la porte de l'escalier, du sas ou de la sortie (PS 13)."
+   ],
+   "image": "CO43_distances-aide-memoire.png?v=9abb8cf342",
+   "ordre": 29
   },
   {
    "id": "CO43_distances-rdc",
@@ -423,7 +487,7 @@
     "La règle des 5 m entre portes (CO 43 § 3) a été ajoutée au règlement ; elle ne figurait pas sur l'ancienne fiche."
    ],
    "image": "CO43_distances-rdc.png?v=387521ef2f",
-   "ordre": 27
+   "ordre": 30
   },
   {
    "id": "CO45_portes",
@@ -442,7 +506,7 @@
     "Portes coupe-feu maintenues ouvertes : fermeture automatique conforme à la norme, plaque « Porte coupe-feu — ne mettez pas d'obstacle à la fermeture » (CO 47)."
    ],
    "image": "CO45_portes.png?v=6d2f03cd25",
-   "ordre": 28
+   "ordre": 31
   },
   {
    "id": "CO49_distances-etage",
@@ -457,7 +521,7 @@
     "Débouché au rez-de-chaussée d'un escalier non protégé : à moins de 50 m d'une sortie (30 m sans choix), CO 52 § 6."
    ],
    "image": "CO49_distances-etage.png?v=474225957b",
-   "ordre": 29
+   "ordre": 32
   },
   {
    "id": "CO53_escalier-encloisonne",
@@ -475,7 +539,7 @@
     "Portes palières d'ascenseur en cage encloisonnée : E 30 (CO 53 § 3)."
    ],
    "image": "CO53_escalier-encloisonne.png?v=62b5a9dfb0",
-   "ordre": 30
+   "ordre": 33
   },
   {
    "id": "CO55_escaliers-droits-tournants",
@@ -491,7 +555,7 @@
     "Les valeurs de marches (hauteur 0,13 à 0,17 m, giron 0,28 à 0,36 m, 0,60 ≤ 2h + g ≤ 0,64 m) sont des règles de l'art auxquelles renvoie CO 55 ; elles ne sont pas fixées par le règlement."
    ],
    "image": "CO55_escaliers-droits-tournants.png?v=d7bf278971",
-   "ordre": 31
+   "ordre": 34
   },
   {
    "id": "CO59_espace-attente-securise",
@@ -511,7 +575,7 @@
     "Capacité : 2 fauteuils jusqu'à 50 personnes au niveau, + 1 fauteuil par tranche de 50 personnes, sans réduire la largeur du dégagement menant à l'issue."
    ],
    "image": "CO59_espace-attente-securise.png?v=4bafa842b2",
-   "ordre": 32
+   "ordre": 35
   },
   {
    "id": "DF3_principes-desenfumage",
@@ -528,7 +592,7 @@
     "Désenfumage mécanique alimenté par une AES (NF S 61-940) ; désenfumage commandé avant l'extinction automatique à eau en présence d'un SSI A (DF 3 § 2). Ingénierie du désenfumage possible (DF 4 § 2)."
    ],
    "image": "DF3_principes-desenfumage.png?v=175a38ae88",
-   "ordre": 33
+   "ordre": 36
   },
   {
    "id": "DF5_desenfumage-escaliers",
@@ -543,7 +607,7 @@
     "Surpression : différence de pression de 20 à 80 Pa entre l'escalier et les volumes adjacents, toutes portes fermées."
    ],
    "image": "DF5_desenfumage-escaliers.png?v=14b67c243e",
-   "ordre": 34
+   "ordre": 37
   },
   {
    "id": "DF6_desenfumage-circulations",
@@ -558,7 +622,7 @@
     "Obligatoire si la circulation dépasse 30 m, si elle est desservie par des escaliers en surpression, si elle dessert des locaux à sommeil, ou en sous-sol (DF 6 § 1). Halls de plus de 300 m² : désenfumés comme des locaux."
    ],
    "image": "DF6_desenfumage-circulations.png?v=9804665daf",
-   "ordre": 35
+   "ordre": 38
   },
   {
    "id": "DF7_desenfumage-locaux",
@@ -575,7 +639,7 @@
     "Volume de 3 niveaux au plus en communication (si autorisé par le type) : désenfumé comme un local unique au-delà de 300 m² cumulés (DF 7 § 2). Compartiments : DF 8."
    ],
    "image": "DF7_desenfumage-locaux.png?v=0e74c85761",
-   "ordre": 36
+   "ordre": 39
   },
   {
    "id": "EC8_eclairage-securite",
@@ -594,7 +658,7 @@
     "Blocs d'évacuation à système de test automatique (SATI, NF C 71-820) ; mise au repos centralisée près de la commande générale de l'éclairage (EC 12 § 5)."
    ],
    "image": "EC8_eclairage-securite.png?v=3bd362512b",
-   "ordre": 37
+   "ordre": 40
   },
   {
    "id": "EC12_alimentation-eclairage-securite",
@@ -610,7 +674,7 @@
     "Normes actualisées : blocs NF EN IEC 60598-2-22 (2022) et NF C 71-800/801/805 ; source centralisée NF EN 50171 (2021) ; câbles C ca-s2,d2,a2 (l'ancienne fiche citait les câbles C2)."
    ],
    "image": "EC12_alimentation-eclairage-securite.png?v=6f76ff2d7c",
-   "ordre": 38
+   "ordre": 41
   },
   {
    "id": "EL5_locaux-service-electrique",
@@ -625,7 +689,7 @@
     "Mise hors tension générale : inaccessible au public, facile à atteindre par les secours, sans couper l'alimentation normale des installations de sécurité (EL 11 § 1)."
    ],
    "image": "EL5_locaux-service-electrique.png?v=ab4236f8ca",
-   "ordre": 39
+   "ordre": 42
   },
   {
    "id": "GC9_grandes-cuisines",
@@ -644,7 +708,7 @@
     "Distance de 0,50 m aux parois (sauf revêtement M 0 / A2-s1, d1) ; appareils marqués CE : préconisations du fabricant (GC 5)."
    ],
    "image": "GC9_grandes-cuisines.png?v=7c4c571e23",
-   "ordre": 40
+   "ordre": 43
   },
   {
    "id": "GN1_classement-types-categories",
@@ -661,7 +725,7 @@
     "Pour le classement en 5e catégorie, l'effectif du personnel n'est pas pris en compte (GN 1 § 2 b)."
    ],
    "image": "GN1_classement-types-categories.png?v=ef4885649a",
-   "ordre": 41
+   "ordre": 44
   },
   {
    "id": "GZ10_organes-coupure-gaz",
@@ -678,7 +742,7 @@
     "Le chapitre GZ a été entièrement réécrit (arrêté du 23 novembre 2015 et suivants) : les règles chiffrées des anciennes fiches (stockages de propane et butane, distances, sections de ventilation, détendeurs) relèvent désormais des guides professionnels reconnus visés à l'article GZ 3, et non plus du règlement."
    ],
    "image": "GZ10_organes-coupure-gaz.png?v=c22e1ea359",
-   "ordre": 42
+   "ordre": 45
   },
   {
    "id": "J10_zones-transfert-horizontal",
@@ -698,7 +762,7 @@
     "Circulations communes désenfumées mécaniquement quelle que soit leur longueur, sauf bâtiments R+1 et halls (J 25) ; commandes automatiques asservies à la détection."
    ],
    "image": "J10_zones-transfert-horizontal.png?v=8c3f51ae1b",
-   "ordre": 43
+   "ordre": 46
   },
   {
    "id": "L28_rangees-sieges",
@@ -717,7 +781,7 @@
     "Effectif : sièges ou places numérotées, 1 personne par 0,50 m de banc, 3 pers./m² debout, 5 par mètre de file d'attente ; réunion sans spectacle et polyvalente : 1 pers./m² ; cabaret : 4 pers. pour 3 m² (L 3). Sièges mobiles interdits en salle (L 29)."
    ],
    "image": "L28_rangees-sieges.png?v=326663f1bc",
-   "ordre": 44
+   "ordre": 47
   },
   {
    "id": "M2_magasins",
@@ -737,7 +801,7 @@
     "Défense : au-delà de 3 000 m² de vente, extinction automatique à eau et RIA (M 26)."
    ],
    "image": "M2_magasins.png?v=375e10584f",
-   "ordre": 45
+   "ordre": 48
   },
   {
    "id": "M7_centres-commerciaux",
@@ -755,7 +819,23 @@
     "Effectif : 1 personne pour 5 m² de mail ; boutiques de moins de 300 m² : 1 pour 6 m² quel que soit le niveau (M 2). Hall réunissant le rez-de-chaussée et 4 niveaux admis seulement dans le mail, avec extinction automatique (M 6 § 1 bis)."
    ],
    "image": "M7_centres-commerciaux.png?v=b8bcb6ed4a",
-   "ordre": 46
+   "ordre": 49
+  },
+  {
+   "id": "M11_sorties-exploitations",
+   "titre": "Centres commerciaux : sorties des exploitations",
+   "articles": [
+    "ERP:M 11",
+    "ERP:M 2"
+   ],
+   "fiche": "",
+   "legende": "Exploitation de 20 à 50 personnes : une seule sortie de 2 UP sur le mail (atténuation de CO 38). Au-delà de 50 personnes, dégagements indépendants des mails vers l'extérieur, directement ou par un dégagement protégé : 51 à 300 personnes, 1 accessoire ; 301 à 700, 1 normal de 2 UP ; plus de 700, les deux tiers du nombre et de la largeur des dégagements normaux.",
+   "ecarts": [
+    "Exploitations de 51 à 700 personnes situées au centre d'un mail : dégagements sur le mail admis si l'un donne sur une partie diamétralement opposée, dans un autre canton de désenfumage, et si l'établissement est sprinklé (M 11 § 2).",
+    "Boutique de moins de 300 m² : 1 personne pour 6 m² de la surface réservée au public (M 2), soit 50 personnes au plus."
+   ],
+   "image": "M11_sorties-exploitations.png?v=6003c82ce3",
+   "ordre": 50
   },
   {
    "id": "MS18_colonnes-seches-points-eau",
@@ -775,7 +855,7 @@
     "Colonnes en charge (humides) : prévues par les dispositions particulières de certains types et en IGH ; elles ne figurent pas dans les dispositions générales MS."
    ],
    "image": "MS18_colonnes-seches-points-eau.png?v=448e814736",
-   "ordre": 47
+   "ordre": 51
   },
   {
    "id": "MS39_ria-extincteurs",
@@ -795,7 +875,7 @@
     "Diamètres des RIA : DN 19/6, 25/8 ou 33/12 (ancienne fiche : DN 19, 25 ou 40)."
    ],
    "image": "MS39_ria-extincteurs.png?v=5167bb9e9c",
-   "ordre": 48
+   "ordre": 52
   },
   {
    "id": "MS53_categories-ssi",
@@ -814,7 +894,7 @@
     "Alarme perceptible par les personnes en situation de handicap (MS 64 § 3) : diffuseurs lumineux en complément du signal sonore."
    ],
    "image": "MS53_categories-ssi.png?v=aa6834f7d1",
-   "ordre": 49
+   "ordre": 53
   },
   {
    "id": "N2_restaurants",
@@ -833,7 +913,7 @@
     "Seuls les dégagements accessoires peuvent être communs avec des tiers (N 6). Bougies admises seulement dans les salles, sur supports stables et incombustibles (N 12)."
    ],
    "image": "N2_restaurants.png?v=384abbe612",
-   "ordre": 50
+   "ordre": 54
   },
   {
    "id": "O9_hotels",
@@ -851,7 +931,7 @@
     "Assujettis : hôtels de 100 personnes et plus ; autres hébergements à exploitation collective homogène au-delà de 15 personnes (O 1). Locaux de déchets > 50 m² : risques importants ; ≤ 50 m², réserves, lingeries, bagageries : risques moyens (O 5)."
    ],
    "image": "O9_hotels.png?v=d7e5f5aa88",
-   "ordre": 51
+   "ordre": 55
   },
   {
    "id": "P2_salles-de-danse",
@@ -869,7 +949,7 @@
     "Locaux à risques importants : stockage de disques et bandes non utilisés pendant la soirée ; risques moyens : réserves, articles de cotillons, offices, lingeries (P 5). Installations électriques BE 2 (P 16) ; chauffage électrique fixe à 100 °C de surface au plus (P 15)."
    ],
    "image": "P2_salles-de-danse.png?v=4c8dd10f0c",
-   "ordre": 52
+   "ordre": 56
   },
   {
    "id": "PE11_5e-categorie-degagements",
@@ -886,7 +966,7 @@
     "Escaliers protégés si le plancher bas accessible est à plus de 8 m, cage CF 1 h et portes PF ½ h (PE 11 § 6)."
    ],
    "image": "PE11_5e-categorie-degagements.png?v=ab9fda30ac",
-   "ordre": 53
+   "ordre": 57
   },
   {
    "id": "PS8_structure-isolement",
@@ -904,7 +984,7 @@
     "Parois en M 0 / A2-s2, d0 ; revêtements M 1 / B-s3, d0 (PS 16). Désenfumage naturel limité aux niveaux de référence et adjacents, 12 dm² par véhicule (PS 18)."
    ],
    "image": "PS8_structure-isolement.png?v=6044e65e32",
-   "ordre": 54
+   "ordre": 58
   },
   {
    "id": "PS12_compartiments-escaliers",
@@ -921,7 +1001,7 @@
     "Tunnel de circulation de plus de 50 m : 40 m au plus pour en sortir, désenfumage (900 m³/h par 5 m, 600 si sprinklé) (PS 14)."
    ],
    "image": "PS12_compartiments-escaliers.png?v=05246c584e",
-   "ordre": 55
+   "ordre": 59
   },
   {
    "id": "R6_enseignement",
@@ -939,7 +1019,7 @@
     "Exercices d'évacuation pendant l'année, le premier dans le mois qui suit la rentrée, de nuit s'il y a des locaux à sommeil (R 33)."
    ],
    "image": "R6_enseignement.png?v=222e2deed6",
-   "ordre": 56
+   "ordre": 60
   },
   {
    "id": "T23_stands-expositions",
@@ -957,7 +1037,7 @@
     "Vélums horizontaux autorisés le temps de la manifestation, en M 1 (M 2 si sprinklé) (T 22). Chargé de sécurité désigné par l'organisateur ; demande d'autorisation deux mois avant l'ouverture (T 5, T 6)."
    ],
    "image": "T23_stands-expositions.png?v=c7f27c26fb",
-   "ordre": 57
+   "ordre": 61
   },
   {
    "id": "U10_zones-protegees",
@@ -974,7 +1054,7 @@
     "Circulations des niveaux à sommeil désenfumées mécaniquement quelle que soit leur longueur (naturel possible en R+1 après avis), asservies à la détection de la zone sinistrée (U 26)."
    ],
    "image": "U10_zones-protegees.png?v=e735cbdadc",
-   "ordre": 58
+   "ordre": 62
   },
   {
    "id": "W3_bureaux",
@@ -993,7 +1073,7 @@
     "Assujettis : 100 personnes en sous-sol, 100 en étages, 200 au total (W 1). Salles de coffres admises à plus de 6 m de profondeur (W 5)."
    ],
    "image": "W3_bureaux.png?v=15b9762b9e",
-   "ordre": 59
+   "ordre": 63
   },
   {
    "id": "X2_etablissements-sportifs",
@@ -1012,7 +1092,7 @@
     "Couvertures à plus de 8 m d'un tiers ou de la limite de parcelle : M 3 admis (M 2 sur 3 m au-dessus du sol) ; plafonds des grands volumes M 3, résilles bois interdites (X 7, X 15). Pédiluves de 0,15 m au plus (X 8)."
    ],
    "image": "X2_etablissements-sportifs.png?v=2df14e89ce",
-   "ordre": 60
+   "ordre": 64
   },
   {
    "id": "HAB3_familles",
@@ -1028,7 +1108,7 @@
     "Collectif R+3 dont le plancher bas du logement le plus haut est à plus de 8 m : escaliers encloisonnés, sauf escaliers extérieurs (art. 3, 2°)."
    ],
    "image": "HAB3_familles.png?v=c230ee0677",
-   "ordre": 61
+   "ordre": 65
   },
   {
    "id": "HAB4_voie-echelles",
@@ -1043,7 +1123,7 @@
     "Ce sont ces valeurs (1 à 8 m, 100 kN sur Ø 20 cm) que l'ancienne fiche ERP C.3 reprenait : elles sont propres à l'habitation. Voie engins habitation : 130 kN (40 + 90 kN, essieux à 4,50 m), hauteur libre 3,50 m (3,30 + 0,20)."
    ],
    "image": "HAB4_voie-echelles.png?v=9d51f69cd1",
-   "ordre": 62
+   "ordre": 66
   },
   {
    "id": "GH7_volume-protection",
@@ -1059,7 +1139,7 @@
     "Planche ajoutée : l'ancien recueil ne traitait pas les IGH. Structure de l'IGH : SF 2 h ou R 120 (GH 9)."
    ],
    "image": "GH7_volume-protection.png?v=42c9e72ae7",
-   "ordre": 63
+   "ordre": 67
   }
  ]
 }
