@@ -258,6 +258,7 @@ METHODES = [
     ("GA", "GA2-3", "GA 2 (2.2.2.1)", "Comptoir : 1 personne par mètre linéaire", U_ML, 1, 0, ""),
     ("GA", "GA2-4", "GA 2 (2.2.2.2)", "Magasin : 2 personnes par m² sur le tiers de la surface", U_M2, 2 / 3, 0, ""),
     ("GA", "GA2-d", "GA 2", "Effectif déclaré par le pétitionnaire", U_P, 1, 0, ""),
+    ("CT", "CT-trav", "Code du travail", "Locaux réservés aux travailleurs à dégagements propres : hors classement ERP", U_P, 0, 1, "ct"),
 ]
 
 # Variantes de seuils (lignes du tableau PE 2) : index de la ligne par défaut et

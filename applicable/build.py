@@ -156,6 +156,9 @@ def main():
     methodes = []
     codes = {c for c, _, _ in G.TYPES}
     for t, mid, ref, lab, unite, k, kp, opt in G.METHODES:
+        if t == "CT":
+            methodes.append({"t": t, "id": mid, "ref": ref, "art": "", "lab": lab, "u": unite, "k": k, "kp": kp, "o": opt})
+            continue
         art = re.match(r"^([A-Z]+ \d+)", ref).group(1)
         if art not in nums or t not in codes:
             raise SystemExit(f"mode de calcul : référence inconnue {ref} ({t})")

@@ -778,7 +778,8 @@
     const persCalc = m && m.kp ? Math.ceil(q * m.kp - 1e-9) : 0;
     const pub = r.pub !== '' && r.pub != null ? (+r.pub || 0) : calc;
     const pers = r.pers !== '' && r.pers != null ? (+r.pers || 0) : persCalc;
-    return { pub, pers, calc, persCalc, cumul: !(m && m.o === 'noncumul'), m };
+    const ct = !!(m && m.o === 'ct');
+    return { pub: ct ? 0 : pub, pers, calc: ct ? 0 : calc, persCalc, cumul: !(m && (m.o === 'noncumul' || ct)), ct, m };
   }
   function seuilNum(v) { const x = parseInt(v, 10); return isNaN(x) ? null : x; }
   /* Classement : catégorie calculée et justification */
@@ -999,40 +1000,54 @@
   }
 
   /* --- tableau d'effectif --- */
+  const rid = () => Math.random().toString(36).slice(2, 9);
+  const TYPE_LBL = (code) => (code === 'CT' ? 'CT' : code);
   function methOptions(code, sel) {
     const ms = st.appl.methodes.filter((m) => m.t === code);
     return ms.map((m) => `<option value="${m.id}"${m.id === sel ? ' selected' : ''}>${esc(m.ref)} : ${esc(m.o === 'niveau' ? 'selon le niveau (1/3, 1/6, 1/15 m²)' : m.lab)}</option>`).join('');
   }
+  /* Types ERP du tableau, du plus fort effectif au plus faible (le premier est le type principal) */
+  function rowTypes() {
+    const c = calcState(); const eff = {};
+    for (const r of c.rows) if (r.m && r.t !== 'CT') { const e = rowEff(r); eff[r.t] = (eff[r.t] || 0) + e.pub + e.pers + 1e-3; }
+    return Object.keys(eff).sort((a, b) => eff[b] - eff[a]);
+  }
+  function tabsHTML(tab) {
+    const T = [['eff', '1. Effectif et catégorie'], ['deg', '2. Dégagements'], ['reg', '3. Réglementation applicable']];
+    return `<div class="apl-tabs" role="tablist">${T.map(([k, l]) => `<button role="tab" class="apl-tab" data-apltab="${k}" aria-selected="${tab === k}">${l}</button>`).join('')}</div>`;
+  }
   function calcHTML() {
     const c = calcState();
-    const all = st.appl.types;
-    const order = c.types.concat(all.map((t) => t.code).filter((x) => !c.types.includes(x)));
+    const all = st.appl.types.map((t) => t.code).concat(['CT']);
+    const used = rowTypes();
+    const order = used.concat(all.filter((x) => !used.includes(x)));
     const rows = c.rows.map((r, i) => {
       const e = rowEff(r); const m = e.m;
-      return `<tr data-row="${i}" class="${m && m.o === 'noncumul' ? 'noncumul' : ''}">
+      return `<tr data-row="${i}" class="${m && m.o === 'noncumul' ? 'noncumul' : ''}${e.ct ? ' ctrow' : ''}">
         <td><select data-f="niv" aria-label="Niveau">${NIVEAUX.map((n) => `<option value="${n}"${+r.niv === n ? ' selected' : ''}>${nivLbl(n)}</option>`).join('')}</select></td>
         <td><input data-f="loc" value="${esc(r.loc || '')}" placeholder="Désignation du local" aria-label="Locaux"></td>
-        <td><select data-f="t" aria-label="Type">${order.map((x) => `<option${x === r.t ? ' selected' : ''}>${x}</option>`).join('')}</select></td>
-        <td><select data-f="m" class="msel" aria-label="Mode de calcul">${methOptions(r.t, r.m)}</select><div class="mlab" data-mlab>${m ? `<b>${esc(m.ref)}</b> ${esc(methLabel(m, +r.niv))}` : ''}</div></td>
+        <td><select data-f="t" aria-label="Type">${order.map((x) => `<option value="${x}"${x === r.t ? ' selected' : ''}>${x === 'CT' ? 'CT (Code du travail)' : x}</option>`).join('')}</select></td>
+        <td><select data-f="m" class="msel" aria-label="Mode de calcul">${methOptions(r.t, r.m)}</select><div class="mlab" data-mlab></div></td>
         <td class="q"><input data-f="q" inputmode="decimal" value="${esc(r.q || '')}" aria-label="Quantité"><span class="u">${esc(m ? m.u : '')}</span></td>
-        <td class="n"><input data-f="pub" inputmode="numeric" value="${esc(r.pub ?? '')}" placeholder="${e.calc}" aria-label="Effectif public"></td>
+        <td class="n"><input data-f="pub" inputmode="numeric" value="${esc(r.pub ?? '')}" placeholder="${e.calc}" aria-label="Effectif public"${e.ct ? ' disabled' : ''}></td>
         <td class="n"><input data-f="pers" inputmode="numeric" value="${esc(r.pers ?? '')}" placeholder="${e.persCalc}" aria-label="Effectif personnel"></td>
-        <td class="n tot" data-tot>${m && m.o === 'noncumul' ? `(${e.pub + e.pers})` : e.pub + e.pers}</td>
+        <td class="n tot" data-tot></td>
         <td><button class="x" data-calcdel="${i}" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</button></td></tr>`;
     }).join('');
-    const vars = c.types.map(typeOf).filter((t) => t && t.var).map((t) => `<label class="cvar">${esc(t.code)} : <select data-var="${t.code}">${t.var.map((v, i) => `<option value="${i}"${(c.variants[t.code] || 0) === i ? ' selected' : ''}>${esc(v.l)}</option>`).join('')}</select></label>`).join('');
+    const vars = used.map(typeOf).filter((t) => t && t.var).map((t) => `<label class="cvar">${esc(t.code)} : <select data-var="${t.code}">${t.var.map((v, i) => `<option value="${i}"${(c.variants[t.code] || 0) === i ? ' selected' : ''}>${esc(v.l)}</option>`).join('')}</select></label>`).join('');
     return `<div class="calc-head"><h2>Effectif et catégorie</h2><div class="cvars">${vars}</div></div>
       <div class="ctab-wrap"><table class="ctab"><thead><tr><th>Niveau</th><th>Locaux</th><th>Type</th><th>Article et mode de calcul</th><th>Quantité</th><th>Public</th><th>Personnel</th><th>Total</th><th></th></tr></thead>
-      <tbody>${rows || `<tr><td colspan="9" class="empty">Ajoutez un local : niveau, désignation, type, mode de calcul et quantité. L'effectif public se calcule, vous pouvez le remplacer par une valeur déclarée.</td></tr>`}</tbody>
-      <tfoot><tr><td colspan="5">TOTAL</td><td class="n" data-sum="pub"></td><td class="n" data-sum="pers"></td><td class="n" data-sum="tot"></td><td></td></tr></tfoot></table></div>
+      <tbody>${rows || `<tr><td colspan="9" class="empty">Ajoutez un local : niveau, désignation, type, mode de calcul et quantité. L'effectif public se calcule ; vous pouvez le remplacer par une valeur déclarée. Type CT : locaux réservés aux travailleurs, hors classement ERP.</td></tr>`}</tbody>
+      <tfoot><tr><td colspan="5">TOTAL ERP</td><td class="n" data-sum="pub"></td><td class="n" data-sum="pers"></td><td class="n" data-sum="tot"></td><td></td></tr><tr class="ctsum" data-ctsum hidden><td colspan="5">Code du travail (hors classement)</td><td class="n">—</td><td class="n" data-sum="ct"></td><td class="n" data-sum="ctt"></td><td></td></tr></tfoot></table></div>
       <div class="calc-bar"><button class="btn ghost" data-calcadd="same">+ Local au même niveau</button><button class="btn ghost" data-calcadd="up">+ Niveau au-dessus</button><button class="btn ghost" data-calcadd="down">+ Niveau en dessous</button>
-        <span class="sp"></span><button class="btn ghost" data-calcclear="1">Vider</button><button class="btn" data-calccopy="1">Copier pour OpenOffice</button></div>
+        <span class="sp"></span><button class="btn ghost" data-calcclear="1">Vider</button><button class="btn ghost" data-copyprev="eff">Copier pour OpenOffice</button></div>
       <div class="calc-res" data-res></div>
-      <p class="hint calc-note">Arrondi à l'unité supérieure par ligne. Personnel : à compter s'il ne dispose pas de dégagements indépendants (R. 143-19, GN 1 § 2 b) ; il n'intervient pas pour la 5e catégorie. J 2 et U 2 incluent le personnel dans le calcul forfaitaire.</p>`;
+      <div class="calc-go"><button class="btn" data-apltab="deg">Calculer les dégagements</button><button class="btn primary" data-generate="1">Générer la réglementation</button></div>
+      <p class="hint calc-note">Arrondi à l'unité supérieure par ligne. Personnel : à compter s'il ne dispose pas de dégagements indépendants (R. 143-19, GN 1 § 2 b) ; il n'intervient pas pour la 5e catégorie. J 2 et U 2 incluent le personnel dans le calcul forfaitaire. Locaux réservés aux travailleurs avec dégagements propres : type CT, hors classement, dégagements selon le Code du travail.</p>`;
   }
   function refreshCalc() {
-    const c = calcState(); const box = $('#aplCalcBox'); if (!box) return;
-    let sp = 0, spe = 0;
+    const c = calcState(); const box = $('#aplPane'); if (!box || c.tab !== 'eff') return;
+    let sp = 0, spe = 0, ct = 0;
     c.rows.forEach((r, i) => {
       const tr = box.querySelector(`tr[data-row="${i}"]`); if (!tr) return;
       const e = rowEff(r);
@@ -1040,120 +1055,329 @@
       tr.querySelector('[data-f="pers"]').placeholder = e.persCalc;
       tr.querySelector('[data-tot]').textContent = e.cumul ? e.pub + e.pers : `(${e.pub + e.pers})`;
       const ml = tr.querySelector('[data-mlab]'); if (ml && e.m) ml.innerHTML = `<b>${esc(e.m.ref)}</b> ${esc(methLabel(e.m, +r.niv))}`;
-      if (e.cumul) { sp += e.pub; spe += e.pers; }
+      if (e.ct) ct += e.pers; else if (e.cumul) { sp += e.pub; spe += e.pers; }
     });
     box.querySelector('[data-sum="pub"]').textContent = sp;
     box.querySelector('[data-sum="pers"]').textContent = spe;
     box.querySelector('[data-sum="tot"]').textContent = sp + spe;
+    box.querySelector('[data-ctsum]').hidden = !ct;
+    box.querySelector('[data-sum="ct"]').textContent = ct;
+    box.querySelector('[data-sum="ctt"]').textContent = ct;
     const r = classer();
     const res = box.querySelector('[data-res]');
-    if (!r) { res.innerHTML = '<p class="hint">La catégorie sera calculée dès qu\'une ligne a un mode de calcul.</p>'; return; }
+    if (!r) { res.innerHTML = '<p class="hint">La catégorie sera calculée dès qu\'une ligne ERP a un mode de calcul.</p>'; return; }
     const man = c.cat && c.cat !== r.cat;
-    res.innerHTML = `<div class="cres"><span class="ccat">${CAT_LBL[r.cat]}<small>catégorie</small></span><div><b>${r.cat === 5 ? '2e groupe (livre III)' : '1er groupe (livre II)'}</b>
+    res.innerHTML = `<div class="cres"><span class="ccat">${CAT_LBL[r.cat]}<small>catégorie</small></span><div><b>${r.cat === 5 ? '2e groupe (livre III)' : '1er groupe (livre II)'} · type${rowTypes().length > 1 ? 's' : ''} ${esc(rowTypes().join(', '))}</b>
       <ul>${r.why.map((w) => `<li>${esc(w)}</li>`).join('')}${r.alerts.map((w) => `<li class="alert">${esc(w)}</li>`).join('')}</ul>
       ${man ? `<p class="man">Catégorie forcée à la ${CAT_LBL[c.cat]} pour l'extraction. <button class="linkish" data-calcauto="1">Revenir à la catégorie calculée</button></p>` : ''}</div></div>`;
   }
-  function copyCalc() {
-    const c = calcState(); const r = classer();
-    const rows = c.rows.filter((x) => x.m).map((x) => ({ x, e: rowEff(x) })).sort((a, b) => +b.x.niv - +a.x.niv);
-    if (!rows.length) { toast('Le tableau est vide'); return; }
-    const td = 'border:1px solid #000;padding:4px 6px;text-align:center;vertical-align:middle;font-family:Arial,Liberation Sans,sans-serif;font-size:11pt';
-    const th = td + ';font-weight:bold;background:#E6E6E6';
-    const W = [9, 25, 10, 23, 11, 11, 11];
-    const H = ['Niveau', 'Désignation des locaux', 'Article', 'Mode de calcul', 'Effectif public', 'Effectif personnel', 'Effectif total'];
-    let html = `<table border="1" cellspacing="0" cellpadding="4" width="100%" style="border-collapse:collapse;width:100%"><colgroup>${W.map((w) => `<col width="${w}%">`).join('')}</colgroup><thead><tr>${H.map((h, i) => `<th bgcolor="#E6E6E6" width="${W[i]}%" style="${th}">${h}</th>`).join('')}</tr></thead><tbody>`;
-    const tsv = [['Niveau', 'Désignation des locaux', 'Article', 'Mode de calcul', 'Effectif public', 'Effectif personnel', 'Effectif total'].join('\t')];
-    let sp = 0, spe = 0;
-    rows.forEach(({ x, e }, i) => {
-      const m = e.m; const q = String(x.q || '').trim();
-      let des = (x.loc || '').trim().replace(/«\s*/g, '«\u00a0').replace(/\s*»/g, '\u00a0»');
-      if (q && m.u !== 'personnes' && !des.includes(q)) des = des ? `${des} : ${q} ${m.u}` : `${q} ${m.u}`;
-      const span = rows.filter((y) => +y.x.niv === +x.niv).length;
-      const first = i === 0 || +rows[i - 1].x.niv !== +x.niv;
-      const tot = e.pub + e.pers;
-      const totTxt = e.cumul ? String(tot) : `${tot} (non cumulé)`;
-      if (e.cumul) { sp += e.pub; spe += e.pers; }
-      html += `<tr>${first ? `<td align="center" valign="middle" style="${td}" rowspan="${span}">${esc(nivLbl(+x.niv))}</td>` : ''}<td align="center" valign="middle" style="${td}">${esc(des)}</td><td align="center" valign="middle" style="${td}">${esc(m.ref)}</td><td align="center" valign="middle" style="${td}">${esc(methLabel(m, +x.niv))}</td><td align="center" valign="middle" style="${td}">${e.pub}</td><td align="center" valign="middle" style="${td}">${e.pers}</td><td align="center" valign="middle" style="${td}">${esc(totTxt)}</td></tr>`;
-      tsv.push([first ? nivLbl(+x.niv) : '', des, m.ref, methLabel(m, +x.niv), e.pub, e.pers, totTxt].join('\t'));
-    });
-    html += `<tr><td bgcolor="#E6E6E6" align="center" style="${th}" colspan="4"><b>TOTAL</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${sp}</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${spe}</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${sp + spe}</b></td></tr></tbody></table>`;
-    tsv.push(['TOTAL', '', '', '', sp, spe, sp + spe].join('\t'));
-    if (r) {
-      const cat = c.cat || r.cat;
-      const types = c.types.join(', ');
-      const p = `Établissement de type ${types}, classé en ${CAT_LBL[cat]} catégorie (${cat === 5 ? 'effectif du public : ' + sp : 'effectif total : ' + (sp + spe)} personnes).`;
-      html += `<p style="font-family:Arial,Liberation Sans,sans-serif;font-size:11pt;margin-top:8pt">${esc(p)}</p>`;
-      tsv.push('', p);
-    }
-    const doc = `<html><head><meta charset="utf-8"></head><body>${html}</body></html>`;
-    let ok = false;
-    const onCopy = (ev) => { ev.clipboardData.setData('text/html', doc); ev.clipboardData.setData('text/plain', tsv.join('\n')); ev.preventDefault(); ok = true; };
-    document.addEventListener('copy', onCopy);
-    try { document.execCommand('copy'); } catch (e) { ok = false; }
-    document.removeEventListener('copy', onCopy);
-    if (ok) { toast('Tableau copié : collez-le dans OpenOffice'); return; }
-    if (navigator.clipboard && window.ClipboardItem) {
-      navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([doc], { type: 'text/html' }), 'text/plain': new Blob([tsv.join('\n')], { type: 'text/plain' }) })])
-        .then(() => toast('Tableau copié : collez-le dans OpenOffice'), () => toast('Copie impossible dans ce navigateur'));
-    } else toast('Copie impossible dans ce navigateur');
-  }
   function bindCalc() {
-    const box = $('#aplCalcBox'); if (!box) return;
+    const box = $('#aplPane'); if (!box) return;
     const c = calcState();
     box.oninput = (ev) => {
+      if (c.tab === 'deg') { degInput(ev); return; }
       const tr = ev.target.closest('tr[data-row]'); const f = ev.target.dataset.f;
       if (!tr || !f || ev.target.tagName === 'SELECT') return;
       c.rows[+tr.dataset.row][f] = ev.target.value; saveCalc(); refreshCalc();
     };
     box.onchange = (ev) => {
+      if (c.tab === 'deg') { degChange(ev); return; }
       const v = ev.target.dataset.var;
-      if (v) { c.variants[v] = +ev.target.value; saveCalc(); refreshCalc(); renderApplExt(); return; }
+      if (v) { c.variants[v] = +ev.target.value; saveCalc(); refreshCalc(); return; }
       const tr = ev.target.closest('tr[data-row]'); const f = ev.target.dataset.f;
       if (tr && f) {
         const r = c.rows[+tr.dataset.row]; r[f] = ev.target.value;
         if (f === 't') { const m0 = st.appl.methodes.find((m) => m.t === r.t); r.m = m0 ? m0.id : ''; r.pub = ''; r.pers = ''; }
         if (f === 'm') { r.pub = ''; r.pers = ''; }
         saveCalc();
-        if (f === 't' || f === 'm' || f === 'niv') { renderApplCalc(); }
+        if (f === 't' || f === 'm' || f === 'niv') renderPane();
       }
-      const before = st.applShownCat; if (currentCat() !== before) renderApplExt();
     };
   }
   function addRow(where) {
     const c = calcState(); const last = c.rows[c.rows.length - 1];
     const niv = last ? +last.niv + (where === 'up' ? 1 : where === 'down' ? -1 : 0) : 0;
-    const t = last && where === 'same' ? last.t : c.types[0];
-    const m0 = st.appl.methodes.find((m) => m.t === t);
-    c.rows.push({ niv: Math.max(-3, Math.min(10, niv)), loc: '', t, m: m0 ? m0.id : '', q: '', pub: '', pers: '' });
-    saveCalc(); renderApplCalc();
-    const ins = $$('#aplCalcBox [data-f="loc"]'); if (ins.length) ins[ins.length - 1].focus();
+    const t = last ? last.t : c.types[0];
+    const m0 = (last && last.t === t && methOf(last.m)) || st.appl.methodes.find((m) => m.t === t);
+    c.rows.push({ id: rid(), niv: Math.max(-3, Math.min(10, niv)), loc: '', t, m: m0 ? m0.id : '', q: '', pub: '', pers: '' });
+    saveCalc(); renderPane();
+    const ins = $$('#aplPane [data-f="loc"]'); if (ins.length) ins[ins.length - 1].focus();
   }
   const $$ = (s) => [...document.querySelectorAll(s)];
-  function renderApplCalc() {
-    const box = $('#aplCalcBox'); if (!box) return;
-    box.innerHTML = calcHTML(); bindCalc(); refreshCalc();
+
+  /* --- dégagements --- */
+  const fr = (x) => String(Math.round(x * 100) / 100).replace('.', ',');
+  function upOf(e) { return e <= 100 ? 0 : Math.ceil(e / 100) + (e <= 500 ? 1 : 0); }
+  function nbOf(e) { return e <= 500 ? 2 : 2 + Math.ceil((e - 500) / 500); }
+  /* Exigence réglementaire : {s, u, ns, nu, mode:'up'|'w', wmin:[...], ref, note} */
+  function exigence(eff, kind, groupe, ct, h8) {
+    if (!eff) return null;
+    if (ct) {
+      const neuf = calcState().ctMode !== 'existant';
+      if (neuf) {
+        if (eff < 20) return { s: '1', u: '1', ns: 1, nu: 1, mode: 'up', ref: 'R. 4216-8' };
+        if (eff <= 50) return { s: '1 + 1 acc.', u: '1', ns: 2, nu: 1, mode: 'up', ref: 'R. 4216-8', note: 'ou 1 dégagement de 2 UP si parcours ≤ 25 m, hors sous-sol' };
+        if (eff <= 100) return { s: '2', u: '2', ns: 2, nu: 2, mode: 'up', ref: 'R. 4216-8', note: 'ou 1 + 1 accessoire' };
+        return { s: String(nbOf(eff)), u: String(Math.max(3, Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0))), ns: nbOf(eff), nu: Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0), mode: 'up', ref: 'R. 4216-8' };
+      }
+      const w = eff < 20 ? 0.8 : eff <= 100 ? 1.5 : eff <= 300 ? 2 : eff <= 500 ? 2.5 : 2.5 + 0.5 * Math.ceil((eff - 500) / 100);
+      const n = eff <= 100 ? 1 : eff <= 500 ? 2 : 2 + Math.ceil((eff - 500) / 500);
+      return { s: String(n), u: `${fr(w)} m au total`, ns: n, nu: 0, mode: 'w', wsum: w, wmin: [0.8], ref: 'R. 4227-5' };
+    }
+    if (groupe === 2 && eff <= 300) {
+      const esc1 = kind === 'escE';
+      if (eff < 20) return { s: '1', u: '0,90 m', ns: 1, mode: 'w', alt: [[0.9]], ref: 'PE 11 § 3 a)' };
+      if (eff <= 50) {
+        if (esc1) return { s: h8 ? '1 + 1 acc.' : '1', u: '0,90 m', ns: h8 ? 2 : 1, mode: 'w', alt: [[0.9]], ref: 'PE 11 § 3 b)', note: h8 ? 'escalier unique complété par un accessoire (plancher > 8 m)' : 'escalier unique' };
+        return { s: '1 ou 2', u: '1,40 m (sortie directe, ≤ 25 m) ou 0,90 m + 0,60 m', ns: 1, mode: 'w', alt: [[1.4], [0.9, 0.6]], ref: 'PE 11 § 3 b)' };
+      }
+      if (eff <= 100) return { s: '2', u: '2 × 0,90 m ou 1,40 m + 0,60 m', ns: 2, mode: 'w', alt: [[0.9, 0.9], [1.4, 0.6]], ref: 'PE 11 § 3 c)' };
+      if (eff <= 200) return { s: '2', u: '1,40 m + 0,90 m', ns: 2, mode: 'w', alt: [[1.4, 0.9]], ref: 'PE 11 § 3 d)' };
+      return { s: '2', u: '2 × 1,40 m', ns: 2, mode: 'w', alt: [[1.4, 1.4]], ref: 'PE 11 § 3 e)' };
+    }
+    const ref = groupe === 2 ? 'PE 11 § 5 et CO 38' : 'CO 38';
+    if (eff < 20) return { s: '1', u: '1', ns: 1, nu: 1, mode: 'up', ref };
+    if (eff <= 50) {
+      if (kind === 'escE') return { s: h8 ? '1 + 1 acc.' : '1', u: '1', ns: h8 ? 2 : 1, nu: 1, mode: 'up', ref: 'CO 38 § 1 b)', note: 'escalier d\'1 UP' + (h8 ? ' complété par un accessoire (plancher > 8 m)' : '') };
+      return { s: '1 + 1 acc.', u: '1 + 1 acc.', ns: 2, nu: 1, mode: 'up', ref: 'CO 38 § 1 b)' };
+    }
+    if (eff <= 100) return { s: '2', u: '1 UP chacune', ns: 2, nu: 2, mode: 'up', ref: 'CO 38 § 1 c)', note: 'ou 1 × 2 UP + 1 accessoire' };
+    const n = nbOf(eff), u = upOf(eff);
+    return { s: String(n), u: String(u), ns: n, nu: u, mode: 'up', ref: 'CO 38 § 1 d)', note: eff > 200 ? 'dégagements de 2 UP au moins (CO 36 § 3)' : '' };
+  }
+  function widths(txt) { return String(txt || '').split(/[+;/]|et/).map((x) => parseFloat(x.replace(',', '.').replace(/[^\d.]/g, ''))).filter((x) => x > 0).sort((a, b) => b - a); }
+  function observe(ex, real) {
+    if (!ex || !real || (real.s === '' && real.u === '') || real.s == null) return { t: '', k: '' };
+    const ns = +real.s || 0;
+    if (ex.mode === 'up') {
+      const nu = +String(real.u).replace(',', '.') || 0;
+      if (ns < ex.ns || nu < ex.nu) return { t: 'Insuffisant', k: 'ko' };
+      if (ns === ex.ns && nu === ex.nu) return { t: 'Dimensionné', k: 'ok' };
+      if (ns > ex.ns) return { t: 'En excédent', k: 'plus' };
+      return { t: "En excédent d'UP", k: 'plus' };
+    }
+    const w = widths(real.u);
+    if (ex.wsum != null) {
+      const sum = w.reduce((a, b) => a + b, 0);
+      if (ns < ex.ns || sum + 1e-6 < ex.wsum || w.some((x) => x < 0.8)) return { t: 'Insuffisant', k: 'ko' };
+      return ns > ex.ns || sum > ex.wsum + 1e-6 ? { t: 'En excédent', k: 'plus' } : { t: 'Dimensionné', k: 'ok' };
+    }
+    const ok = ex.alt.some((a) => a.every((x, i) => (w[i] || 0) + 1e-6 >= x));
+    if (!ok) return { t: 'Insuffisant', k: 'ko' };
+    const exact = ex.alt.some((a) => a.length === w.length && a.every((x, i) => Math.abs(w[i] - x) < 1e-6));
+    if (exact) return { t: 'Dimensionné', k: 'ok' };
+    const need = Math.min(...ex.alt.map((a) => a.length));
+    return w.length > need ? { t: 'En excédent', k: 'plus' } : { t: 'En excédent de largeur', k: 'plus' };
+  }
+  /* Lignes du tableau des dégagements, regroupées par niveau (du plus haut au plus bas) */
+  function degModel() {
+    const c = calcState();
+    const cat = currentCat(); const groupe = cat === 5 ? 2 : 1;
+    const h8 = !!c.h8;
+    const rows = c.rows.filter((r) => r.m).map((r) => { if (!r.id) r.id = rid(); const e = rowEff(r); return { r, e, eff: e.pub + e.pers, niv: +r.niv }; });
+    const nivs = [...new Set(rows.map((x) => x.niv))].sort((a, b) => b - a);
+    const lvEff = {}; for (const n of nivs) lvEff[n] = rows.filter((x) => x.niv === n && x.e.cumul && !x.e.ct).reduce((k, x) => k + x.eff, 0);
+    const out = [];
+    for (const n of nivs) {
+      const loc = rows.filter((x) => x.niv === n);
+      for (const x of loc) {
+        const ex = exigence(x.eff, 'local', groupe, x.e.ct, h8);
+        out.push({ kind: 'loc', key: x.r.id, niv: n, loc: x.r.loc || (x.e.m ? x.e.m.lab : ''), eff: x.eff, cum: null, ex, ct: x.e.ct, nc: !x.e.cumul && !x.e.ct });
+      }
+      const erp = loc.filter((x) => !x.e.ct);
+      if (!erp.length) continue;
+      const cum = n > 0 ? nivs.filter((k) => k >= n).reduce((k, m) => k + lvEff[m], 0) : n < 0 ? nivs.filter((k) => k <= n).reduce((k, m) => k + lvEff[m], 0) : nivs.reduce((k, m) => k + lvEff[m], 0);
+      let base = cum;
+      const depth = parseFloat(String((c.depth || {})[n] || '').replace(',', '.')) || 0;
+      let maj = '';
+      if (n < 0 && depth > 2 && cum > 100) { base = Math.ceil(Math.ceil(cum / 100) * 100 * (1 + 0.1 * Math.ceil(depth - 2)) - 1e-9); maj = `effectif théorique ${base} (CO 39 § 2 : arrondi à la centaine, + 10 % par mètre au-delà de 2 m)`; }
+      const kind = n > 0 ? 'escE' : n < 0 ? 'escS' : 'rdc';
+      const ex = exigence(base, kind, groupe, false, h8);
+      out.push({ kind: 'tot', key: 'L' + n, niv: n, loc: n === 0 ? 'Total (sorties)' : 'Total (escaliers)', eff: lvEff[n], cum: cum !== lvEff[n] ? cum : null, ex, maj });
+    }
+    if (nivs.length && !nivs.includes(0)) {
+      const tot = nivs.reduce((k, m) => k + lvEff[m], 0);
+      out.push({ kind: 'tot', key: 'ALL', niv: null, loc: 'Ensemble de l\'établissement', eff: tot, cum: null, ex: exigence(tot, 'rdc', groupe, false, h8) });
+    }
+    return { out, groupe, cat };
+  }
+  function degHTML() {
+    const c = calcState(); c.deg = c.deg || {};
+    const { out, groupe, cat } = degModel();
+    const anyCT = out.some((x) => x.ct);
+    if (!out.length) return `<div class="calc-head"><h2>Dégagements</h2></div><p class="empty">Remplissez d'abord l'onglet « Effectif et catégorie » : les dégagements se calculent local par local, puis par niveau (escaliers en étage et en sous-sol, sorties au rez-de-chaussée).</p>`;
+    const anySS = out.some((x) => x.niv < 0 && x.kind === 'tot');
+    let prevNiv;
+    const body = out.map((x) => {
+      const first = x.niv !== prevNiv; prevNiv = x.niv;
+      const real = c.deg[x.key] || {};
+      const ob = observe(x.ex, real);
+      const wmode = x.ex && x.ex.mode === 'w';
+      return `<tr class="${x.kind === 'tot' ? 'dtot' : ''}${x.ct ? ' ctrow' : ''}${x.nc ? ' noncumul' : ''}" data-dk="${x.key}">
+        <td>${first || x.kind === 'tot' ? esc(x.niv == null ? '' : nivLbl(x.niv)) : ''}</td>
+        <td>${esc(x.loc)}${x.ct ? ' <span class="tag">CT</span>' : ''}${x.nc ? ' <span class="tag">non cumulé</span>' : ''}${x.maj ? `<div class="mlab">${esc(x.maj)}</div>` : ''}</td>
+        <td class="n">${x.eff}</td><td class="n">${x.cum == null ? '/' : x.cum}</td>
+        <td class="c">${x.ex ? esc(x.ex.s) : '—'}</td><td class="c">${x.ex ? esc(x.ex.u) : '—'}${x.ex && (x.ex.note || x.ex.ref) ? `<div class="mlab">${esc([x.ex.ref, x.ex.note].filter(Boolean).join(' · '))}</div>` : ''}</td>
+        <td class="c"><input data-dg="s" inputmode="numeric" value="${esc(real.s ?? '')}" aria-label="Sorties réalisées"></td>
+        <td class="c"><input data-dg="u" ${wmode ? 'placeholder="1,40 + 0,90"' : 'inputmode="decimal"'} value="${esc(real.u ?? '')}" aria-label="${wmode ? 'Largeurs réalisées (m)' : 'UP réalisées'}"></td>
+        <td class="c obs ${ob.k}" data-obs>${esc(ob.t)}</td></tr>`;
+    }).join('');
+    const nivSS = [...new Set(out.filter((x) => x.niv < 0).map((x) => x.niv))];
+    return `<div class="calc-head"><h2>Dégagements</h2><span class="hint">${CAT_LBL[cat]} catégorie · ${groupe === 2 ? '5e catégorie : nombre et largeurs (PE 11)' : 'nombre et unités de passage (CO 36, CO 38)'}</span></div>
+      <div class="deg-opts"><label><input type="checkbox" data-dopt="h8" ${c.h8 ? 'checked' : ''}> Plancher bas du niveau le plus haut accessible au public à plus de 8 m</label>
+        ${anyCT ? `<label>Code du travail : <select data-dopt="ct"><option value="neuf"${c.ctMode !== 'existant' ? ' selected' : ''}>construction neuve (R. 4216-8)</option><option value="existant"${c.ctMode === 'existant' ? ' selected' : ''}>bâtiment existant (R. 4227-5)</option></select></label>` : ''}
+        ${nivSS.map((n) => `<label>Profondeur ${nivLbl(n)} (m) <input data-depth="${n}" inputmode="decimal" value="${esc((c.depth || {})[n] || '')}" style="width:60px"></label>`).join('')}</div>
+      <div class="ctab-wrap"><table class="ctab dtab"><thead>
+        <tr><th rowspan="2">Niveau</th><th rowspan="2">Locaux</th><th colspan="2" class="c">Effectifs</th><th colspan="2" class="c">Réglementaires</th><th colspan="2" class="c">Réalisés</th><th rowspan="2" class="c">Observations</th></tr>
+        <tr><th class="n">Niveau</th><th class="n">Cumulés</th><th class="c">Sorties</th><th class="c">${groupe === 2 ? 'Largeurs' : 'UP'}</th><th class="c">Sorties</th><th class="c">${groupe === 2 ? 'Largeurs (m)' : 'UP'}</th></tr></thead>
+        <tbody>${body}</tbody></table></div>
+      <div class="calc-bar"><span class="sp"></span><button class="btn ghost" data-copyprev="deg">Copier pour OpenOffice</button><button class="btn primary" data-generate="1">Générer la réglementation</button></div>
+      <p class="hint calc-note">Effectif total (public + personnel sans dégagements propres). Étages : escaliers calculés sur l'effectif du niveau cumulé avec les niveaux au-dessus ; sous-sols : avec les niveaux en dessous (CO 38 § 2${groupe === 2 ? ', appliqué par analogie en 5e catégorie' : ''}). Rez-de-chaussée : sorties calculées sur l'effectif cumulé de l'établissement. Un accessoire compte comme une sortie et pas comme une UP. ${groupe === 2 ? 'Largeurs : saisissez par exemple « 1,40 + 0,90 » ; en rénovation, 0,90 m peut être ramené à 0,80 m (PE 11 § 3). Au-delà de 300 personnes, CO 38 (PE 11 § 5).' : 'Plus de 200 personnes : dégagements normaux de 2 UP au moins (CO 36 § 3).'}</p>`;
+  }
+  function degInput(ev) {
+    const c = calcState(); c.deg = c.deg || {};
+    const tr = ev.target.closest('tr[data-dk]');
+    if (tr && ev.target.dataset.dg) {
+      const k = tr.dataset.dk; c.deg[k] = c.deg[k] || {}; c.deg[k][ev.target.dataset.dg] = ev.target.value; saveCalc();
+      const { out } = degModel(); const x = out.find((y) => y.key === k);
+      const ob = observe(x && x.ex, c.deg[k]); const cell = tr.querySelector('[data-obs]');
+      cell.textContent = ob.t; cell.className = 'c obs ' + ob.k;
+    }
+    if (ev.target.dataset.depth) { c.depth = c.depth || {}; c.depth[ev.target.dataset.depth] = ev.target.value; saveCalc(); }
+  }
+  function degChange(ev) {
+    const c = calcState(); const o = ev.target.dataset.dopt;
+    if (o === 'h8') { c.h8 = ev.target.checked; saveCalc(); renderPane(); }
+    if (o === 'ct') { c.ctMode = ev.target.value; saveCalc(); renderPane(); }
+    if (ev.target.dataset.depth) renderPane();
+  }
+
+  /* --- copie vers OpenOffice --- */
+  const CELL = 'border:1px solid #000;padding:3px 5px;text-align:center;vertical-align:middle;font-family:Arial,Liberation Sans,sans-serif;font-size:10pt';
+  const HEAD = CELL + ';font-weight:bold;font-variant:small-caps;background:#E6E6E6';
+  const td = (x, o = {}) => `<td align="center" valign="middle"${o.rs ? ` rowspan="${o.rs}"` : ''}${o.cs ? ` colspan="${o.cs}"` : ''}${o.g ? ' bgcolor="#E6E6E6"' : ''} style="${o.g ? HEAD.replace('font-variant:small-caps;', '') : CELL}">${o.b ? `<b>${esc(String(x))}</b>` : esc(String(x))}</td>`;
+  const th = (x, o = {}) => `<th bgcolor="#E6E6E6"${o.rs ? ` rowspan="${o.rs}"` : ''}${o.cs ? ` colspan="${o.cs}"` : ''} style="${HEAD}">${esc(x)}</th>`;
+  function effTable() {
+    const c = calcState(); const r = classer();
+    const rows = c.rows.filter((x) => x.m).map((x) => ({ x, e: rowEff(x) })).sort((a, b) => +b.x.niv - +a.x.niv);
+    if (!rows.length) return null;
+    const head = `<tr>${['Niveaux', 'Locaux', 'Articles de référence', 'Mode de calcul', 'Effectif du public', 'Effectif du personnel', 'Effectif total'].map((h) => th(h)).join('')}</tr>`;
+    const tsvH = 'Niveaux\tLocaux\tArticles de référence\tMode de calcul\tEffectif du public\tEffectif du personnel\tEffectif total';
+    let body = ''; const tsv = []; let sp = 0, spe = 0, ct = 0;
+    rows.forEach(({ x, e }, i) => {
+      const m = e.m; const q = String(x.q || '').trim();
+      let des = (x.loc || '').trim().replace(/«\s*/g, '« ').replace(/\s*»/g, ' »');
+      if (q && m.u !== 'personnes' && !des.includes(q)) des = des ? `${des} : ${q} ${m.u}` : `${q} ${m.u}`;
+      const span = rows.filter((y) => +y.x.niv === +x.niv).length;
+      const first = i === 0 || +rows[i - 1].x.niv !== +x.niv;
+      const tot = e.pub + e.pers;
+      const totTxt = e.ct ? `${tot} (Code du travail)` : e.cumul ? String(tot) : `${tot} (non cumulé)`;
+      if (e.ct) ct += tot; else if (e.cumul) { sp += e.pub; spe += e.pers; }
+      body += `<tr>${first ? td(nivLbl(+x.niv), { rs: span }) : ''}${td(des)}${td(m.ref)}${td(methLabel(m, +x.niv))}${td(e.ct ? '—' : e.pub)}${td(e.pers)}${td(totTxt)}</tr>`;
+      tsv.push([first ? nivLbl(+x.niv) : '', des, m.ref, methLabel(m, +x.niv), e.ct ? '—' : e.pub, e.pers, totTxt].join('\t'));
+    });
+    body += `<tr>${td('TOTAL', { cs: 4, g: 1, b: 1 })}${td(sp, { g: 1, b: 1 })}${td(spe, { g: 1, b: 1 })}${td(sp + spe, { g: 1, b: 1 })}</tr>`;
+    tsv.push(['TOTAL', '', '', '', sp, spe, sp + spe].join('\t'));
+    let after = '';
+    if (r) {
+      const cat = c.cat || r.cat;
+      after = `Établissement de type ${rowTypes().join(', ')}, classé en ${CAT_LBL[cat]} catégorie (${cat === 5 ? 'effectif du public : ' + sp : 'effectif total : ' + (sp + spe)} personnes)${ct ? ` ; ${ct} travailleurs dans des locaux relevant du seul Code du travail` : ''}.`;
+    }
+    return { head, body, tsvH, tsv, after, cols: [9, 25, 11, 23, 11, 11, 10] };
+  }
+  function degTable() {
+    const c = calcState(); c.deg = c.deg || {};
+    const { out, groupe } = degModel(); if (!out.length) return null;
+    const head = `<tr>${th('Niveaux', { rs: 2 })}${th('Locaux', { rs: 2 })}${th('Effectifs', { cs: 2 })}${th('Réglementaires', { cs: 2 })}${th('Réalisés', { cs: 2 })}${th('Observations', { rs: 2 })}</tr><tr>${['Niveau', 'Cumulés', 'Sorties', groupe === 2 ? 'Largeurs' : 'UP', 'Sorties', groupe === 2 ? 'Largeurs' : 'UP'].map((h) => th(h)).join('')}</tr>`;
+    const tsvH = `Niveaux\tLocaux\tEffectif niveau\tEffectif cumulé\tSorties réglementaires\t${groupe === 2 ? 'Largeurs' : 'UP'} réglementaires\tSorties réalisées\t${groupe === 2 ? 'Largeurs' : 'UP'} réalisées\tObservations`;
+    let body = ''; const tsv = [];
+    // regroupement des locaux d'un même niveau (cellule fusionnée), ligne total à part
+    for (let i = 0; i < out.length; i++) {
+      const x = out[i]; const real = c.deg[x.key] || {}; const ob = observe(x.ex, real);
+      const g = x.kind === 'tot';
+      let nivCell = '';
+      if (g) nivCell = td(x.niv == null ? '' : nivLbl(x.niv), { g: 1, b: 1 });
+      else if (i === 0 || out[i - 1].niv !== x.niv || out[i - 1].kind === 'tot') {
+        let span = 0; for (let j = i; j < out.length && out[j].niv === x.niv && out[j].kind === 'loc'; j++) span++;
+        nivCell = td(nivLbl(x.niv), { rs: span });
+      }
+      const loc = x.loc + (x.ct ? ' (Code du travail)' : '') + (x.nc ? ' (non cumulé)' : '');
+      const cells = [loc, x.eff, x.cum == null ? '/' : x.cum, x.ex ? x.ex.s : '—', x.ex ? x.ex.u : '—', real.s || '', real.u || '', ob.t];
+      body += `<tr>${nivCell}${cells.map((v) => td(v, g ? { g: 1 } : {})).join('')}</tr>`;
+      tsv.push([nivCell ? (x.niv == null ? '' : nivLbl(x.niv)) : '', ...cells].join('\t'));
+    }
+    return { head, body, tsvH, tsv, after: '', cols: [8, 22, 8, 8, 9, 11, 8, 9, 17] };
+  }
+  function tableHTML(t, lignes) {
+    const cols = `<colgroup>${t.cols.map((w) => `<col width="${w}%">`).join('')}</colgroup>`;
+    return `<table border="1" cellspacing="0" cellpadding="3" width="100%" style="border-collapse:collapse;width:100%">${cols}${lignes ? '' : `<thead>${t.head}</thead>`}<tbody>${t.body}</tbody></table>${!lignes && t.after ? `<p style="font-family:Arial,Liberation Sans,sans-serif;font-size:10pt;margin-top:6pt">${esc(t.after)}</p>` : ''}`;
+  }
+  function putClipboard(html, text) {
+    const doc = `<html><head><meta charset="utf-8"></head><body>${html}</body></html>`;
+    let ok = false;
+    const onCopy = (ev) => { ev.clipboardData.setData('text/html', doc); ev.clipboardData.setData('text/plain', text); ev.preventDefault(); ok = true; };
+    document.addEventListener('copy', onCopy);
+    try { document.execCommand('copy'); } catch (e) { ok = false; }
+    document.removeEventListener('copy', onCopy);
+    if (ok) return Promise.resolve(true);
+    if (navigator.clipboard && window.ClipboardItem) {
+      return navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([doc], { type: 'text/html' }), 'text/plain': new Blob([text], { type: 'text/plain' }) })]).then(() => true, () => false);
+    }
+    return Promise.resolve(false);
+  }
+  function copyPreview(which) {
+    const t = which === 'deg' ? degTable() : effTable();
+    if (!t) { toast('Le tableau est vide'); return; }
+    let ov = $('#copyPrev');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'copyPrev'; ov.className = 'cpv'; document.body.append(ov); }
+    ov.innerHTML = `<div class="cpv-box" role="dialog" aria-modal="true" aria-label="Aperçu du tableau à coller">
+      <div class="cpv-head"><b>${which === 'deg' ? 'Tableau des dégagements' : "Tableau de calcul de l'effectif"}</b><button class="x" data-cpv="close" aria-label="Fermer">×</button></div>
+      <p class="hint">Deux façons de coller dans OpenOffice ou LibreOffice Writer :</p>
+      <div class="cpv-acts">
+        <button class="btn" data-cpv="all">Copier le tableau complet</button><span class="hint">à coller sur une ligne vide : le tableau est créé avec ses en-têtes.</span>
+        <button class="btn ghost" data-cpv="rows">Copier les lignes seules</button><span class="hint">à coller dans votre tableau existant, curseur dans la première cellule sous l'en-tête : les cellules sont remplies (LibreOffice 6.4 et plus).</span>
+      </div>
+      <p class="hint">Si le collage se fait mal, utilisez Édition › Collage spécial › Format HTML, ou sélectionnez le tableau ci-dessous à la souris et copiez-le.</p>
+      <div class="cpv-doc">${tableHTML(t, false)}</div></div>`;
+    ov.hidden = false;
+    ov.onclick = (e) => {
+      const b = e.target.closest('[data-cpv]'); if (!b && e.target !== ov) return;
+      const a = b ? b.dataset.cpv : 'close';
+      if (a === 'close') { ov.hidden = true; return; }
+      const lignes = a === 'rows';
+      const text = (lignes ? [] : [t.tsvH]).concat(t.tsv).join('\n') + (!lignes && t.after ? '\n\n' + t.after : '');
+      putClipboard(tableHTML(t, lignes), text).then((ok) => toast(ok ? (lignes ? 'Lignes copiées : collez dans la première cellule de votre tableau' : 'Tableau copié : collez-le dans OpenOffice') : 'Copie impossible : sélectionnez le tableau de l\'aperçu et faites Ctrl+C'));
+    };
   }
 
   /* --- page --- */
+  function renderPane() {
+    const box = $('#aplPane'); if (!box) return;
+    const c = calcState();
+    if (c.tab === 'deg') box.innerHTML = degHTML();
+    else box.innerHTML = calcHTML();
+    bindCalc(); if (c.tab === 'eff') refreshCalc();
+  }
   function renderAppl() {
     setSide(false);
     const A = st.appl;
     if (!A) { $('#read').innerHTML = '<div class="home"><p class="hint">Grille indisponible (data/applicable.json).</p></div>'; return; }
-    const c = calcState();
+    const c = calcState(); c.tab = c.tab || (c.rows.length ? 'eff' : 'reg');
     st.applOpen = st.applOpen || new Set();
-    const groups = [['Types (livre II)', A.types.filter((x) => x.livre === 'II')], ['Établissements spéciaux (livre IV)', A.types.filter((x) => x.livre === 'IV')]];
     $('#read').className = 'pane readpane dom-ERP';
+    const groups = [['Types (livre II)', A.types.filter((x) => x.livre === 'II')], ['Établissements spéciaux (livre IV)', A.types.filter((x) => x.livre === 'IV')]];
+    const rt = rowTypes();
+    const diff = rt.length && (rt.length !== c.types.length || rt.some((x) => !c.types.includes(x)));
     $('#read').innerHTML = `<div class="home appl">
       <h1>Réglementation applicable</h1>
-      <p class="lead">Sélectionnez le ou les types de l'établissement (le premier est le type principal), décrivez les locaux niveau par niveau : la catégorie se calcule et la page extrait les textes qui s'appliquent, en masquant les passages qui visent d'autres catégories.</p>
-      <div class="apl-bar">
+      <p class="lead">Remplissez le tableau d'effectif niveau par niveau puis générez la réglementation : les types viennent du tableau, la catégorie est calculée. Pour aller vite, choisissez directement types et catégorie dans l'onglet 3.</p>
+      ${tabsHTML(c.tab)}
+      ${c.tab === 'reg' ? `<div class="apl-bar">
         <div class="apl-types" role="group" aria-label="Types de l'établissement">${groups.map(([g, ts]) => `<div class="apl-tg"><span class="lbl">${esc(g)}</span><div class="plates">${ts.map((x) => { const i = c.types.indexOf(x.code); return `<button class="tp${i === 0 ? ' princ' : ''}" data-aplt="${x.code}" aria-pressed="${i >= 0}" title="${esc(x.label)}${i === 0 ? ' (type principal)' : ''}">${esc(x.code)}</button>`; }).join('')}</div></div>`).join('')}</div>
-      </div>
-      <section class="apl-calc-box" id="aplCalcBox"></section>
-      <section id="aplExt"></section>
+        ${diff ? `<p class="apl-sync">Le tableau d'effectif contient les types ${esc(rt.join(', '))}. <button class="linkish" data-generate="1">Reprendre les types et la catégorie du tableau</button></p>` : ''}
+      </div><section id="aplExt"></section>` : '<section class="apl-calc-box" id="aplPane"></section>'}
     </div>`;
-    renderApplCalc();
-    renderApplExt();
+    if (c.tab === 'reg') renderApplExt(); else renderPane();
   }
   function renderApplExt() {
     const box = $('#aplExt'); if (!box) return;
@@ -1237,6 +1461,11 @@
       const txt = lines.join('\n');
       (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast('Liste copiée'), () => toast('Copie impossible dans ce navigateur'));
     };
+  }
+  function applGenerate() {
+    const c = calcState(); const rt = rowTypes();
+    if (!rt.length) { toast("Ajoutez au moins un local d'un type ERP"); return; }
+    c.types = rt; c.cat = null; c.tab = 'reg'; saveCalc(); renderAppl(); $('#read').scrollTop = 0;
   }
   function applToggleType(code) {
     const c = calcState(); const i = c.types.indexOf(code);
@@ -1729,12 +1958,14 @@
     if (d.planches) { go({ v: 'planches' }); return; }
     if (d.appl) { go({ v: 'appl' }); return; }
     if (d.aplt) { applToggleType(d.aplt); return; }
-    if (d.aplc) { const c = calcState(); const r = classer(); c.cat = r && r.cat === +d.aplc ? null : +d.aplc; saveCalc(); renderApplCalc(); renderApplExt(); return; }
-    if (d.calcauto) { calcState().cat = null; saveCalc(); renderApplCalc(); renderApplExt(); return; }
+    if (d.aplc) { const c = calcState(); const r = classer(); c.cat = r && r.cat === +d.aplc ? null : +d.aplc; saveCalc(); renderApplExt(); return; }
+    if (d.calcauto) { calcState().cat = null; saveCalc(); renderPane(); return; }
+    if (d.apltab) { const c = calcState(); c.tab = d.apltab; saveCalc(); renderAppl(); return; }
+    if (d.generate) { applGenerate(); return; }
+    if (d.copyprev) { copyPreview(d.copyprev); return; }
     if (d.calcadd) { addRow(d.calcadd); return; }
-    if (d.calcdel != null) { const c = calcState(); c.rows.splice(+d.calcdel, 1); saveCalc(); renderApplCalc(); if (currentCat() !== st.applShownCat) renderApplExt(); return; }
-    if (d.calcclear) { const c = calcState(); if (c.rows.length && t.dataset.armed !== '1') { t.dataset.armed = '1'; t.textContent = 'Confirmer : vider le tableau'; return; } c.rows = []; c.cat = null; saveCalc(); renderApplCalc(); renderApplExt(); return; }
-    if (d.calccopy) { copyCalc(); return; }
+    if (d.calcdel != null) { const c = calcState(); c.rows.splice(+d.calcdel, 1); saveCalc(); renderPane(); return; }
+    if (d.calcclear) { const c = calcState(); if (c.rows.length && t.dataset.armed !== '1') { t.dataset.armed = '1'; t.textContent = 'Confirmer : vider le tableau'; return; } c.rows = []; c.cat = null; c.deg = {}; saveCalc(); renderPane(); return; }
     if (d.apltog) { const y = $('#read').scrollTop; st.applOpen.has(d.apltog) ? st.applOpen.delete(d.apltog) : st.applOpen.add(d.apltog); renderApplExt(); $('#read').scrollTop = y; return; }
     if (d.gosec) { scrollToItem(d.gosec, true); return; }
     if (d.goart) { scrollToItem(d.goart); return; }
