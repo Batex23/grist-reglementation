@@ -362,6 +362,7 @@
     else if (view.v === 'search') renderSearch(view.q);
     else if (view.v === 'ask') renderAsk(view.q);
     else if (view.v === 'veille') renderVeille();
+    else if (view.v === 'planches') renderPlanches(view.q);
     renderTree();
   }
   window.addEventListener('popstate', (e) => { if (e.state) go(e.state, false); });
@@ -655,7 +656,8 @@
       return `<button class="sign dom-${d}" data-board="${d}"><b>${esc(DOMAINES[d].court)}</b>
         <span>${esc(DOMAINES[d].label)}</span>
         <small>${a.length.toLocaleString('fr-FR')} articles · dernière modification ${fmtDate(last)}${nf ? ` · ${nf} à venir` : ''}</small></button>`;
-    }).join('');
+    }).join('') + (st.illus && st.illus.length ? `<button class="sign planches-sign" data-planches="1"><b>Schémas</b><span>Planches illustrées SDIS 33</span>
+        <small>${st.illus.length} planche${st.illus.length > 1 ? 's' : ''} isométrique${st.illus.length > 1 ? 's' : ''} · rangées sur les articles</small></button>` : '');
     const li = (n, sub) => `<li class="dom-${n.dom}"><button data-open="${n.id}"><span class="mini">${esc(dispNum(n).replace('Art. ', ''))}</span><span>${esc(n.chemin.split(' › ').slice(-1)[0] || '')}<span class="sub">${sub}</span></span></button></li>`;
     $('#read').innerHTML = `<div class="home">
       <h1>Réglementation sécurité incendie</h1>
@@ -666,6 +668,58 @@
         <section><h2>Modifiés récemment</h2><ul class="list">${rec.map((n) => li(n, 'En vigueur depuis le ' + fmtDate(n.depuis))).join('')}</ul></section>
         <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, `<span class="hwho">${avatar(agentOf(c), c.auteur, 20)}<b>${esc(authorName(c))}</b></span> ${esc(c.texte.slice(0, 90))}`) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
       </div></div>`;
+    $('#read').scrollTop = 0;
+  }
+
+  // ------------------------------------------------------------------ planches illustrées (publiées avec le widget)
+  function illusKey(dom, num) { return dom + ':' + String(num || '').replace(/\s+/g, ' ').trim().toUpperCase(); }
+  function loadIllus(cat) {
+    st.illus = (cat && cat.fiches) || [];
+    st.illusBy = new Map();
+    for (const f of st.illus) for (const a of f.articles) {
+      if (!st.illusBy.has(a)) st.illusBy.set(a, []);
+      st.illusBy.get(a).push(f);
+    }
+  }
+  function illusOf(n) { return (st.illusBy && n && n.type === 'Article' && st.illusBy.get(illusKey(n.dom, n.num))) || []; }
+  function illusSrc(f) { return 'illustrations/' + f.image; }
+  function illusArts(f) {
+    return f.articles.map((a) => { const [dom, num] = a.split(':'); return st.nodes.find((n) => n.type === 'Article' && n.dom === dom && illusKey(dom, n.num) === a); }).filter(Boolean);
+  }
+  function figHTML(n) {
+    const fs = illusOf(n); if (!fs.length) return '';
+    return `<div class="figs${fs.length > 1 ? ' multi' : ''}">${fs.map((f) => `<figure class="illus">
+      <button class="illus-img" data-page="${esc(illusSrc(f))}" title="Agrandir la planche « ${esc(f.titre)} »"><img loading="lazy" src="${esc(illusSrc(f))}" alt="Planche illustrée : ${esc(f.titre)}"></button>
+      <figcaption><b>${esc(f.titre)}</b> ${esc(f.legende || '')}<button class="linkish" data-focus="${n.id}" data-tab="cmt">Planche SDIS 33${f.fiche ? ' · fiche ' + esc(f.fiche) : ''}${f.ecarts && f.ecarts.length ? ' · ce qui a changé' : ''}</button></figcaption>
+    </figure>`).join('')}</div>`;
+  }
+  function illusCardHTML(n) {
+    return illusOf(n).map((f) => {
+      const autres = illusArts(f).filter((a) => a.id !== n.id);
+      return `<div class="cmt illus-card"><span class="av sdis" style="width:36px;height:36px;font-size:13px" aria-hidden="true">33</span><div class="cbody">
+        <div class="cname">Planche illustrée — Prévention SDIS 33</div>
+        <div class="who"><span class="pill">Photo / schéma</span>${f.fiche ? `<span>Fiche ${esc(f.fiche)} actualisée</span>` : ''}</div>
+        <button class="illus-img" data-page="${esc(illusSrc(f))}" title="Agrandir"><img src="${esc(illusSrc(f))}" alt="Planche illustrée : ${esc(f.titre)}"></button>
+        <div class="txt"><b>${esc(f.titre)}.</b> ${esc(f.legende || '')}</div>
+        ${autres.length ? `<div class="cited"><span class="nob">Aussi sur</span>${autres.map((a) => `<button class="docref dom-${a.dom}" data-open="${a.id}">${esc(dispNum(a))}</button>`).join('')}</div>` : ''}
+        ${f.ecarts && f.ecarts.length ? `<details class="ecarts"><summary>Ce qui change par rapport à l'ancienne fiche</summary><ul>${f.ecarts.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></details>` : ''}
+        <a class="dl" href="${esc(illusSrc(f))}" download="${esc(f.id)}.png">Télécharger l'image</a>
+      </div></div>`;
+    }).join('');
+  }
+  function renderPlanches(q) {
+    setSide(false);
+    const norm = (x) => S.fold(x);
+    const qq = q ? norm(q) : '';
+    const list = (st.illus || []).filter((f) => !qq || norm([f.titre, f.legende, f.fiche, ...f.articles].join(' ')).includes(qq));
+    $('#read').innerHTML = `<div class="home planches">
+      <h1>Planches illustrées</h1>
+      <p class="lead">Schémas isométriques actualisés selon le texte en vigueur, rangés sur les articles qu'ils illustrent. Cliquez une planche pour lire l'article.</p>
+      <input id="plq" type="search" placeholder="Filtrer : voie, escalier, CO 38, C.15…" value="${esc(q || '')}" aria-label="Filtrer les planches">
+      <div class="pgrid">${list.map((f) => { const a = illusArts(f)[0]; return `<button class="pcard" ${a ? `data-open="${a.id}"` : `data-page="${esc(illusSrc(f))}"`}>
+        <img loading="lazy" src="${esc(illusSrc(f))}" alt=""><span class="pt">${esc(f.titre)}</span>
+        <span class="pr">${f.articles.map((x) => esc(x.split(':')[1])).join(' · ')}${f.fiche ? ` <em>fiche ${esc(f.fiche)}</em>` : ''}</span></button>`; }).join('') || '<p class="hint">Aucune planche ne correspond.</p>'}</div></div>`;
+    const inp = $('#plq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; renderPlanches(inp.value); const i = $('#plq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250));
     $('#read').scrollTop = 0;
   }
 
@@ -768,6 +822,7 @@
         ${cites.length ? `<div class="cited top"><span>Commenté dans</span>${cites.slice(0, 6).map((c) => `<button class="docref dom-DOC" data-open="${c.id}" title="${esc(c.titre)}">${esc(dispNum(c))}<em>${esc(c.titre)}</em></button>`).join('')}${cites.length > 6 ? `<span class="hint">+${cites.length - 6}</span>` : ''}</div>` : ''}
         ${it.etat === 'A_VENIR' ? `<p class="pill warn">Entre en vigueur le ${fmtDate(it.futDate)}</p>` : `<div class="legal">${safeHTML(it.html, it.texte)}</div>`}
         ${it.nota ? `<div class="nota"><b>Nota :</b> ${esc(it.nota)}</div>` : ''}
+        ${figHTML(it)}
         ${it.fut ? `<details class="future"${it.etat === 'A_VENIR' ? ' open' : ''}><summary><b>Nouvelle rédaction au ${fmtDate(it.futDate)}</b> — voir les changements</summary><div class="legal diff" data-diff="${it.id}"></div></details>` : ''}
         <div class="meta">
           ${it.depuis ? `<span class="pill${recent ? ' new' : ''}">En vigueur depuis le ${fmtDate(it.depuis)}</span>` : ''}
@@ -844,9 +899,10 @@
     if (st.sideTab === 'cmt') {
       body = `<div class="tags" aria-label="Mots-clés">${n.tags.map((t) => `<span class="tag">${esc(t)}<button data-untag="${esc(t)}" aria-label="Retirer ${esc(t)}">×</button></span>`).join('')}
         <input id="tagIn" type="text" placeholder="+ mot-clé" style="border:0;background:none;padding:2px 4px;width:110px;font-size:13px" aria-label="Ajouter un mot-clé"></div>
+        ${illusCardHTML(n)}
         ${cm.length ? cm.map((c) => `<div class="cmt">${avatar(agentOf(c), c.auteur, 36)}<div class="cbody"><div class="cname">${esc(authorName(c))}</div>
           <div class="who">${c.type ? `<span class="pill">${esc(c.type)}</span>` : ''}<span>${fmtDate(c.date)}</span></div>
-          ${c.texte ? `<div class="txt">${esc(c.texte)}</div>` : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div></div>`).join('') : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>'}
+          ${c.texte ? `<div class="txt">${esc(c.texte)}</div>` : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div></div>`).join('') : (illusOf(n).length ? '' : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>')}
         <form class="form" id="cform">
           ${st.me ? `<div class="asme">${avatar(st.me, '', 28)}<span>Publier en tant que <b>${esc(agentName(st.me))}</b></span></div>` : ''}
           <select name="type" aria-label="Type de commentaire">${['Interprétation', 'Retour terrain', 'Photo / schéma', 'Question', 'Jurisprudence', 'Doctrine / réponse ministérielle'].map((t) => `<option>${t}</option>`).join('')}</select>
@@ -1147,6 +1203,7 @@
     if (d.ref && !d.open) { e.preventDefault(); showPop(t); return; }
     if (d.page) { const lb = $('#lightbox'); $('img', lb).src = d.page; lb.classList.add('show'); return; }
     if (d.board) { go({ v: 'board', dom: d.board }); return; }
+    if (d.planches) { go({ v: 'planches' }); return; }
     if (d.gosec) { scrollToItem(d.gosec, true); return; }
     if (d.goart) { scrollToItem(d.goart); return; }
     if (d.href) { window.open(d.href, '_blank', 'noopener'); return; }
@@ -1284,6 +1341,7 @@
 
   async function boot() {
     if (!st.ss) st.ss = await fetch('data/sitesecurite.json').then((r) => r.json()).catch(() => null);
+    if (!st.illus) loadIllus(await fetch('illustrations/index.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null));
     ingest(await fetchAll());
     buildPlans();
     renderChips(); updateBadge();

@@ -267,6 +267,36 @@ dialog input{border:1px solid var(--line);border-radius:6px;padding:7px;backgrou
 .addoc{margin-top:22px;max-width:80ch}
 .chap .bigplate{max-width:140px;overflow-wrap:anywhere}
 
+
+/* ---------- planches illustrées ---------- */
+.figs{display:grid;gap:12px;margin:12px 0 4px}
+.figs.multi{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.illus{margin:0;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);overflow:hidden;max-width:760px}
+.illus-img{display:block;width:100%;border:0;padding:0;background:#fff;cursor:zoom-in}
+.illus-img img{display:block;width:100%;height:auto}
+.illus figcaption{font-size:13px;color:var(--muted);padding:8px 12px 10px;line-height:1.45;border-top:1px solid var(--line)}
+.illus figcaption b{color:var(--ink)}
+.linkish{border:0;background:none;padding:0;margin-left:4px;color:var(--ink);font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.av.sdis{background:#C2261E;font-family:var(--plate)}
+.illus-card .illus-img{margin:8px 0 6px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.illus-card{background:color-mix(in srgb,var(--erp) 4%,var(--surface));border-radius:var(--r2);padding:10px;border:1px solid color-mix(in srgb,var(--erp) 25%,var(--line));margin-top:8px}
+.illus-card .cited{margin:8px 0 0}
+.illus-card .cited>span.nob::before{content:""}
+.ecarts{margin-top:8px;font-size:13px}
+.ecarts summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.ecarts ul{margin:6px 0 0;padding-left:18px;color:var(--muted)}
+.ecarts li{margin:4px 0}
+.illus-card .dl{display:inline-block;margin-top:8px;font-size:12.5px}
+.planches-sign{--dom:#1F2A37;background:#1F2A37}
+.planches #plq{width:100%;max-width:420px;margin:0 0 16px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);color:var(--ink);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:grid;gap:4px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r2);padding:0 0 10px;overflow:hidden;color:var(--ink)}
+.pcard:hover{border-color:var(--ink)}
+.pcard img{width:100%;aspect-ratio:1600/1160;object-fit:cover;background:#fff;border-bottom:1px solid var(--line)}
+.pcard .pt{font-weight:700;padding:4px 12px 0;font-size:14.5px}
+.pcard .pr{font-size:12.5px;color:var(--muted);padding:0 12px}
+.pcard .pr em{font-style:normal;opacity:.8}
+
 /* ---------- navigation par codes ---------- */
 .tdom{width:100%;border:0;background:none;text-align:left;border-radius:5px}
 .tdom:hover{background:var(--sunk)}

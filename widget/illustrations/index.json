@@ -1,0 +1,447 @@
+{
+ "version": 1,
+ "credit": "Icônes © SDMIS 2023 (CC BY-NC-SA 4.0) — planches SDIS 33",
+ "fiches": [
+  {
+   "id": "CO1_desserte",
+   "titre": "Desserte des bâtiments",
+   "articles": [
+    "ERP:CO 1",
+    "ERP:CO 3"
+   ],
+   "fiche": "C.1",
+   "legende": "Plancher bas du dernier niveau accessible au public à 8 m au plus : voie engins ou espace libre. Au-delà de 8 m : voie échelles (ou espaces libres en distribution par secteurs, CO 5).",
+   "ecarts": [
+    "La règle se lit sur le plancher bas du dernier niveau accessible au public, et non sur la hauteur du bâtiment ou du dernier plancher."
+   ],
+   "image": "CO1_desserte.png?v=11c45ddb75",
+   "ordre": 0
+  },
+  {
+   "id": "CO2_espace-libre",
+   "titre": "Espace libre",
+   "articles": [
+    "ERP:CO 2",
+    "ERP:CO 5"
+   ],
+   "fiche": "C.4",
+   "legende": "Espace sans obstacle dont la plus petite dimension vaut au moins la largeur totale des sorties qui y débouchent (8 m minimum), issues à moins de 60 m d'une voie engins, accès de 1,80 m ou 3 m.",
+   "ecarts": [
+    "La page de l'ancienne fiche (C.4) était vierge : planche entièrement redessinée d'après le texte de CO 2 § 3."
+   ],
+   "image": "CO2_espace-libre.png?v=8e8232f1c6",
+   "ordre": 1
+  },
+  {
+   "id": "CO2_voie-echelles",
+   "titre": "Voie échelles",
+   "articles": [
+    "ERP:CO 2"
+   ],
+   "fiche": "C.3",
+   "legende": "Section de voie engins pour la mise en station des échelles aériennes : longueur ≥ 10 m, chaussée ≥ 4 m, pente ≤ 10 %, point d'accès en façade tous les 20 m au plus.",
+   "ecarts": [
+    "L'ancienne fiche indiquait une distance voie–façade de 1 à 8 m et une force portante de 100 kN sur Ø 20 cm : ces valeurs viennent de l'arrêté habitation du 31 janvier 1986 (art. 4), pas de CO 2. En ERP, la position est définie par l'objectif : atteindre un point d'accès d'où toutes les baies sont accessibles.",
+    "Force portante de la voie engins : 160 kN (90 kN par essieu, essieux à 3,60 m), et non 130 kN."
+   ],
+   "image": "CO2_voie-echelles.png?v=cca5f67999",
+   "ordre": 2
+  },
+  {
+   "id": "CO2_voie-engins",
+   "titre": "Voie engins",
+   "articles": [
+    "ERP:CO 2"
+   ],
+   "fiche": "C.2",
+   "legende": "Voie de 8 m au moins, chaussée de 3 m (6 m si la largeur exigée atteint 12 m), hauteur libre 3,50 m, rayon intérieur 11 m avec surlargeur S = 15/R, pente < 15 %, force portante 160 kN.",
+   "ecarts": [
+    "Force portante : 160 kN (90 kN par essieu, essieux distants d'au moins 3,60 m). Les anciennes fiches mentionnaient 130 kN.",
+    "Le panneau indiquant le tonnage limite autorisé est obligatoire en permanence (CO 2 § 4)."
+   ],
+   "image": "CO2_voie-engins.png?v=ed70664255",
+   "ordre": 3
+  },
+  {
+   "id": "CO3_baies-accessibles",
+   "titre": "Façade et baies accessibles",
+   "articles": [
+    "ERP:CO 3"
+   ],
+   "fiche": "C.5",
+   "legende": "Façade accessible : une sortie normale au niveau d'accès et des baies accessibles à chaque niveau. Baie ouvrante d'au moins 1,30 × 0,90 m ; en façade aveugle ou à châssis fixes, baies de 1,80 × 0,90 m tous les 10 à 20 m, décalées de 4 m d'un niveau à l'autre.",
+   "ecarts": [],
+   "image": "CO3_baies-accessibles.png?v=59c2817f6d",
+   "ordre": 4
+  },
+  {
+   "id": "CO4_facades-accessibles",
+   "titre": "Nombre de façades accessibles",
+   "articles": [
+    "ERP:CO 4"
+   ],
+   "fiche": "C.5",
+   "legende": "Nombre de façades accessibles et largeur des voies qui les desservent selon la catégorie et l'effectif de l'établissement.",
+   "ecarts": [],
+   "image": "CO4_facades-accessibles.png?v=e0564acdba",
+   "ordre": 5
+  },
+  {
+   "id": "CO7_isolement-facade-dominante",
+   "titre": "Isolement latéral — façade dominante",
+   "articles": [
+    "ERP:CO 7",
+    "ERP:CO 6"
+   ],
+   "fiche": "C.6",
+   "legende": "Paroi d'isolement CF 2 h (3 h si risques particuliers). Si une façade domine la couverture de l'autre : façade CF 2 h sur 8 m au-dessus de la ligne d'héberge, ou toiture basse PF ½ h sur 4 m.",
+   "ecarts": [
+    "Équivalences européennes (arrêté du 22 mars 2004) : CF 2 h = EI 120 (REI 120 si la paroi est porteuse), PF ½ h = E 30."
+   ],
+   "image": "CO7_isolement-facade-dominante.png?v=c86f56ddc5",
+   "ordre": 6
+  },
+  {
+   "id": "CO7_isolement-meme-niveau-diedre",
+   "titre": "Isolement latéral — couvertures au même niveau, dièdre",
+   "articles": [
+    "ERP:CO 7"
+   ],
+   "fiche": "C.6",
+   "legende": "Couvertures au même niveau : paroi d'isolement prolongée de 1 m hors toiture (PF 1 h) ou toiture PF ½ h sur 4 m. Façades formant un dièdre de moins de 135° : bande verticale PF ½ h de 2 m le long de l'arête.",
+   "ecarts": [
+    "La bande du dièdre peut être réduite à 1 m si le tiers comporte déjà un tel isolement ; elle n'est pas exigée pour un ERP dont le dernier niveau accessible est à moins de 8 m sans locaux à sommeil au-dessus du 1er étage."
+   ],
+   "image": "CO7_isolement-meme-niveau-diedre.png?v=cfe44d6d8d",
+   "ordre": 7
+  },
+  {
+   "id": "CO8_vis-a-vis",
+   "titre": "Isolement — bâtiments en vis-à-vis",
+   "articles": [
+    "ERP:CO 8"
+   ],
+   "fiche": "C.6",
+   "legende": "Façades séparées par moins de 8 m : l'une est PF 1 h (CF 1 h avec sommeil au-dessus du 1er étage), baies PF ½ h. Pas d'exigence à partir de 4 m si le dernier niveau accessible est à moins de 8 m et sans sommeil au-dessus du 1er étage.",
+   "ecarts": [],
+   "image": "CO8_vis-a-vis.png?v=860c70def1",
+   "ordre": 8
+  },
+  {
+   "id": "CO9_superposition",
+   "titre": "Isolement — ERP et tiers superposés",
+   "articles": [
+    "ERP:CO 9",
+    "ERP:CO 12"
+   ],
+   "fiche": "C.6",
+   "legende": "Le plancher séparatif est CF 1 h ou 2 h si le dernier niveau de l'ERP est à 8 m au plus, CF 2 h ou 3 h au-delà, selon que la partie inférieure est à risques courants ou particuliers ; la structure située dessous a la même stabilité au feu.",
+   "ecarts": [],
+   "image": "CO9_superposition.png?v=28577335f9",
+   "ordre": 9
+  },
+  {
+   "id": "CO10_franchissement",
+   "titre": "Franchissement d'une paroi d'isolement",
+   "articles": [
+    "ERP:CO 10"
+   ],
+   "fiche": "C.6",
+   "legende": "Communication entre l'ERP et un tiers : dispositif CF 2 h (CF ½ h dans les cas de CO 29, CO 35 et CO 41), portes à ferme-porte ou à fermeture automatique, non utilisable pour l'évacuation sauf exceptions, maintenance par l'exploitant de l'ERP.",
+   "ecarts": [],
+   "image": "CO10_franchissement.png?v=2ec0c621c9",
+   "ordre": 10
+  },
+  {
+   "id": "CO12_stabilite-structures",
+   "titre": "Stabilité au feu des structures",
+   "articles": [
+    "ERP:CO 12",
+    "ERP:CO 11",
+    "ERP:CO 14",
+    "ERP:CO 15"
+   ],
+   "fiche": "C.7",
+   "legende": "Structure SF et planchers CF selon le nombre de niveaux, la hauteur (8 m, 28 m) et la catégorie : ½ h en simple rez-de-chaussée, ½ h ou 1 h jusqu'à 8 m, 1 h ou 1 h ½ de 8 à 28 m (1re catégorie : degré supérieur).",
+   "ecarts": [
+    "Équivalences européennes : SF ½ h = R 30, SF 1 h = R 60, SF 1 h ½ = R 90 ; planchers CF ½ h = REI 30, CF 1 h = REI 60, CF 1 h ½ = REI 90.",
+    "Exceptions sans exigence : bâtiments en rez-de-chaussée sous conditions (CO 14), certains bâtiments de 3 niveaux au plus en 3e et 4e catégories (CO 15)."
+   ],
+   "image": "CO12_stabilite-structures.png?v=bef1830acf",
+   "ordre": 11
+  },
+  {
+   "id": "CO17_couvertures",
+   "titre": "Couvertures et feu extérieur",
+   "articles": [
+    "ERP:CO 17",
+    "ERP:CO 16",
+    "ERP:CO 18"
+   ],
+   "fiche": "C.8",
+   "legende": "Au-delà de 12 m du bâtiment voisin ou de la limite de parcelle : aucune exigence. En deçà : couverture M 0, ou M 1 à M 3 sur support continu, ou classement T 30 (d ≤ 8 m) / T 15 (8 à 12 m), indice 1 ou 2 selon la catégorie et le sommeil.",
+   "ecarts": [
+    "Le règlement cite encore l'essai de l'arrêté du 10 septembre 1970 (classes T 30 / T 15). Équivalence européenne courante : BROOF (t3) (arrêté du 14 février 2003).",
+    "Éclairages zénithaux et exutoires : M 3 si moins de 25 % de la surface, M 4 si moins de 10 % (CO 18)."
+   ],
+   "image": "CO17_couvertures.png?v=30c57c98b0",
+   "ordre": 12
+  },
+  {
+   "id": "CO21_C-plus-D",
+   "titre": "Règle du C + D",
+   "articles": [
+    "ERP:CO 21",
+    "ERP:CO 19",
+    "ERP:CO 20"
+   ],
+   "fiche": "C.9",
+   "legende": "Obstacle au passage du feu d'un étage à l'autre : C (distance verticale entre baies) + D (saillie horizontale) ≥ 1 m si la masse combustible mobilisable M ≤ 130 MJ/m², ≥ 1,30 m au-delà.",
+   "ecarts": [
+    "La définition de C, D et M et les solutions sans essai sont dans l'instruction technique relative aux façades (IT 249, version 2010).",
+    "Règle exigée : sommeil au-dessus du 1er étage, dernier niveau > 8 m avec secteurs ou compartiments, droit des planchers hauts des locaux à risques importants et des planchers d'isolement avec un tiers ; non exigée si l'ERP occupe tout le bâtiment et est sprinklé ou équipé d'un SSI A."
+   ],
+   "image": "CO21_C-plus-D.png?v=d43a5ef664",
+   "ordre": 13
+  },
+  {
+   "id": "CO24_cloisonnement-traditionnel",
+   "titre": "Cloisonnement traditionnel",
+   "articles": [
+    "ERP:CO 24",
+    "ERP:CO 23",
+    "ERP:CO 26"
+   ],
+   "fiche": "C.10",
+   "legende": "Locaux séparés des dégagements par des parois dont le degré suit la stabilité de la structure ; blocs-portes PF ½ h (¼ h sans exigence de structure) ; circulations encloisonnées recoupées tous les 25 à 30 m par des portes PF ½ h à ferme-porte.",
+   "ecarts": [
+    "Le tableau des degrés de parois figure dans le texte de l'article (CO 24 § 1 a) ; il dépend du degré de stabilité exigé pour la structure.",
+    "Parois construites de plancher à plancher ; combles et plénums recoupés en cellules de 300 m² au plus, 30 m de plus grande dimension (CO 26)."
+   ],
+   "image": "CO24_cloisonnement-traditionnel.png?v=644801bc4d",
+   "ordre": 14
+  },
+  {
+   "id": "CO24_secteurs",
+   "titre": "Distribution par secteurs",
+   "articles": [
+    "ERP:CO 24",
+    "ERP:CO 5"
+   ],
+   "fiche": "C.11",
+   "legende": "Autant de secteurs que d'escaliers normaux, de capacité comparable, isolés par une paroi CF 1 h avec un seul bloc-porte va-et-vient PF ½ h ; 800 m² au plus, 20 m au plus en façade accessible, 40 m au plus de profondeur ; une baie accessible par secteur à chaque niveau.",
+   "ecarts": [
+    "Établissements à risques particuliers : extinction automatique à eau ; locaux à sommeil : SSI de catégorie A (CO 24 § 2)."
+   ],
+   "image": "CO24_secteurs.png?v=de45b5b79a",
+   "ordre": 15
+  },
+  {
+   "id": "CO25_compartiments",
+   "titre": "Distribution par compartiments",
+   "articles": [
+    "ERP:CO 25"
+   ],
+   "fiche": "C.12",
+   "legende": "Au moins deux compartiments par niveau, de capacité comparable ; pas d'exigence de résistance au feu entre locaux à l'intérieur ; parois limites CF selon la structure ; deux communications au plus, par bloc-porte va-et-vient ou sas ; une issue de 2 UP vers l'extérieur ou un dégagement protégé au-delà de 100 personnes.",
+   "ecarts": [
+    "Autorisés seulement lorsque les dispositions particulières du type d'établissement le prévoient (surface ou effectif maximal fixé par type)."
+   ],
+   "image": "CO25_compartiments.png?v=d148c22406",
+   "ordre": 16
+  },
+  {
+   "id": "CO28_locaux-risques",
+   "titre": "Locaux à risques particuliers",
+   "articles": [
+    "ERP:CO 28",
+    "ERP:CO 27"
+   ],
+   "fiche": "C.13",
+   "legende": "Risques importants : parois et plancher haut CF 2 h, porte CF 1 h à ferme-porte s'ouvrant vers la sortie, aucune communication directe avec le public. Risques moyens : parois et plancher haut CF 1 h, bloc-porte CF ½ h à ferme-porte.",
+   "ecarts": [
+    "La liste des locaux à risques moyens ou importants est fixée par les chapitres techniques et les dispositions particulières de chaque type (ex. chaufferie > 70 kW : CH ; local électrique : EL). Les exemples de l'ancienne fiche sont indicatifs.",
+    "Équivalences : CF 2 h = EI 120 (REI 120 pour un plancher), CF 1 h = EI 60, porte CF 1 h = EI2 60-C, porte CF ½ h = EI2 30-C."
+   ],
+   "image": "CO28_locaux-risques.png?v=1fe5c7f2e0",
+   "ordre": 17
+  },
+  {
+   "id": "CO31_conduits-gaines",
+   "titre": "Conduits et gaines",
+   "articles": [
+    "ERP:CO 31",
+    "ERP:CO 30",
+    "ERP:CO 32",
+    "ERP:CO 33"
+   ],
+   "fiche": "C.14",
+   "legende": "Diamètre ≤ 75 mm et eau en charge : sans exigence. De 75 à 315 mm : pare-flammes de traversée 30 min (CF 15 min en horizontal). Au-delà de 315 mm : gaine incombustible CF de la paroi (60 min au plus) ou clapet ; gaine verticale recoupée tous les deux niveaux, trappes PF ½ h.",
+   "ecarts": [
+    "Ne visent pas les conduits de ventilation, de fumées et de gaz (chapitres CH et GZ) — CO 30 § 1.",
+    "PVC B-s3, d0 marqué NF Me ≤ 125 mm : PF 30 min réputé satisfait avec un renforcement (manchon de longueur = paroi + 1 diamètre) ; métal à point de fusion > 850 °C : réputé satisfait.",
+    "Les classements M de l'ancienne fiche sont conservés par le texte ; équivalences européennes : M 0 ≈ A2-s1, d0 ; M 1 ≈ B-s3, d0."
+   ],
+   "image": "CO31_conduits-gaines.png?v=a634c576e9",
+   "ordre": 18
+  },
+  {
+   "id": "CO35_conception-degagements",
+   "titre": "Conception des dégagements",
+   "articles": [
+    "ERP:CO 35",
+    "ERP:CO 37",
+    "ERP:CO 34"
+   ],
+   "fiche": "C.15",
+   "legende": "Une circulation principale par sortie ; circulations de 2 UP entre escaliers et sorties ; portes des locaux à 10 m au plus du débouché d'un cul-de-sac ; pas de marche isolée ; aucune saillie de plus de 0,10 m sous 1,10 m de haut.",
+   "ecarts": [],
+   "image": "CO35_conception-degagements.png?v=7cd70bedf6",
+   "ordre": 19
+  },
+  {
+   "id": "CO36_unites-de-passage",
+   "titre": "Unités de passage",
+   "articles": [
+    "ERP:CO 36",
+    "ERP:CO 44"
+   ],
+   "fiche": "C.15",
+   "legende": "Unité de passage (UP) : 0,60 m. Un dégagement d'une UP mesure 0,90 m, de deux UP 1,40 m, puis n × 0,60 m. Au-delà de 200 personnes, dégagements normaux de 2 UP au moins. Tolérance de -5 % sur la largeur des portes (CO 44).",
+   "ecarts": [
+    "Escaliers mécaniques (≤ 30°) et trottoirs roulants (≤ 12°) : 50 % au plus peuvent compter ; 1 UP pour 0,80 m entre mains courantes (0,60 m entre limons), 2 UP pour 1,20 m (1 m entre limons)."
+   ],
+   "image": "CO36_unites-de-passage.png?v=6bae2fee74",
+   "ordre": 20
+  },
+  {
+   "id": "CO38_calcul-degagements",
+   "titre": "Nombre et largeur des dégagements",
+   "articles": [
+    "ERP:CO 38"
+   ],
+   "fiche": "C.15",
+   "legende": "De 1 à 19 personnes : 1 dégagement d'1 UP. De 20 à 50 : 2 dégagements (1 UP + accessoire). De 51 à 100 : 2 × 1 UP ou 2 UP + accessoire. Au-delà : 2 dégagements jusqu'à 500, +1 par 500 ; 1 UP par 100 personnes, +1 UP jusqu'à 500.",
+   "ecarts": [],
+   "image": "CO38_calcul-degagements.png?v=cf83af3d6a",
+   "ordre": 21
+  },
+  {
+   "id": "CO39_sous-sol",
+   "titre": "Locaux en sous-sol",
+   "articles": [
+    "ERP:CO 39",
+    "ERP:CO 40"
+   ],
+   "fiche": "C.15",
+   "legende": "Sous-sol : plafond à moins de 1 m au-dessus des seuils extérieurs, ou plancher à plus de 1 m en dessous. Au-delà de 2 m de profondeur et 100 personnes, effectif arrondi à la centaine et majoré de 10 % par mètre. Un seul niveau de sous-sol accessible, à 6 m au plus.",
+   "ecarts": [
+    "La majoration d'effectif sert au calcul des dégagements, pas au classement de l'établissement."
+   ],
+   "image": "CO39_sous-sol.png?v=2b556689dc",
+   "ordre": 22
+  },
+  {
+   "id": "CO43_distances-rdc",
+   "titre": "Distances à parcourir au rez-de-chaussée",
+   "articles": [
+    "ERP:CO 43"
+   ],
+   "fiche": "C.15",
+   "legende": "Au rez-de-chaussée, de tout point d'un local jusqu'à une sortie sur l'extérieur ou un dégagement protégé : 50 m au plus s'il y a le choix entre plusieurs sorties, 30 m sinon. Deux portes distantes de moins de 5 m comptent pour un seul dégagement.",
+   "ecarts": [
+    "La règle des 5 m entre portes (CO 43 § 3) a été ajoutée au règlement ; elle ne figurait pas sur l'ancienne fiche."
+   ],
+   "image": "CO43_distances-rdc.png?v=387521ef2f",
+   "ordre": 23
+  },
+  {
+   "id": "CO45_portes",
+   "titre": "Manœuvre des portes",
+   "articles": [
+    "ERP:CO 45",
+    "ERP:CO 44",
+    "ERP:CO 46",
+    "ERP:CO 47",
+    "ERP:CO 48"
+   ],
+   "fiche": "C.15",
+   "legende": "Portes des locaux de plus de 50 personnes et des escaliers dans le sens de l'évacuation ; aucune saillie dans le dégagement ; portes de recoupement utilisées dans les deux sens en va-et-vient, vitrées à hauteur de vue ; locaux en cul-de-sac signalés « sans issue ».",
+   "ecarts": [
+    "Verrouillage des issues de secours (CO 46) : dispositif électromagnétique, déverrouillage par boîtier à bris de glace ou dispositif de contrôle d'issues (T1 ≤ 8 s, T2 ≤ 3 min avec service de sécurité), et par le SSI (MS 60).",
+    "Portes coupe-feu maintenues ouvertes : fermeture automatique conforme à la norme, plaque « Porte coupe-feu — ne mettez pas d'obstacle à la fermeture » (CO 47)."
+   ],
+   "image": "CO45_portes.png?v=6d2f03cd25",
+   "ordre": 24
+  },
+  {
+   "id": "CO49_distances-etage",
+   "titre": "Distances à parcourir en étage",
+   "articles": [
+    "ERP:CO 49",
+    "ERP:CO 52"
+   ],
+   "fiche": "C.15",
+   "legende": "En étage et en sous-sol : 40 m au plus pour gagner un escalier protégé ou une circulation protégée (30 m depuis une partie en cul-de-sac), 30 m pour un escalier non protégé. Au rez-de-chaussée, débouché d'un escalier encloisonné à moins de 20 m d'une sortie.",
+   "ecarts": [
+    "Débouché au rez-de-chaussée d'un escalier non protégé : à moins de 50 m d'une sortie (30 m sans choix), CO 52 § 6."
+   ],
+   "image": "CO49_distances-etage.png?v=474225957b",
+   "ordre": 25
+  },
+  {
+   "id": "CO53_escalier-encloisonne",
+   "titre": "Escalier encloisonné",
+   "articles": [
+    "ERP:CO 53",
+    "ERP:CO 52",
+    "ERP:CO 50",
+    "ERP:CO 54"
+   ],
+   "fiche": "C.15",
+   "legende": "Cage continue jusqu'au niveau d'évacuation, parois CF du degré de stabilité de la structure, un seul accès par niveau par bloc-porte PF ½ h à ferme-porte (hauteur ≤ 2,20 m), désenfumée ou à l'abri des fumées, sans communication avec la cage desservant les sous-sols ni local annexe.",
+   "ecarts": [
+    "Désenfumage des escaliers : instruction technique relative au désenfumage dans les ERP (IT 246), à laquelle renvoie CO 53.",
+    "Portes palières d'ascenseur en cage encloisonnée : E 30 (CO 53 § 3)."
+   ],
+   "image": "CO53_escalier-encloisonne.png?v=62b5a9dfb0",
+   "ordre": 26
+  },
+  {
+   "id": "CO55_escaliers-droits-tournants",
+   "titre": "Escaliers droits et tournants",
+   "articles": [
+    "ERP:CO 55",
+    "ERP:CO 56",
+    "ERP:CO 51"
+   ],
+   "fiche": "C.15",
+   "legende": "Volées de 25 marches au plus, paliers de la largeur de l'escalier (plus de 1 m de long si les volées ne se contrarient pas), mains courantes, recoupement au-delà de 4 UP ; escalier tournant à balancement continu, giron extérieur < 0,42 m.",
+   "ecarts": [
+    "Les valeurs de marches (hauteur 0,13 à 0,17 m, giron 0,28 à 0,36 m, 0,60 ≤ 2h + g ≤ 0,64 m) sont des règles de l'art auxquelles renvoie CO 55 ; elles ne sont pas fixées par le règlement."
+   ],
+   "image": "CO55_escaliers-droits-tournants.png?v=d7bf278971",
+   "ordre": 27
+  },
+  {
+   "id": "CO59_espace-attente-securise",
+   "titre": "Espace d'attente sécurisé",
+   "articles": [
+    "ERP:CO 59",
+    "ERP:GN 8",
+    "ERP:CO 57",
+    "ERP:CO 58",
+    "ERP:CO 60",
+    "ERP:AS 4"
+   ],
+   "fiche": "C.15",
+   "legende": "Au moins deux espaces par niveau accessible en fauteuil roulant, près d'un escalier normal, atteints dans les distances de CO 43 et CO 49 ; 2 fauteuils au moins chacun ; parois comme les locaux à sommeil, portes CF à ferme-porte ; ouvrant en façade ou protection contre les fumées ; éclairage de sécurité ; balisage.",
+   "ecarts": [
+    "L'ancienne fiche présentait le « local d'attente » de l'ascenseur (AS 4) comme règle générale. Depuis l'arrêté du 24 septembre 2009, GN 8 impose des espaces d'attente sécurisés (CO 59) ; AS 4 n'est plus qu'une des solutions équivalentes (CO 57).",
+    "Capacité : 2 fauteuils jusqu'à 50 personnes au niveau, + 1 fauteuil par tranche de 50 personnes, sans réduire la largeur du dégagement menant à l'issue."
+   ],
+   "image": "CO59_espace-attente-securise.png?v=4bafa842b2",
+   "ordre": 28
+  }
+ ]
+}
