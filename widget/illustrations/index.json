@@ -556,6 +556,101 @@
    ],
    "image": "EL5_locaux-service-electrique.png?v=ab4236f8ca",
    "ordre": 35
+  },
+  {
+   "id": "GC9_grandes-cuisines",
+   "titre": "Grandes cuisines",
+   "articles": [
+    "ERP:GC 9",
+    "ERP:GC 1",
+    "ERP:GC 4",
+    "ERP:GC 10",
+    "ERP:GC 11"
+   ],
+   "fiche": "GC 1",
+   "legende": "Plus de 20 kW de cuisson : grande cuisine. Isolée : local à risques moyens (CF 1 h), portes va-et-vient vers la salle PF ½ h / E 30. Ouverte : écran E 15 de 0,50 m au moins sous plafond, cuisine et salle classées à risques moyens, extraction mécanique tenant 400 °C pendant 1 h. Arrêt d'urgence de l'énergie dans le local.",
+   "ecarts": [
+    "L'ancienne fiche (1996) mentionnait la mise en dépression de la cuisine ouverte et un écran M 0 SF ¼ h : le texte actuel exige un écran stable au feu ¼ h ou E 15-S en M 1 ou A2-s1, d1, et une extraction mécanique à commande manuelle « évacuation de fumées ».",
+    "Distance de 0,50 m aux parois (sauf revêtement M 0 / A2-s1, d1) ; appareils marqués CE : préconisations du fabricant (GC 5)."
+   ],
+   "image": "GC9_grandes-cuisines.png?v=7c4c571e23",
+   "ordre": 36
+  },
+  {
+   "id": "GZ10_organes-coupure-gaz",
+   "titre": "Organes de coupure du gaz",
+   "articles": [
+    "ERP:GZ 10",
+    "ERP:GZ 11",
+    "ERP:GZ 14",
+    "ERP:GZ 7"
+   ],
+   "fiche": "GZ 2",
+   "legende": "Organe de coupure de branchement en limite de propriété (posé par le distributeur), puis organes de coupure au niveau des bâtiments, des sites de production d'énergie, des locaux et des appareils : commande accessible, simple et identifiée. Air de combustion pris à l'extérieur, produits de combustion évacués dehors.",
+   "ecarts": [
+    "Le chapitre GZ a été entièrement réécrit (arrêté du 23 novembre 2015 et suivants) : les règles chiffrées des anciennes fiches (stockages de propane et butane, distances, sections de ventilation, détendeurs) relèvent désormais des guides professionnels reconnus visés à l'article GZ 3, et non plus du règlement."
+   ],
+   "image": "GZ10_organes-coupure-gaz.png?v=c22e1ea359",
+   "ordre": 37
+  },
+  {
+   "id": "MS18_colonnes-seches-points-eau",
+   "titre": "Colonnes sèches et points d'eau",
+   "articles": [
+    "ERP:MS 18",
+    "ERP:MS 19",
+    "ERP:MS 20",
+    "ERP:MS 21",
+    "ERP:MS 5",
+    "ERP:MS 6"
+   ],
+   "fiche": "MS 2-3",
+   "legende": "Colonne sèche dès qu'un local à risques importants est en étage à plus de 18 m de la voie engins : raccord d'alimentation sur la façade la plus proche d'un poteau, à 60 m de cheminement au plus, signalé, prises d'incendie dans les cages d'escalier, vidange et purge.",
+   "ecarts": [
+    "Défense extérieure contre l'incendie : depuis 2015, besoins en eau fixés par le règlement départemental de DECI (RDDECI 33), et non plus par la circulaire n° 465 de 1951 citée par l'ancienne fiche (60 m³/h sous 1 bar, réserve de 120 m³).",
+    "Colonnes en charge (humides) : prévues par les dispositions particulières de certains types et en IGH ; elles ne figurent pas dans les dispositions générales MS."
+   ],
+   "image": "MS18_colonnes-seches-points-eau.png?v=448e814736",
+   "ordre": 38
+  },
+  {
+   "id": "MS39_ria-extincteurs",
+   "titre": "RIA et extincteurs",
+   "articles": [
+    "ERP:MS 39",
+    "ERP:MS 38",
+    "ERP:MS 14",
+    "ERP:MS 15",
+    "ERP:MS 16"
+   ],
+   "fiche": "MS 2-2 · MS 2-5",
+   "legende": "Extincteurs : 1 pour 200 m² et par niveau (2 au moins par établissement), eau pulvérisée de 6 L au moins, rouges, accrochés poignée à 1,20 m au plus, dans les dégagements. RIA (DN 19/6, 25/8, 33/12) numérotés, à l'extérieur et près des locaux à protéger ; locaux à risques importants battus par deux jets.",
+   "ecarts": [
+    "La règle actuelle est d'un extincteur pour 200 m² et par niveau (MS 39) ; l'ancienne fiche citait la norme APSAD (1 pour 150 m² en industriel, 250 m² en tertiaire, 10 m de distance maximale), qui n'est pas réglementaire en ERP.",
+    "Classes de feu A, B, C, D et F (feux d'huiles de cuisson) marquées sur l'extincteur ; vérification annuelle et révision décennale, étiquette datée (MS 38).",
+    "Diamètres des RIA : DN 19/6, 25/8 ou 33/12 (ancienne fiche : DN 19, 25 ou 40)."
+   ],
+   "image": "MS39_ria-extincteurs.png?v=5167bb9e9c",
+   "ordre": 39
+  },
+  {
+   "id": "MS53_categories-ssi",
+   "titre": "Catégories de SSI et équipements d'alarme",
+   "articles": [
+    "ERP:MS 53",
+    "ERP:MS 62",
+    "ERP:MS 61",
+    "ERP:MS 66",
+    "ERP:MS 64"
+   ],
+   "fiche": "SSI 2-3 · 4-2",
+   "legende": "Cinq catégories de SSI, de A (détection automatique + CMSI) à E (commandes manuelles des DAS) ; quatre types d'équipements d'alarme (1, 2a/2b, 3, 4). Seuls les types 1, 2a et 2b permettent une temporisation de l'alarme générale (5 min au plus, personnel qualifié présent).",
+   "ecarts": [
+    "Normes en vigueur : NF S 61-931 (SSI), NF S 61-936 (équipements d'alarme), NF S 61-970 (règles d'installation des SDI), NF S 61-932 (installation des SSI) ; la NF S 61-950 citée par l'ancienne fiche a été remplacée par la série NF EN 54.",
+    "Alarme perceptible par les personnes en situation de handicap (MS 64 § 3) : diffuseurs lumineux en complément du signal sonore."
+   ],
+   "image": "MS53_categories-ssi.png?v=aa6834f7d1",
+   "ordre": 40
   }
  ]
 }
