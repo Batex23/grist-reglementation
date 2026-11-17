@@ -854,6 +854,41 @@
    "ordre": 51
   },
   {
+   "id": "P2_salles-de-danse",
+   "titre": "Type P : salles de danse et de jeux",
+   "articles": [
+    "ERP:P 2",
+    "ERP:P 4",
+    "ERP:P 9",
+    "ERP:P 17",
+    "ERP:P 5"
+   ],
+   "fiche": "",
+   "legende": "Effectif : 4 personnes pour 3 m² de salle, déduction faite des estrades des musiciens et aménagements fixes autres que tables et sièges (billard : 4 par billard). Cloisonnement traditionnel seul autorisé. Vêtements suspendus le long d'une circulation : largeur majorée de 0,60 m. Bougies interdites.",
+   "ecarts": [
+    "Locaux à risques importants : stockage de disques et bandes non utilisés pendant la soirée ; risques moyens : réserves, articles de cotillons, offices, lingeries (P 5). Installations électriques BE 2 (P 16) ; chauffage électrique fixe à 100 °C de surface au plus (P 15)."
+   ],
+   "image": "P2_salles-de-danse.png?v=4c8dd10f0c",
+   "ordre": 52
+  },
+  {
+   "id": "PE11_5e-categorie-degagements",
+   "titre": "5e catégorie : dégagements et isolement",
+   "articles": [
+    "ERP:PE 11",
+    "ERP:PE 6",
+    "ERP:PE 9"
+   ],
+   "fiche": "",
+   "legende": "Moins de 20 personnes : 1 dégagement de 0,90 m. 20 à 50 : 1 de 1,40 m vers l'extérieur (25 m au plus) ou 0,90 m + 0,60 m / accessoire. 51 à 100 : 2 × 0,90 m ou 1,40 m + 0,60 m / accessoire. 101 à 200 : 1,40 + 0,90 m. 201 à 300 : 2 × 1,40 m. Cul-de-sac de 10 m au plus. Isolement des tiers et des locaux à risques : murs et planchers CF 1 h, porte CF ½ h à ferme-porte.",
+   "ecarts": [
+    "En rénovation ou aménagement dans un immeuble existant, 0,90 m peut être ramené à 0,80 m (PE 11 § 3). Au-delà de 300 personnes (public + personnel sans dégagements propres) : CO 38.",
+    "Escaliers protégés si le plancher bas accessible est à plus de 8 m, cage CF 1 h et portes PF ½ h (PE 11 § 6)."
+   ],
+   "image": "PE11_5e-categorie-degagements.png?v=ab9fda30ac",
+   "ordre": 53
+  },
+  {
    "id": "PS8_structure-isolement",
    "titre": "Parcs de stationnement : structure et isolement",
    "articles": [
@@ -869,7 +904,7 @@
     "Parois en M 0 / A2-s2, d0 ; revêtements M 1 / B-s3, d0 (PS 16). Désenfumage naturel limité aux niveaux de référence et adjacents, 12 dm² par véhicule (PS 18)."
    ],
    "image": "PS8_structure-isolement.png?v=6044e65e32",
-   "ordre": 52
+   "ordre": 54
   },
   {
    "id": "PS12_compartiments-escaliers",
@@ -886,7 +921,7 @@
     "Tunnel de circulation de plus de 50 m : 40 m au plus pour en sortir, désenfumage (900 m³/h par 5 m, 600 si sprinklé) (PS 14)."
    ],
    "image": "PS12_compartiments-escaliers.png?v=05246c584e",
-   "ordre": 53
+   "ordre": 55
   },
   {
    "id": "R6_enseignement",
@@ -904,7 +939,25 @@
     "Exercices d'évacuation pendant l'année, le premier dans le mois qui suit la rentrée, de nuit s'il y a des locaux à sommeil (R 33)."
    ],
    "image": "R6_enseignement.png?v=222e2deed6",
-   "ordre": 54
+   "ordre": 56
+  },
+  {
+   "id": "T23_stands-expositions",
+   "titre": "Type T : expositions et stands",
+   "articles": [
+    "ERP:T 23",
+    "ERP:T 21",
+    "ERP:T 2",
+    "ERP:T 22",
+    "ERP:T 24"
+   ],
+   "fiche": "",
+   "legende": "Effectif : 1 personne / m² (salons temporaires), 1 / 9 m² (expositions permanentes). Stands en M 3. Stands couverts ou à étage : moins de 300 m², distants de 4 m au moins, plafonds pleins limités à 10 % de la surface du niveau, un seul niveau de surélévation ; au-delà de 50 m², moyens d'extinction et agent de sécurité.",
+   "ecarts": [
+    "Vélums horizontaux autorisés le temps de la manifestation, en M 1 (M 2 si sprinklé) (T 22). Chargé de sécurité désigné par l'organisateur ; demande d'autorisation deux mois avant l'ouverture (T 5, T 6)."
+   ],
+   "image": "T23_stands-expositions.png?v=c7f27c26fb",
+   "ordre": 57
   },
   {
    "id": "U10_zones-protegees",
@@ -921,7 +974,7 @@
     "Circulations des niveaux à sommeil désenfumées mécaniquement quelle que soit leur longueur (naturel possible en R+1 après avis), asservies à la détection de la zone sinistrée (U 26)."
    ],
    "image": "U10_zones-protegees.png?v=e735cbdadc",
-   "ordre": 55
+   "ordre": 58
   },
   {
    "id": "W3_bureaux",
@@ -940,7 +993,26 @@
     "Assujettis : 100 personnes en sous-sol, 100 en étages, 200 au total (W 1). Salles de coffres admises à plus de 6 m de profondeur (W 5)."
    ],
    "image": "W3_bureaux.png?v=15b9762b9e",
-   "ordre": 56
+   "ordre": 59
+  },
+  {
+   "id": "X2_etablissements-sportifs",
+   "titre": "Type X : établissements sportifs couverts",
+   "articles": [
+    "ERP:X 2",
+    "ERP:X 4",
+    "ERP:X 5",
+    "ERP:X 1",
+    "ERP:X 7",
+    "ERP:X 15"
+   ],
+   "fiche": "",
+   "legende": "Effectif (sauf déclaration) : plus grande valeur entre 1 personne / 4 m² d'aire d'activité et 1 / 8 m² + spectateurs (tennis : 25 par court) ; patinoires 2 / 3 m² ou 1 / 10 m² + spectateurs ; piscines 1 / m² de plan d'eau ou 1 / 5 m² + spectateurs. Compartiments de 1 600 m² au plus ; mezzanine de spectateurs sur un seul niveau : pas un étage.",
+   "ecarts": [
+    "Couvertures à plus de 8 m d'un tiers ou de la limite de parcelle : M 3 admis (M 2 sur 3 m au-dessus du sol) ; plafonds des grands volumes M 3, résilles bois interdites (X 7, X 15). Pédiluves de 0,15 m au plus (X 8)."
+   ],
+   "image": "X2_etablissements-sportifs.png?v=2df14e89ce",
+   "ordre": 60
   },
   {
    "id": "HAB3_familles",
@@ -956,7 +1028,7 @@
     "Collectif R+3 dont le plancher bas du logement le plus haut est à plus de 8 m : escaliers encloisonnés, sauf escaliers extérieurs (art. 3, 2°)."
    ],
    "image": "HAB3_familles.png?v=c230ee0677",
-   "ordre": 57
+   "ordre": 61
   },
   {
    "id": "HAB4_voie-echelles",
@@ -971,7 +1043,7 @@
     "Ce sont ces valeurs (1 à 8 m, 100 kN sur Ø 20 cm) que l'ancienne fiche ERP C.3 reprenait : elles sont propres à l'habitation. Voie engins habitation : 130 kN (40 + 90 kN, essieux à 4,50 m), hauteur libre 3,50 m (3,30 + 0,20)."
    ],
    "image": "HAB4_voie-echelles.png?v=9d51f69cd1",
-   "ordre": 58
+   "ordre": 62
   },
   {
    "id": "GH7_volume-protection",
@@ -987,7 +1059,7 @@
     "Planche ajoutée : l'ancien recueil ne traitait pas les IGH. Structure de l'IGH : SF 2 h ou R 120 (GH 9)."
    ],
    "image": "GH7_volume-protection.png?v=42c9e72ae7",
-   "ordre": 59
+   "ordre": 63
   }
  ]
 }
