@@ -392,7 +392,7 @@ table.seuils th,table.seuils td{border:1px solid var(--line);padding:3px 8px;tex
 table.seuils th{background:var(--sunk);font-weight:600}
 table.seuils td+td,table.seuils th+th{text-align:center}
 .apl-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
-.apl-tools .hint{margin:0 auto 0 0}
+.apl-tools .hint{margin:0}
 .btn.ghost{background:var(--surface)}
 .apl-head,.apl-row{display:grid;grid-template-columns:minmax(180px,250px) minmax(0,1fr) minmax(0,1fr) 150px;gap:6px 16px;align-items:start}
 .apl-head{position:sticky;top:0;z-index:4;background:var(--paper);font-size:12px;color:var(--muted);font-weight:600;padding:6px 0;border-bottom:2px solid var(--ink)}
@@ -424,6 +424,64 @@ table.seuils td+td,table.seuils th+th{text-align:center}
 mark.catm{background:color-mix(in srgb,var(--mark) 45%,transparent);color:inherit;border-radius:2px;padding:0 2px}
 mark.catm.on{background:var(--mark);box-shadow:inset 0 -2px 0 var(--focus);font-weight:600}
 .apl-src{margin-top:18px}
+
+/* Calcul de l'effectif */
+.tp.princ{position:relative}
+.tp.princ::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:#fff}
+.apl-calc-box{background:var(--surface);border-radius:var(--r2);box-shadow:var(--shadow);padding:14px 16px;margin:0 0 18px}
+.calc-head{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:0 0 8px}
+.calc-head h2{font:700 22px/1.1 var(--plate);letter-spacing:.02em;margin:0}
+.cvars{display:flex;flex-wrap:wrap;gap:8px 16px}
+.cvar{font-size:13px;display:flex;gap:6px;align-items:center}
+.apl-calc-box select,.apl-calc-box input{font:inherit;font-size:13.5px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;background:var(--paper);color:var(--ink);min-width:0}
+.ctab-wrap{overflow-x:auto}
+table.ctab{border-collapse:collapse;width:100%;min-width:820px}
+.ctab th{font-size:12px;color:var(--muted);font-weight:600;text-align:left;padding:4px 6px;border-bottom:2px solid var(--ink)}
+.ctab td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.ctab td:nth-child(1) select{width:74px}
+.ctab td:nth-child(2) input{width:100%;min-width:130px}
+.ctab th:nth-child(8),.ctab th:nth-child(6),.ctab th:nth-child(7){width:64px}
+.ctab th:nth-child(9){width:30px}
+.ctab th:nth-child(5){width:120px}
+.ctab td:nth-child(3) select{width:64px}
+.ctab td:nth-child(4){min-width:200px;max-width:340px}
+.ctab .msel{width:100%}
+.ctab .mlab{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.3}
+.ctab .mlab b{color:var(--erp);font-weight:700}
+.ctab td.q{white-space:nowrap}
+.ctab td.q input{width:70px}
+.ctab .u{font-size:12px;color:var(--muted);margin-left:4px}
+.ctab td.n input{width:64px;text-align:right}
+.ctab td.n{text-align:right;font-variant-numeric:tabular-nums}
+.ctab td.tot{font-weight:700;padding-top:9px}
+.ctab tr.noncumul td{color:var(--muted)}
+.ctab tfoot td{font-weight:700;background:var(--sunk);border-bottom:0;padding:8px 6px}
+.ctab tfoot td:first-child{text-align:center}
+.ctab .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:2px 6px}
+.ctab .x:hover{color:var(--erp)}
+.ctab .empty{color:var(--muted);font-size:13.5px;padding:12px 6px}
+.calc-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.calc-bar .sp{flex:1}
+.cres{display:flex;gap:14px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
+.ccat{font:700 40px/1 var(--plate);background:var(--ink);color:var(--surface);border-radius:var(--r1);padding:8px 12px 6px;text-align:center;min-width:76px}
+.ccat small{display:block;font:600 11px/1.2 var(--font);opacity:.8}
+.cres ul{margin:4px 0 0;padding-left:18px;font-size:13.5px}
+.cres li.alert{color:var(--erp);font-weight:600}
+.cres .man{font-size:13px;margin:6px 0 0}
+.calc-note{font-size:12.5px;margin:8px 0 0}
+.apl-card .apl-cat{margin:12px 0 0}
+.apl-filt{display:flex;gap:6px;align-items:center;font-size:13.5px;font-weight:600;margin-right:auto}
+.apl-tools .apl-filt+.hint{margin:0}
+.an.off{opacity:.4;text-decoration:line-through}
+.legal .offcat{display:none}
+.legal .offsoft{opacity:.45}
+.legal .offstub{font-size:12.5px;color:var(--muted);font-style:italic;cursor:pointer;border-left:3px dashed var(--line);padding-left:8px}
+.legal .offstub:hover{color:var(--erp)}
+.legal tr.offsoft{opacity:.35}
+.legal tr.oncat{border-left:0;margin:0;padding:0;background:color-mix(in srgb,var(--mark) 30%,transparent)}
+.legal .oncat{border-left:3px solid var(--focus);padding-left:8px;margin-left:-11px}
+mark.effm{background:transparent;color:inherit;border-bottom:2px dotted var(--erp);cursor:help}
+@media print{.apl-calc-box{box-shadow:none;border:1px solid #999}.calc-bar,.ctab .x{display:none!important}}
 @media (max-width:980px){
   .apl-head{display:none}
   .apl-row{grid-template-columns:minmax(0,1fr)}

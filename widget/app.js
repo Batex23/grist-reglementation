@@ -729,6 +729,8 @@
 
   // ------------------------------------------------------------------ réglementation applicable (extraction par type et catégorie)
   const CAT_LBL = { 1: '1re', 2: '2e', 3: '3e', 4: '4e', 5: '5e' };
+  const NIVEAUX = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const nivLbl = (n) => (n < 0 ? `SS${n}` : n === 0 ? 'RDC' : `R+${n}`);
   function applNode(num) {
     if (!st.erpNum) {
       st.erpNum = new Map();
@@ -740,84 +742,249 @@
     const t = ((n && n.texte) || '').split('\n')[0].trim();
     return t && t.length < 110 && !t.startsWith('§') ? t : (n ? n.chemin.split(' › ').slice(-1)[0].replace(/^(Section|Sous-section|Chapitre) [^:]*: /, '') : '');
   }
-  function applState() {
-    const v = st.view || {};
-    const saved = store.get('appl', {});
+
+  /* --- état du calculateur (persistant) --- */
+  function calcState() {
+    if (st.calc) return st.calc;
     const A = st.appl;
-    const t = A.types.find((x) => x.code === (v.t || saved.t)) || A.types.find((x) => x.code === 'L');
-    const c = +(v.c || saved.c || 3);
-    const s = v.s != null ? v.s : (saved.s != null && saved.t === t.code ? saved.s : !!t.sommeil);
-    return { t, c, s };
+    let c = store.get('applCalc', null);
+    if (!c || !Array.isArray(c.types) || !c.types.length) {
+      const old = store.get('appl', {});
+      c = { types: [old.t || 'L'], variants: {}, rows: [], cat: null, sommeil: null, filtre: true };
+    }
+    c.types = c.types.filter((x) => A.types.some((t) => t.code === x));
+    if (!c.types.length) c.types = ['L'];
+    c.rows = (c.rows || []).filter((r) => r && typeof r === 'object');
+    if (c.filtre == null) c.filtre = true;
+    st.calc = c;
+    return c;
   }
-  /* Rubriques effectives : [{c, id, t, dg:[num], dp:[num]}] selon le groupe */
-  function applRows(t, cat, sommeil) {
-    const A = st.appl;
-    const g2 = cat === 5 && t.livre === 'II';
-    const base = t.livre === 'IV' ? A.rub1.filter((r) => r.c === 'Classement et généralités' || (t.dp[r.id] || []).length) : (g2 ? A.rub2 : A.rub1);
-    const dpOf = (id) => (g2 ? ((t.dp5 || {})[id] || []) : (t.dp[id] || []));
-    const rows = base.map((r) => ({
-      c: r.c, id: r.id, t: r.t,
-      dg: t.livre === 'IV' ? r.dg.filter((n) => /^(GN|R1)/.test(n)) : r.dg.concat(g2 && sommeil ? (A.sommeil[r.id] || []) : []),
-      dp: dpOf(r.id),
-    }));
-    if (g2) {
-      // dispositions particulières d'un chapitre du livre III rangées dans une rubrique absente du squelette 5e : on les rattache au chapitre le plus proche
-      const known = new Set(rows.map((r) => r.id));
-      for (const [id, nums] of Object.entries(t.dp5 || {})) if (!known.has(id)) {
-        const r1 = A.rub1.find((r) => r.id === id);
-        const host = rows.find((r) => r1 && r.c === r1.c) || rows[0];
-        host.dp = host.dp.concat(nums);
+  const saveCalc = () => store.set('applCalc', st.calc);
+  const typeOf = (code) => st.appl.types.find((t) => t.code === code);
+  const methOf = (id) => st.appl.methodes.find((m) => m.id === id);
+  function methLabel(m, niv) {
+    if (m.o === 'niveau') return niv <= 1 ? '1 personne pour 3 m²' : niv === 2 ? '1 personne pour 6 m²' : '1 personne pour 15 m²';
+    return m.lab;
+  }
+  function methK(m, niv) {
+    if (m.o === 'niveau') return niv <= 1 ? 1 / 3 : niv === 2 ? 1 / 6 : 1 / 15;
+    return m.k;
+  }
+  /* Effectifs d'une ligne : {pub, pers, calc (public calculé), cumul} */
+  function rowEff(r) {
+    const m = methOf(r.m);
+    const q = parseFloat(String(r.q || '').replace(',', '.')) || 0;
+    const calc = m ? Math.ceil(q * methK(m, +r.niv) - 1e-9) : 0;
+    const persCalc = m && m.kp ? Math.ceil(q * m.kp - 1e-9) : 0;
+    const pub = r.pub !== '' && r.pub != null ? (+r.pub || 0) : calc;
+    const pers = r.pers !== '' && r.pers != null ? (+r.pers || 0) : persCalc;
+    return { pub, pers, calc, persCalc, cumul: !(m && m.o === 'noncumul'), m };
+  }
+  function seuilNum(v) { const x = parseInt(v, 10); return isNaN(x) ? null : x; }
+  /* Classement : catégorie calculée et justification */
+  function classer() {
+    const c = calcState();
+    const rows = c.rows.filter((r) => r.m);
+    if (!rows.length) return null;
+    const per = {}; let pub = 0, pers = 0, ss = 0, et = 0; const lvEt = new Set();
+    for (const r of rows) {
+      const e = rowEff(r); if (!e.cumul) continue;
+      const t = (e.m && e.m.t) || r.t;
+      const p = (per[t] = per[t] || { pub: 0, ss: 0, et: 0, res: 0, lv: new Set(), bas: false });
+      p.pub += e.pub; pub += e.pub; pers += e.pers;
+      if (+r.niv <= 0) p.bas = true;
+      if (+r.niv < 0) { p.ss += e.pub; ss += e.pub; }
+      if (+r.niv > 0) { p.et += e.pub; et += e.pub; p.lv.add(+r.niv); lvEt.add(+r.niv); }
+      if (e.m && e.m.o === 'res') p.res += e.pub;
+    }
+    const why = []; const alerts = [];
+    // un type est-il, à lui seul, au 1er groupe (PE 2) ?
+    const g1Type = {};
+    for (const [code, p] of Object.entries(per)) {
+      const t = typeOf(code); if (!t || !t.seuils.length) continue;
+      const v = (t.var || [{ rows: t.seuils.map((_, i) => i) }])[c.variants[code] || 0] || { rows: [0] };
+      for (const ri of v.rows) {
+        const row = t.seuils[ri]; if (!row) continue;
+        const sSS = seuilNum(row[1]), sEt = row[2].startsWith('1 (') ? (p.lv.size === 1 && !p.bas ? 20 : 1) : seuilNum(row[2]), sTot = seuilNum(row[3]);
+        if (row[1] === 'interdit' && p.ss > 0) alerts.push(`${code} : ${row[0]} interdits en sous-sol (PE 2)`);
+        const base = /résidents/.test(row[0]) ? p.res : p.pub;
+        if (sTot != null && base >= sTot) { g1Type[code] = `${code} : ${/résidents/.test(row[0]) ? 'résidents' : 'public'} ${base} ≥ ${sTot} (PE 2, ${row[0].toLowerCase()})`; break; }
+        if (sSS != null && p.ss >= sSS) { g1Type[code] = `${code} : public en sous-sol ${p.ss} ≥ ${sSS} (PE 2)`; break; }
+        if (sEt != null && p.et >= sEt) { g1Type[code] = `${code} : public en étages ${p.et} ≥ ${sEt} (PE 2)`; break; }
       }
     }
-    return rows;
+    const types = Object.keys(per);
+    let groupe1 = false;
+    if (types.length > 1) {
+      if (ss >= 50) why.push(`public en sous-sol ${ss} ≥ 50 (GN 2 § 2, types différents)`);
+      if (et >= 100) why.push(`public en étages ${et} ≥ 100 (GN 2 § 2)`);
+      if (pub >= 200) why.push(`public total ${pub} ≥ 200 (GN 2 § 2)`);
+      for (const w of Object.values(g1Type)) why.push(`${w}, donc 4e catégorie au moins (GN 2 § 2)`);
+      groupe1 = why.length > 0;
+    } else {
+      const w = Object.values(g1Type)[0];
+      if (w) { why.push(w); groupe1 = true; }
+      const t = typeOf(types[0]);
+      if (t && !t.seuils.length) { why.push(`type ${t.code} : pas de seuil de 5e catégorie dans PE 2, classement selon R. 143-19`); groupe1 = true; }
+    }
+    let cat;
+    if (!groupe1) {
+      cat = 5;
+      why.push(`public ${pub} sous les seuils ${types.length > 1 ? 'de GN 2 § 2 (50 en sous-sol, 100 en étages, 200 au total)' : 'du 1er groupe (PE 2)'} : 5e catégorie, le personnel n'intervient pas (GN 1 § 2 b)`);
+    } else {
+      const tot = pub + pers;
+      cat = tot > 1500 ? 1 : tot > 700 ? 2 : tot > 300 ? 3 : 4;
+      why.push(`effectif public ${pub} + personnel ${pers} = ${tot} : ${CAT_LBL[cat]} catégorie (R. 143-19)`);
+    }
+    return { cat, pub, pers, tot: pub + pers, ss, et, why, alerts, per };
   }
-  function applAutres(t, cat) {
-    const g2 = cat === 5 && t.livre === 'II';
-    return g2 ? (t.autres5 || []) : t.autres;
+  function currentCat() {
+    const c = calcState();
+    if (c.cat) return c.cat;
+    const r = classer();
+    return r ? r.cat : 3;
   }
-  function catOf(t, pub, pers) {
-    const ens = t.seuils.map((r) => parseInt(r[3], 10)).filter((x) => !isNaN(x));
-    const seuil = ens.length ? Math.max(...ens) : null;
-    if (seuil && pub < seuil) return { c: 5, why: `public ${pub} < seuil de ${seuil} (PE 2, ensemble des niveaux) : 5e catégorie, à vérifier aussi par niveau` };
-    const tot = pub + pers;
-    const c = tot > 1500 ? 1 : tot > 700 ? 2 : tot > 300 ? 3 : 4;
-    return { c, why: `effectif total ${tot} (public + personnel) : ${CAT_LBL[c]} catégorie (R. 143-19)` };
-  }
-  const ORD = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, premiere: 1, deuxieme: 2, troisieme: 3, quatrieme: 4, cinquieme: 5 };
-  const CAT_RX = /\b((?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me)(?:\s*(?:,|et|à|ou)\s*(?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me))*\s+cat[ée]gories?|(?:deux|trois|quatre) premi[èe]res cat[ée]gories|(?:de )?la [1-5](?:re|e) (?:[àa]|et) (?:la )?[1-5]e cat[ée]gories?)/gi;
+
+  /* --- filtrage par catégorie : passages et articles --- */
+  const ORDW = { premi: 1, deuxi: 2, troisi: 3, quatri: 4, cinqui: 5 };
+  const CAT_RX = /\b((?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me)(?:\s*(?:,|et|à|ou)\s*(?:de\s+)?(?:la\s+)?(?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me))*\s+cat[ée]gories?|(?:deux|trois|quatre) premi[èe]res cat[ée]gories)/gi;
+  const NEG_RX = /(sauf|à l'exception|exception faite|excepté|autres? que|hormis|non applicables?|ne s'applique pas|ne sont pas applicables|dispensés?)[^.;]{0,50}$/i;
+  const LIQ_RX = /(liquides?|combustibles?|alcools?|produits?|gaz)\s+(?:inflammables?\s+)?(?:de\s+)?(?:la\s+)?$/i;
   function catsIn(s) {
     if (/quatre premi/i.test(s)) return [1, 2, 3, 4];
     if (/trois premi/i.test(s)) return [1, 2, 3];
     if (/deux premi/i.test(s)) return [1, 2];
-    const toks = [...s.matchAll(/([1-5])(?:re|er|ère|e|ème)|(premi|deuxi|troisi|quatri|cinqui)[èe]me|(premi[èe]re)|\s(à)\s/gi)];
     const out = []; let range = false;
-    for (const m of toks) {
-      if (m[4]) { range = true; continue; }
-      const k = m[1] || S.fold(m[2] ? m[2] + 'eme' : m[3]).replace(/[^a-z]/g, '').replace(/^premi.*/, 'premiere');
-      const v = ORD[k] || ORD[k.replace(/eme$/, 'eme')];
+    for (const m of s.matchAll(/([1-5])(?:re|er|ère|e|ème)|(premi|deuxi|troisi|quatri|cinqui)[èe]|\s(à)\s/gi)) {
+      if (m[3]) { range = true; continue; }
+      const v = m[1] ? +m[1] : ORDW[S.fold(m[2])];
       if (!v) continue;
       if (range && out.length) { for (let i = out[out.length - 1] + 1; i <= v; i++) out.push(i); range = false; } else out.push(v);
     }
     return out;
   }
-  function markCats(el, cat) {
+  /* Catégories visées par un texte (null si aucune). lead : seulement au début du texte */
+  function scopeOf(txt, lead) {
+    CAT_RX.lastIndex = 0; let m; let res = null;
+    while ((m = CAT_RX.exec(txt))) {
+      const before = txt.slice(Math.max(0, m.index - 60), m.index);
+      if (LIQ_RX.test(before)) continue;
+      if (lead && m.index > 110) break;
+      let cs = catsIn(m[0]);
+      if (NEG_RX.test(before)) cs = [1, 2, 3, 4, 5].filter((x) => !cs.includes(x));
+      res = (res || []).concat(cs);
+    }
+    return res;
+  }
+  /* Applicabilité des lignes d'un texte : [{t, ok}] (ok null = neutre) */
+  function blocksScope(lines, cat) {
+    let scope = null;
+    return lines.map((t) => {
+      const s = t.trim();
+      const head = /^(§|paragraphe|article|[IVX]+\.|\d+°)/i.test(s);
+      const sc = scopeOf(s, true);
+      if (sc) { scope = /:\s*$/.test(s) ? sc : null; return { t, ok: sc.includes(cat) }; }
+      if (head) scope = null;
+      if (scope && /^(-|–|•|[a-z]\)|\d+\))/.test(s)) return { t, ok: scope.includes(cat) };
+      if (scope && !/^(-|–|•|[a-z]\)|\d+\))/.test(s)) scope = null;
+      return { t, ok: null };
+    });
+  }
+  /* L'article vise-t-il la catégorie ? true / false (exclu) */
+  function artApplies(n, cat) {
+    if (!n) return true;
+    const key = n.id + ':' + cat;
+    st.artCat = st.artCat || new Map();
+    if (st.artCat.has(key)) return st.artCat.get(key);
+    const lines = (n.texte || '').split('\n').filter((l) => l.trim());
+    let ok = true;
+    const tsc = lines.length ? scopeOf(lines[0], true) : null;
+    if (tsc && lines[0].length < 140) ok = tsc.includes(cat);
+    else if (lines.length > 1) {
+      const b = blocksScope(lines.slice(1), cat);
+      const scoped = b.filter((x) => x.ok !== null);
+      if (scoped.length && scoped.length === b.length && scoped.every((x) => !x.ok)) ok = false;
+    }
+    st.artCat.set(key, ok);
+    return ok;
+  }
+  /* Applique le filtre aux blocs rendus d'un article */
+  function filterDom(el, cat, filtre) {
+    const blocks = [...el.children].flatMap((b) => (b.tagName === 'TABLE' ? [...b.querySelectorAll('tr')] : [b]));
+    const lines = blocks.map((b) => (b.tagName === 'TR' ? (b.cells[0] ? b.cells[0].textContent : '') : b.textContent));
+    const sc = blocksScope(lines, cat);
+    let hid = [];
+    const flush = (after) => {
+      if (!hid.length) return;
+      const stub = document.createElement('p');
+      stub.className = 'offstub';
+      const n = hid.length; const grp = hid;
+      const lab = `${n} passage${n > 1 ? 's' : ''} visant une autre catégorie, masqué${n > 1 ? 's' : ''} · afficher`;
+      stub.textContent = lab;
+      stub.onclick = () => { grp.forEach((b) => b.classList.remove('offcat')); stub.remove(); };
+      grp[0].before(stub); hid = [];
+    };
+    sc.forEach((x, i) => {
+      const b = blocks[i];
+      if (x.ok === false && b.tagName === 'TR') { if (hid.length) flush(hid[0]); b.classList.add('offsoft'); return; }
+      if (x.ok === false) { b.classList.add(filtre ? 'offcat' : 'offsoft'); if (filtre) hid.push(b); else flush(b); }
+      else { if (hid.length) flush(hid[0]); if (x.ok) b.classList.add('oncat'); }
+    });
+    if (hid.length) flush(hid[0]);
+  }
+  function markCats(el, cat, eff) {
     const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); const todo = [];
     while (tw.nextNode()) todo.push(tw.currentNode);
+    const RX = new RegExp(CAT_RX.source + '|(?:plus de|moins de|au moins|au-delà de|au-dessus de|supérieure? à|inférieure? à|jusqu\'à|à partir de)\\s+\\d[\\d\\s]*\\s(?:personnes|places)', 'gi');
     for (const tn of todo) {
-      const s = tn.nodeValue; CAT_RX.lastIndex = 0; let m, last = 0, frag = null;
-      while ((m = CAT_RX.exec(s))) {
+      const s = tn.nodeValue; RX.lastIndex = 0; let m, last = 0, frag = null;
+      while ((m = RX.exec(s))) {
+        const isCat = /cat[ée]gorie/i.test(m[0]);
+        if (isCat && LIQ_RX.test(s.slice(Math.max(0, m.index - 60), m.index))) continue;
         frag = frag || document.createDocumentFragment();
         frag.append(s.slice(last, m.index));
-        const mk = document.createElement('mark'); mk.className = 'catm' + (catsIn(m[0]).includes(cat) ? ' on' : ''); mk.textContent = m[0];
-        frag.append(mk); last = m.index + m[0].length;
+        const mk = document.createElement('mark');
+        if (isCat) mk.className = 'catm' + (catsIn(m[0]).includes(cat) ? ' on' : '');
+        else { mk.className = 'effm'; if (eff) mk.title = `Effectif calculé de l'établissement : ${eff} personnes`; }
+        mk.textContent = m[0]; frag.append(mk); last = m.index + m[0].length;
       }
       if (frag) { frag.append(s.slice(last)); tn.replaceWith(frag); }
     }
   }
-  function chipHTML(num, kind) {
+
+  /* --- rubriques fusionnées pour plusieurs types --- */
+  function applRows(codes, cat, sommeil) {
+    const A = st.appl;
+    const ts = codes.map(typeOf).filter(Boolean);
+    const anyII = ts.some((t) => t.livre === 'II');
+    const g2 = cat === 5;
+    const base = anyII ? (g2 ? A.rub2 : A.rub1) : A.rub1;
+    const rows = base.map((r) => ({ c: r.c, id: r.id, t: r.t, dg: anyII ? r.dg.concat(g2 && sommeil ? (A.sommeil[r.id] || []) : []) : r.dg.filter((n) => /^(GN|R1)/.test(n)), dp: [] }));
+    for (const t of ts) {
+      const useII5 = g2 && t.livre === 'II';
+      const src = useII5 ? (t.dp5 || {}) : t.dp;
+      for (const [id, nums] of Object.entries(src)) {
+        let host = rows.find((r) => r.id === id);
+        if (!host) {
+          const r1 = A.rub1.find((r) => r.id === id);
+          host = rows.find((r) => r1 && r.c === r1.c);
+          if (!host && r1) { host = { c: r1.c, id: r1.id, t: r1.t, dg: [], dp: [] }; rows.push(host); }
+          if (!host) host = rows[0];
+        }
+        host.dp = host.dp.concat(nums);
+      }
+    }
+    if (!anyII) return rows.filter((r) => r.c === 'Classement et généralités' || r.dp.length);
+    return rows;
+  }
+  function applAutres(codes, cat) {
+    return codes.map(typeOf).filter(Boolean).flatMap((t) => ((cat === 5 && t.livre === 'II') ? (t.autres5 || []) : t.autres).map((a) => ({ s: `${t.code} · ${a.s}`, n: a.n })));
+  }
+  function chipHTML(num, kind, cat) {
     const n = applNode(num);
     if (!n) return `<span class="an ${kind} miss" title="Absent de la base">${esc(num)}</span>`;
-    return `<button class="an ${kind}" data-ref="${n.id}" title="${esc(artTitle(n))}">${esc(dispNum(n))}</button>`;
+    const off = cat && !artApplies(n, cat);
+    return `<button class="an ${kind}${off ? ' off' : ''}" data-ref="${n.id}" title="${esc(artTitle(n))}${off ? ` (ne vise pas la ${CAT_LBL[cat]} catégorie)` : ''}">${esc(dispNum(n))}</button>`;
   }
   function textsHTML(nums, kind) {
     return nums.map((num) => {
@@ -830,26 +997,186 @@
     for (const num of nums) for (const f of (st.illusBy && st.illusBy.get(illusKey('ERP', num))) || []) if (!seen.has(f.id)) { seen.add(f.id); out.push(f); }
     return out;
   }
+
+  /* --- tableau d'effectif --- */
+  function methOptions(code, sel) {
+    const ms = st.appl.methodes.filter((m) => m.t === code);
+    return ms.map((m) => `<option value="${m.id}"${m.id === sel ? ' selected' : ''}>${esc(m.ref)} : ${esc(m.o === 'niveau' ? 'selon le niveau (1/3, 1/6, 1/15 m²)' : m.lab)}</option>`).join('');
+  }
+  function calcHTML() {
+    const c = calcState();
+    const all = st.appl.types;
+    const order = c.types.concat(all.map((t) => t.code).filter((x) => !c.types.includes(x)));
+    const rows = c.rows.map((r, i) => {
+      const e = rowEff(r); const m = e.m;
+      return `<tr data-row="${i}" class="${m && m.o === 'noncumul' ? 'noncumul' : ''}">
+        <td><select data-f="niv" aria-label="Niveau">${NIVEAUX.map((n) => `<option value="${n}"${+r.niv === n ? ' selected' : ''}>${nivLbl(n)}</option>`).join('')}</select></td>
+        <td><input data-f="loc" value="${esc(r.loc || '')}" placeholder="Désignation du local" aria-label="Locaux"></td>
+        <td><select data-f="t" aria-label="Type">${order.map((x) => `<option${x === r.t ? ' selected' : ''}>${x}</option>`).join('')}</select></td>
+        <td><select data-f="m" class="msel" aria-label="Mode de calcul">${methOptions(r.t, r.m)}</select><div class="mlab" data-mlab>${m ? `<b>${esc(m.ref)}</b> ${esc(methLabel(m, +r.niv))}` : ''}</div></td>
+        <td class="q"><input data-f="q" inputmode="decimal" value="${esc(r.q || '')}" aria-label="Quantité"><span class="u">${esc(m ? m.u : '')}</span></td>
+        <td class="n"><input data-f="pub" inputmode="numeric" value="${esc(r.pub ?? '')}" placeholder="${e.calc}" aria-label="Effectif public"></td>
+        <td class="n"><input data-f="pers" inputmode="numeric" value="${esc(r.pers ?? '')}" placeholder="${e.persCalc}" aria-label="Effectif personnel"></td>
+        <td class="n tot" data-tot>${m && m.o === 'noncumul' ? `(${e.pub + e.pers})` : e.pub + e.pers}</td>
+        <td><button class="x" data-calcdel="${i}" title="Supprimer la ligne" aria-label="Supprimer la ligne">×</button></td></tr>`;
+    }).join('');
+    const vars = c.types.map(typeOf).filter((t) => t && t.var).map((t) => `<label class="cvar">${esc(t.code)} : <select data-var="${t.code}">${t.var.map((v, i) => `<option value="${i}"${(c.variants[t.code] || 0) === i ? ' selected' : ''}>${esc(v.l)}</option>`).join('')}</select></label>`).join('');
+    return `<div class="calc-head"><h2>Effectif et catégorie</h2><div class="cvars">${vars}</div></div>
+      <div class="ctab-wrap"><table class="ctab"><thead><tr><th>Niveau</th><th>Locaux</th><th>Type</th><th>Article et mode de calcul</th><th>Quantité</th><th>Public</th><th>Personnel</th><th>Total</th><th></th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="9" class="empty">Ajoutez un local : niveau, désignation, type, mode de calcul et quantité. L'effectif public se calcule, vous pouvez le remplacer par une valeur déclarée.</td></tr>`}</tbody>
+      <tfoot><tr><td colspan="5">TOTAL</td><td class="n" data-sum="pub"></td><td class="n" data-sum="pers"></td><td class="n" data-sum="tot"></td><td></td></tr></tfoot></table></div>
+      <div class="calc-bar"><button class="btn ghost" data-calcadd="same">+ Local au même niveau</button><button class="btn ghost" data-calcadd="up">+ Niveau au-dessus</button><button class="btn ghost" data-calcadd="down">+ Niveau en dessous</button>
+        <span class="sp"></span><button class="btn ghost" data-calcclear="1">Vider</button><button class="btn" data-calccopy="1">Copier pour OpenOffice</button></div>
+      <div class="calc-res" data-res></div>
+      <p class="hint calc-note">Arrondi à l'unité supérieure par ligne. Personnel : à compter s'il ne dispose pas de dégagements indépendants (R. 143-19, GN 1 § 2 b) ; il n'intervient pas pour la 5e catégorie. J 2 et U 2 incluent le personnel dans le calcul forfaitaire.</p>`;
+  }
+  function refreshCalc() {
+    const c = calcState(); const box = $('#aplCalcBox'); if (!box) return;
+    let sp = 0, spe = 0;
+    c.rows.forEach((r, i) => {
+      const tr = box.querySelector(`tr[data-row="${i}"]`); if (!tr) return;
+      const e = rowEff(r);
+      tr.querySelector('[data-f="pub"]').placeholder = e.calc;
+      tr.querySelector('[data-f="pers"]').placeholder = e.persCalc;
+      tr.querySelector('[data-tot]').textContent = e.cumul ? e.pub + e.pers : `(${e.pub + e.pers})`;
+      const ml = tr.querySelector('[data-mlab]'); if (ml && e.m) ml.innerHTML = `<b>${esc(e.m.ref)}</b> ${esc(methLabel(e.m, +r.niv))}`;
+      if (e.cumul) { sp += e.pub; spe += e.pers; }
+    });
+    box.querySelector('[data-sum="pub"]').textContent = sp;
+    box.querySelector('[data-sum="pers"]').textContent = spe;
+    box.querySelector('[data-sum="tot"]').textContent = sp + spe;
+    const r = classer();
+    const res = box.querySelector('[data-res]');
+    if (!r) { res.innerHTML = '<p class="hint">La catégorie sera calculée dès qu\'une ligne a un mode de calcul.</p>'; return; }
+    const man = c.cat && c.cat !== r.cat;
+    res.innerHTML = `<div class="cres"><span class="ccat">${CAT_LBL[r.cat]}<small>catégorie</small></span><div><b>${r.cat === 5 ? '2e groupe (livre III)' : '1er groupe (livre II)'}</b>
+      <ul>${r.why.map((w) => `<li>${esc(w)}</li>`).join('')}${r.alerts.map((w) => `<li class="alert">${esc(w)}</li>`).join('')}</ul>
+      ${man ? `<p class="man">Catégorie forcée à la ${CAT_LBL[c.cat]} pour l'extraction. <button class="linkish" data-calcauto="1">Revenir à la catégorie calculée</button></p>` : ''}</div></div>`;
+  }
+  function copyCalc() {
+    const c = calcState(); const r = classer();
+    const rows = c.rows.filter((x) => x.m).map((x) => ({ x, e: rowEff(x) })).sort((a, b) => +b.x.niv - +a.x.niv);
+    if (!rows.length) { toast('Le tableau est vide'); return; }
+    const td = 'border:1px solid #000;padding:4px 6px;text-align:center;vertical-align:middle;font-family:Arial,Liberation Sans,sans-serif;font-size:11pt';
+    const th = td + ';font-weight:bold;background:#E6E6E6';
+    const W = [9, 25, 10, 23, 11, 11, 11];
+    const H = ['Niveau', 'Désignation des locaux', 'Article', 'Mode de calcul', 'Effectif public', 'Effectif personnel', 'Effectif total'];
+    let html = `<table border="1" cellspacing="0" cellpadding="4" width="100%" style="border-collapse:collapse;width:100%"><colgroup>${W.map((w) => `<col width="${w}%">`).join('')}</colgroup><thead><tr>${H.map((h, i) => `<th bgcolor="#E6E6E6" width="${W[i]}%" style="${th}">${h}</th>`).join('')}</tr></thead><tbody>`;
+    const tsv = [['Niveau', 'Désignation des locaux', 'Article', 'Mode de calcul', 'Effectif public', 'Effectif personnel', 'Effectif total'].join('\t')];
+    let sp = 0, spe = 0;
+    rows.forEach(({ x, e }, i) => {
+      const m = e.m; const q = String(x.q || '').trim();
+      let des = (x.loc || '').trim().replace(/«\s*/g, '«\u00a0').replace(/\s*»/g, '\u00a0»');
+      if (q && m.u !== 'personnes' && !des.includes(q)) des = des ? `${des} : ${q} ${m.u}` : `${q} ${m.u}`;
+      const span = rows.filter((y) => +y.x.niv === +x.niv).length;
+      const first = i === 0 || +rows[i - 1].x.niv !== +x.niv;
+      const tot = e.pub + e.pers;
+      const totTxt = e.cumul ? String(tot) : `${tot} (non cumulé)`;
+      if (e.cumul) { sp += e.pub; spe += e.pers; }
+      html += `<tr>${first ? `<td align="center" valign="middle" style="${td}" rowspan="${span}">${esc(nivLbl(+x.niv))}</td>` : ''}<td align="center" valign="middle" style="${td}">${esc(des)}</td><td align="center" valign="middle" style="${td}">${esc(m.ref)}</td><td align="center" valign="middle" style="${td}">${esc(methLabel(m, +x.niv))}</td><td align="center" valign="middle" style="${td}">${e.pub}</td><td align="center" valign="middle" style="${td}">${e.pers}</td><td align="center" valign="middle" style="${td}">${esc(totTxt)}</td></tr>`;
+      tsv.push([first ? nivLbl(+x.niv) : '', des, m.ref, methLabel(m, +x.niv), e.pub, e.pers, totTxt].join('\t'));
+    });
+    html += `<tr><td bgcolor="#E6E6E6" align="center" style="${th}" colspan="4"><b>TOTAL</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${sp}</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${spe}</b></td><td bgcolor="#E6E6E6" align="center" style="${th}"><b>${sp + spe}</b></td></tr></tbody></table>`;
+    tsv.push(['TOTAL', '', '', '', sp, spe, sp + spe].join('\t'));
+    if (r) {
+      const cat = c.cat || r.cat;
+      const types = c.types.join(', ');
+      const p = `Établissement de type ${types}, classé en ${CAT_LBL[cat]} catégorie (${cat === 5 ? 'effectif du public : ' + sp : 'effectif total : ' + (sp + spe)} personnes).`;
+      html += `<p style="font-family:Arial,Liberation Sans,sans-serif;font-size:11pt;margin-top:8pt">${esc(p)}</p>`;
+      tsv.push('', p);
+    }
+    const doc = `<html><head><meta charset="utf-8"></head><body>${html}</body></html>`;
+    let ok = false;
+    const onCopy = (ev) => { ev.clipboardData.setData('text/html', doc); ev.clipboardData.setData('text/plain', tsv.join('\n')); ev.preventDefault(); ok = true; };
+    document.addEventListener('copy', onCopy);
+    try { document.execCommand('copy'); } catch (e) { ok = false; }
+    document.removeEventListener('copy', onCopy);
+    if (ok) { toast('Tableau copié : collez-le dans OpenOffice'); return; }
+    if (navigator.clipboard && window.ClipboardItem) {
+      navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([doc], { type: 'text/html' }), 'text/plain': new Blob([tsv.join('\n')], { type: 'text/plain' }) })])
+        .then(() => toast('Tableau copié : collez-le dans OpenOffice'), () => toast('Copie impossible dans ce navigateur'));
+    } else toast('Copie impossible dans ce navigateur');
+  }
+  function bindCalc() {
+    const box = $('#aplCalcBox'); if (!box) return;
+    const c = calcState();
+    box.oninput = (ev) => {
+      const tr = ev.target.closest('tr[data-row]'); const f = ev.target.dataset.f;
+      if (!tr || !f || ev.target.tagName === 'SELECT') return;
+      c.rows[+tr.dataset.row][f] = ev.target.value; saveCalc(); refreshCalc();
+    };
+    box.onchange = (ev) => {
+      const v = ev.target.dataset.var;
+      if (v) { c.variants[v] = +ev.target.value; saveCalc(); refreshCalc(); renderApplExt(); return; }
+      const tr = ev.target.closest('tr[data-row]'); const f = ev.target.dataset.f;
+      if (tr && f) {
+        const r = c.rows[+tr.dataset.row]; r[f] = ev.target.value;
+        if (f === 't') { const m0 = st.appl.methodes.find((m) => m.t === r.t); r.m = m0 ? m0.id : ''; r.pub = ''; r.pers = ''; }
+        if (f === 'm') { r.pub = ''; r.pers = ''; }
+        saveCalc();
+        if (f === 't' || f === 'm' || f === 'niv') { renderApplCalc(); }
+      }
+      const before = st.applShownCat; if (currentCat() !== before) renderApplExt();
+    };
+  }
+  function addRow(where) {
+    const c = calcState(); const last = c.rows[c.rows.length - 1];
+    const niv = last ? +last.niv + (where === 'up' ? 1 : where === 'down' ? -1 : 0) : 0;
+    const t = last && where === 'same' ? last.t : c.types[0];
+    const m0 = st.appl.methodes.find((m) => m.t === t);
+    c.rows.push({ niv: Math.max(-3, Math.min(10, niv)), loc: '', t, m: m0 ? m0.id : '', q: '', pub: '', pers: '' });
+    saveCalc(); renderApplCalc();
+    const ins = $$('#aplCalcBox [data-f="loc"]'); if (ins.length) ins[ins.length - 1].focus();
+  }
+  const $$ = (s) => [...document.querySelectorAll(s)];
+  function renderApplCalc() {
+    const box = $('#aplCalcBox'); if (!box) return;
+    box.innerHTML = calcHTML(); bindCalc(); refreshCalc();
+  }
+
+  /* --- page --- */
   function renderAppl() {
     setSide(false);
     const A = st.appl;
     if (!A) { $('#read').innerHTML = '<div class="home"><p class="hint">Grille indisponible (data/applicable.json).</p></div>'; return; }
-    const { t, c, s } = applState();
-    st.view = Object.assign(st.view || { v: 'appl' }, { t: t.code, c, s });
-    store.set('appl', { t: t.code, c, s });
+    const c = calcState();
     st.applOpen = st.applOpen || new Set();
-    const g2 = c === 5 && t.livre === 'II';
-    const rows = applRows(t, c, s);
-    const autres = applAutres(t, c);
     const groups = [['Types (livre II)', A.types.filter((x) => x.livre === 'II')], ['Établissements spéciaux (livre IV)', A.types.filter((x) => x.livre === 'IV')]];
-    const chap5 = g2 && t.chap5 ? t.chap5 : '';
-    const nDp = rows.reduce((k, r) => k + r.dp.length, 0) + autres.reduce((k, a) => k + a.n.length, 0);
-    const nDg = rows.reduce((k, r) => k + r.dg.length, 0);
+    $('#read').className = 'pane readpane dom-ERP';
+    $('#read').innerHTML = `<div class="home appl">
+      <h1>Réglementation applicable</h1>
+      <p class="lead">Sélectionnez le ou les types de l'établissement (le premier est le type principal), décrivez les locaux niveau par niveau : la catégorie se calcule et la page extrait les textes qui s'appliquent, en masquant les passages qui visent d'autres catégories.</p>
+      <div class="apl-bar">
+        <div class="apl-types" role="group" aria-label="Types de l'établissement">${groups.map(([g, ts]) => `<div class="apl-tg"><span class="lbl">${esc(g)}</span><div class="plates">${ts.map((x) => { const i = c.types.indexOf(x.code); return `<button class="tp${i === 0 ? ' princ' : ''}" data-aplt="${x.code}" aria-pressed="${i >= 0}" title="${esc(x.label)}${i === 0 ? ' (type principal)' : ''}">${esc(x.code)}</button>`; }).join('')}</div></div>`).join('')}</div>
+      </div>
+      <section class="apl-calc-box" id="aplCalcBox"></section>
+      <section id="aplExt"></section>
+    </div>`;
+    renderApplCalc();
+    renderApplExt();
+  }
+  function renderApplExt() {
+    const box = $('#aplExt'); if (!box) return;
+    const A = st.appl; const c = calcState();
+    const cat = currentCat(); st.applShownCat = cat;
+    const codes = c.types; const ts = codes.map(typeOf).filter(Boolean);
+    const g2 = cat === 5 && ts.some((t) => t.livre === 'II');
+    const somOffer = g2 && ts.some((t) => t.sommeil != null);
+    const sommeil = somOffer && (c.sommeil != null ? c.sommeil : ts.some((t) => t.sommeil));
+    const rowsAll = applRows(codes, cat, sommeil);
+    const autresAll = applAutres(codes, cat);
+    const f = c.filtre;
+    const keep = (num) => !f || artApplies(applNode(num), cat);
+    let nOff = 0;
+    const rows = rowsAll.map((r) => { const dg = r.dg.filter(keep), dp = r.dp.filter(keep); nOff += r.dg.length - dg.length + r.dp.length - dp.length; return Object.assign({}, r, { dg, dp }); });
+    const autres = autresAll.map((a) => { const n = a.n.filter(keep); nOff += a.n.length - n.length; return { s: a.s, n }; }).filter((a) => a.n.length);
+    const calc = classer();
+    const lbl = ts.map((t) => t.code).join(' + ');
+    const chap5 = g2 ? ts.filter((t) => t.chap5).map((t) => t.chap5) : [];
     let regime;
-    if (t.livre === 'IV') regime = `Livre IV : le chapitre ${esc(t.code)} est autonome et cite lui-même les articles des dispositions générales qui s'appliquent. Les dispositions communes du livre Ier (GN) restent applicables.`;
-    else if (g2) regime = `2e groupe : livre III (PE). Les dispositions du livre II ne s'appliquent pas, sauf celles expressément citées (PE 1).${chap5 ? ` Chapitre ${chap5} du livre III en complément${t.code === 'J' ? ' (sauf PU 4 § 2 et PU 5, PE 2 § 1)' : ''}.` : ''}`;
-    else regime = `1er groupe : dispositions générales du livre II (titre Ier) et dispositions particulières du type ${esc(t.code)} (titre II), qui les complètent ou les modifient en aggravation ou en atténuation.`;
-    const seuilsHTML = t.seuils.length ? `<table class="seuils"><thead><tr><th>Seuil du 1er groupe (PE 2)</th><th>Sous-sol</th><th>Étages</th><th>Ensemble</th></tr></thead><tbody>${t.seuils.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td><b>${esc(r[3])}</b></td></tr>`).join('')}</tbody></table>` : '';
+    if (g2) regime = `2e groupe : livre III (PE). Les dispositions du livre II ne s'appliquent pas, sauf celles expressément citées (PE 1).${chap5.length ? ` Chapitre${chap5.length > 1 ? 's' : ''} ${[...new Set(chap5)].join(', ')} du livre III en complément.` : ''}`;
+    else regime = `1er groupe : dispositions générales du livre II et dispositions particulières ${ts.length > 1 ? `de chaque type (${lbl}), appliquées selon la catégorie de l'ensemble (GN 2 § 3)` : `du type ${esc(ts[0].code)}`}.`;
+    if (ts.some((t) => t.livre === 'IV')) regime += ` Les types du livre IV (${ts.filter((t) => t.livre === 'IV').map((t) => t.code).join(', ')}) ont leurs propres règles et citent eux-mêmes les articles généraux applicables.`;
     let chapN = '';
     const body = rows.map((r) => {
       const head = r.c !== chapN ? `<h2 class="apl-ch">${esc(r.c)}</h2>` : ''; chapN = r.c;
@@ -857,78 +1184,66 @@
       const ill = illusFor(r.dg.concat(r.dp));
       return `${head}<section class="apl-row${open ? ' open' : ''}${r.dp.length ? ' has-dp' : ''}" id="apl-${r.id}">
         <div class="apl-t"><button class="apl-tog" data-apltog="${r.id}" aria-expanded="${open}"><span class="car" aria-hidden="true"></span>${esc(r.t)}</button></div>
-        <div class="apl-dg">${r.dg.map((x) => chipHTML(x, 'dg')).join('') || '<span class="none">—</span>'}</div>
-        <div class="apl-dp">${r.dp.map((x) => chipHTML(x, 'dp')).join('') || '<span class="none">pas de disposition particulière</span>'}</div>
-        <div class="apl-il">${ill.slice(0, 3).map((f) => `<button class="apl-th" data-page="${esc(illusSrc(f))}" title="Planche : ${esc(f.titre)}"><img loading="lazy" src="${esc(illusSrc(f))}" alt=""></button>`).join('')}</div>
-        ${open ? `<div class="apl-txt"><div class="col">${r.dp.length ? `<h3 class="dp">Dispositions particulières ${g2 ? (chap5 || '') : esc(t.code)}</h3>${textsHTML(r.dp, 'dp')}` : ''}</div><div class="col">${r.dg.length ? `<h3>${g2 ? 'Livre III et livre Ier' : t.livre === 'IV' ? 'Livre Ier' : 'Dispositions générales'}</h3>${textsHTML(r.dg, 'dg')}` : ''}</div></div>` : ''}
+        <div class="apl-dg">${r.dg.map((x) => chipHTML(x, 'dg', f ? 0 : cat)).join('') || '<span class="none">—</span>'}</div>
+        <div class="apl-dp">${r.dp.map((x) => chipHTML(x, 'dp', f ? 0 : cat)).join('') || '<span class="none">pas de disposition particulière</span>'}</div>
+        <div class="apl-il">${ill.slice(0, 3).map((x) => `<button class="apl-th" data-page="${esc(illusSrc(x))}" title="Planche : ${esc(x.titre)}"><img loading="lazy" src="${esc(illusSrc(x))}" alt=""></button>`).join('')}</div>
+        ${open ? `<div class="apl-txt"><div class="col">${r.dp.length ? `<h3 class="dp">Dispositions particulières</h3>${textsHTML(r.dp, 'dp')}` : ''}</div><div class="col">${r.dg.length ? `<h3>${g2 ? 'Livre III et livre Ier' : 'Dispositions générales'}</h3>${textsHTML(r.dg, 'dg')}` : ''}</div></div>` : ''}
       </section>`;
     }).join('');
-    const autresHTML = autres.length ? `<h2 class="apl-ch">Autres dispositions particulières ${g2 ? esc(chap5) : esc(t.code)}</h2>${autres.map((a, i) => {
+    const autresHTML = autres.length ? `<h2 class="apl-ch">Autres dispositions particulières</h2>${autres.map((a, i) => {
       const id = 'x' + i; const open = st.applOpen.has(id);
-      return `<section class="apl-row${open ? ' open' : ''} has-dp" id="apl-${id}"><div class="apl-t"><button class="apl-tog" data-apltog="${id}" aria-expanded="${open}"><span class="car" aria-hidden="true"></span>${esc(a.s.replace(/^(Section|Sous-section|Chapitre) [^:]*: /, ''))}</button></div>
-        <div class="apl-dg"><span class="none">—</span></div><div class="apl-dp">${a.n.map((x) => chipHTML(x, 'dp')).join('')}</div><div class="apl-il"></div>
+      return `<section class="apl-row${open ? ' open' : ''} has-dp" id="apl-${id}"><div class="apl-t"><button class="apl-tog" data-apltog="${id}" aria-expanded="${open}"><span class="car" aria-hidden="true"></span>${esc(a.s.replace(/(Section|Sous-section|Chapitre) [^:]*: /, ''))}</button></div>
+        <div class="apl-dg"><span class="none">—</span></div><div class="apl-dp">${a.n.map((x) => chipHTML(x, 'dp', f ? 0 : cat)).join('')}</div><div class="apl-il"></div>
         ${open ? `<div class="apl-txt"><div class="col">${textsHTML(a.n, 'dp')}</div><div class="col"></div></div>` : ''}</section>`;
     }).join('')}` : '';
-    $('#read').className = 'pane readpane dom-ERP';
-    $('#read').innerHTML = `<div class="home appl">
-      <h1>Réglementation applicable</h1>
-      <p class="lead">Choisissez le type et la catégorie : la page extrait, rubrique par rubrique, les dispositions générales et les dispositions particulières qui s'appliquent. Survolez un numéro pour lire l'article, dépliez une rubrique pour lire tous ses textes.</p>
-      <div class="apl-bar">
-        <div class="apl-types" role="group" aria-label="Type d'établissement">${groups.map(([g, ts]) => `<div class="apl-tg"><span class="lbl">${esc(g)}</span><div class="plates">${ts.map((x) => `<button class="tp" data-aplt="${x.code}" aria-pressed="${x.code === t.code}" title="${esc(x.label)}">${esc(x.code)}</button>`).join('')}</div></div>`).join('')}</div>
-        <div class="apl-cat"><span class="lbl">Catégorie</span><div class="plates" role="group" aria-label="Catégorie">${[1, 2, 3, 4, 5].map((k) => `<button class="cp" data-aplc="${k}" aria-pressed="${k === c}">${CAT_LBL[k]}</button>`).join('')}</div>
-          ${g2 && t.sommeil != null ? `<label class="apl-som"><input type="checkbox" id="aplSom" ${s ? 'checked' : ''}> Locaux à sommeil (PE 28 à PE 37)</label>` : ''}</div>
-      </div>
+    const nDp = rows.reduce((k, r) => k + r.dp.length, 0) + autres.reduce((k, a) => k + a.n.length, 0);
+    const nDg = rows.reduce((k, r) => k + r.dg.length, 0);
+    box.innerHTML = `
       <div class="apl-card">
-        <div class="apl-id"><span class="bigt">${esc(t.code)}</span><div><b>${esc(t.label)}</b><span>${CAT_LBL[c]} catégorie · ${t.livre === 'IV' ? 'établissement spécial' : g2 ? '2e groupe' : '1er groupe'}</span></div></div>
+        <div class="apl-id"><span class="bigt">${esc(lbl)}</span><div><b>${esc(ts.map((t) => t.label).join(' · '))}</b><span>${CAT_LBL[cat]} catégorie · ${g2 ? '2e groupe' : '1er groupe'}${calc && c.cat && c.cat !== calc.cat ? ` (forcée, calculée : ${CAT_LBL[calc.cat]})` : calc ? ' (calculée)' : ''}</span></div></div>
+        <div class="apl-cat"><span class="lbl">Catégorie de l'extraction</span><div class="plates" role="group" aria-label="Catégorie">${[1, 2, 3, 4, 5].map((k) => `<button class="cp" data-aplc="${k}" aria-pressed="${k === cat}">${CAT_LBL[k]}</button>`).join('')}</div>
+          ${somOffer ? `<label class="apl-som"><input type="checkbox" id="aplSom" ${sommeil ? 'checked' : ''}> Locaux à sommeil (PE 28 à PE 37)</label>` : ''}</div>
         <p class="apl-reg">${regime}</p>
-        <div class="apl-meta">
-          ${t.effectif.length ? `<div><span class="lbl">Calcul de l'effectif</span> ${t.effectif.map((x) => chipHTML(x, 'dp')).join('')} ${chipHTML('R143-19', 'dg')}</div>` : ''}
-          <div class="apl-calc"><span class="lbl">Classer</span><input id="aplPub" type="number" min="0" inputmode="numeric" placeholder="public" aria-label="Effectif du public"> + <input id="aplPers" type="number" min="0" inputmode="numeric" placeholder="personnel" aria-label="Effectif du personnel"> <button class="btn" id="aplCalc">Calculer la catégorie</button> <span id="aplWhy" class="hint"></span></div>
-        </div>
-        ${seuilsHTML}
-        <div class="apl-tools"><span class="hint">${nDg} renvois généraux · ${nDp} articles particuliers</span>
+        <div class="apl-tools">
+          <label class="apl-filt"><input type="checkbox" id="aplFilt" ${f ? 'checked' : ''}> Seulement ce qui vise la ${CAT_LBL[cat]} catégorie${f && nOff ? ` <span class="hint">(${nOff} article${nOff > 1 ? 's' : ''} écarté${nOff > 1 ? 's' : ''})</span>` : ''}</label>
+          <span class="hint">${nDg} articles généraux · ${nDp} particuliers</span>
           <button class="btn ghost" id="aplAll">${st.applOpen.size ? 'Tout replier' : 'Tout déplier'}</button>
           <button class="btn ghost" id="aplCopy">Copier la liste</button>
           <button class="btn" id="aplPrint">Imprimer l'extraction</button></div>
       </div>
-      <div class="apl-head" aria-hidden="true"><span>Rubrique</span><span>${g2 ? 'Livre III, livre Ier' : t.livre === 'IV' ? 'Livre Ier' : 'Dispositions générales'}</span><span>Dispositions particulières</span><span>Schémas</span></div>
+      <div class="apl-head" aria-hidden="true"><span>Rubrique</span><span>${g2 ? 'Livre III, livre Ier' : 'Dispositions générales'}</span><span>Dispositions particulières</span><span>Schémas</span></div>
       ${body}${autresHTML}
-      <p class="hint apl-src">${esc(A.source)}. Les mentions de catégorie sont surlignées dans les textes dépliés${c ? ` (en couleur quand elles visent la ${CAT_LBL[c]})` : ''}. Vérifiez toujours les renvois internes des articles.</p>
-    </div>`;
-    [...document.querySelectorAll('.apl-txt .legal')].forEach((el) => {
+      <p class="hint apl-src">${esc(A.source)}. Filtre par catégorie : un article est écarté quand son titre ou tous ses passages visent d'autres catégories ; dans les textes dépliés, les passages qui commencent par viser une autre catégorie sont masqués (cliquez pour les afficher). Les seuils d'effectif (« plus de 300 personnes ») sont surlignés pour vérification.</p>`;
+    $$('#aplExt .apl-txt .legal').forEach((el) => {
       const n = st.byId.get(el.parentNode.dataset.atx);
       const tt = n && artTitle(n);
       while (el.firstElementChild && (!el.firstElementChild.textContent.trim() || el.firstElementChild.textContent.trim() === tt)) el.firstElementChild.remove();
       if (n) linkify(el, n);
-      markCats(el, c);
+      filterDom(el, cat, f);
+      markCats(el, cat, calc ? calc.tot : 0);
     });
-    const sb = $('#aplSom'); if (sb) sb.onchange = () => { st.view.s = sb.checked; renderAppl(); };
-    $('#aplCalc').onclick = () => {
-      const pub = +$('#aplPub').value || 0, pers = +$('#aplPers').value || 0;
-      if (!pub) { toast("Saisissez l'effectif du public"); return; }
-      const r = catOf(t, pub, pers); st.view.c = r.c; st.applWhy = r.why; renderAppl();
-    };
-    if (st.applWhy) { $('#aplWhy').textContent = st.applWhy; st.applWhy = ''; }
+    const sb = $('#aplSom'); if (sb) sb.onchange = () => { c.sommeil = sb.checked; saveCalc(); renderApplExt(); };
+    $('#aplFilt').onchange = (e) => { c.filtre = e.target.checked; saveCalc(); renderApplExt(); };
+    const allRows = rows.map((r) => r.id).concat(autres.map((a, i) => 'x' + i));
     $('#aplAll').onclick = () => {
-      if (st.applOpen.size) st.applOpen.clear();
-      else { rows.forEach((r) => st.applOpen.add(r.id)); autres.forEach((a, i) => st.applOpen.add('x' + i)); }
-      const y = $('#read').scrollTop; renderAppl(); $('#read').scrollTop = y;
+      if (st.applOpen.size) st.applOpen.clear(); else allRows.forEach((id) => st.applOpen.add(id));
+      const y = $('#read').scrollTop; renderApplExt(); $('#read').scrollTop = y;
     };
-    $('#aplPrint').onclick = () => {
-      rows.forEach((r) => st.applOpen.add(r.id)); autres.forEach((a, i) => st.applOpen.add('x' + i));
-      renderAppl(); setTimeout(() => window.print(), 200);
-    };
+    $('#aplPrint').onclick = () => { allRows.forEach((id) => st.applOpen.add(id)); renderApplExt(); setTimeout(() => window.print(), 250); };
     $('#aplCopy').onclick = () => {
-      const lines = [`Type ${t.code} (${t.label}) — ${CAT_LBL[c]} catégorie`];
-      let ch = '';
-      for (const r of rows) {
-        if (r.c !== ch) { lines.push('', r.c.toUpperCase()); ch = r.c; }
-        lines.push(`${r.t} : ${r.dg.join(', ') || '—'}${r.dp.length ? ' | ' + r.dp.join(', ') : ''}`);
-      }
+      const lines = [`Types ${lbl} — ${CAT_LBL[cat]} catégorie`]; let ch = '';
+      for (const r of rows) { if (r.c !== ch) { lines.push('', r.c.toUpperCase()); ch = r.c; } lines.push(`${r.t} : ${r.dg.join(', ') || '—'}${r.dp.length ? ' | ' + r.dp.join(', ') : ''}`); }
       for (const a of autres) lines.push(`${a.s} : ${a.n.join(', ')}`);
       const txt = lines.join('\n');
       (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast('Liste copiée'), () => toast('Copie impossible dans ce navigateur'));
     };
+  }
+  function applToggleType(code) {
+    const c = calcState(); const i = c.types.indexOf(code);
+    if (i < 0) c.types.push(code);
+    else if (c.types.length > 1) c.types.splice(i, 1);
+    else { toast("Gardez au moins un type"); return; }
+    saveCalc(); renderAppl();
   }
 
   // ------------------------------------------------------------------ lecture continue
@@ -1413,9 +1728,14 @@
     if (d.board) { go({ v: 'board', dom: d.board }); return; }
     if (d.planches) { go({ v: 'planches' }); return; }
     if (d.appl) { go({ v: 'appl' }); return; }
-    if (d.aplt) { const cur = st.view || {}; go({ v: 'appl', t: d.aplt, c: cur.c, s: undefined }, false); return; }
-    if (d.aplc) { const cur = st.view || {}; go({ v: 'appl', t: cur.t, c: +d.aplc, s: cur.s }, false); return; }
-    if (d.apltog) { const y = $('#read').scrollTop; st.applOpen.has(d.apltog) ? st.applOpen.delete(d.apltog) : st.applOpen.add(d.apltog); renderAppl(); $('#read').scrollTop = y; return; }
+    if (d.aplt) { applToggleType(d.aplt); return; }
+    if (d.aplc) { const c = calcState(); const r = classer(); c.cat = r && r.cat === +d.aplc ? null : +d.aplc; saveCalc(); renderApplCalc(); renderApplExt(); return; }
+    if (d.calcauto) { calcState().cat = null; saveCalc(); renderApplCalc(); renderApplExt(); return; }
+    if (d.calcadd) { addRow(d.calcadd); return; }
+    if (d.calcdel != null) { const c = calcState(); c.rows.splice(+d.calcdel, 1); saveCalc(); renderApplCalc(); if (currentCat() !== st.applShownCat) renderApplExt(); return; }
+    if (d.calcclear) { const c = calcState(); if (c.rows.length && t.dataset.armed !== '1') { t.dataset.armed = '1'; t.textContent = 'Confirmer : vider le tableau'; return; } c.rows = []; c.cat = null; saveCalc(); renderApplCalc(); renderApplExt(); return; }
+    if (d.calccopy) { copyCalc(); return; }
+    if (d.apltog) { const y = $('#read').scrollTop; st.applOpen.has(d.apltog) ? st.applOpen.delete(d.apltog) : st.applOpen.add(d.apltog); renderApplExt(); $('#read').scrollTop = y; return; }
     if (d.gosec) { scrollToItem(d.gosec, true); return; }
     if (d.goart) { scrollToItem(d.goart); return; }
     if (d.href) { window.open(d.href, '_blank', 'noopener'); return; }

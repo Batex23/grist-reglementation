@@ -153,7 +153,17 @@ def main():
                 print(f"  {n:8s} {str(rid):14s} {tt[:80]}")
 
     sommeil = {k: developper(v, nums, ordre) for k, v in G.SOMMEIL.items()}
-    data = {"rub1": rub1, "rub2": rub2, "sommeil": sommeil, "types": types,
+    methodes = []
+    codes = {c for c, _, _ in G.TYPES}
+    for t, mid, ref, lab, unite, k, kp, opt in G.METHODES:
+        art = re.match(r"^([A-Z]+ \d+)", ref).group(1)
+        if art not in nums or t not in codes:
+            raise SystemExit(f"mode de calcul : référence inconnue {ref} ({t})")
+        methodes.append({"t": t, "id": mid, "ref": ref, "art": art, "lab": lab, "u": unite, "k": round(k, 6), "kp": round(kp, 6), "o": opt})
+    for t in types:
+        if t["code"] in G.VARIANTES:
+            t["var"] = [{"l": l, "rows": r} for l, r in G.VARIANTES[t["code"]]]
+    data = {"rub1": rub1, "rub2": rub2, "sommeil": sommeil, "types": types, "methodes": methodes,
             "source": "Grille d'après le tableau CLIC/DVECRM (PRV2) et le règlement de sécurité en vigueur"}
     json.dump(data, open(SORTIE, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     print(f"{len(types)} types, {sum(len(r['dg']) for r in rub1)} renvois DG (1er groupe) → {os.path.relpath(SORTIE, RACINE)}")
