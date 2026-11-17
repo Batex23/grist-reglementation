@@ -442,6 +442,70 @@
    ],
    "image": "CO59_espace-attente-securise.png?v=4bafa842b2",
    "ordre": 28
+  },
+  {
+   "id": "DF3_principes-desenfumage",
+   "titre": "Principes du désenfumage",
+   "articles": [
+    "ERP:DF 3",
+    "ERP:DF 1",
+    "ERP:DF 4"
+   ],
+   "fiche": "DF 1-1",
+   "legende": "Le désenfumage extrait en début d'incendie une partie des fumées pour garder praticables les cheminements d'évacuation : par balayage (amenée d'air neuf + évacuation des fumées, naturelles ou mécaniques) ou par différence de pression.",
+   "ecarts": [
+    "Les solutions techniques sont décrites par l'instruction technique n° 246 (arrêté du 22 mars 2004 modifié), qui a remplacé la version de 1982 dont s'inspirait l'ancienne fiche.",
+    "Désenfumage mécanique alimenté par une AES (NF S 61-940) ; désenfumage commandé avant l'extinction automatique à eau en présence d'un SSI A (DF 3 § 2). Ingénierie du désenfumage possible (DF 4 § 2)."
+   ],
+   "image": "DF3_principes-desenfumage.png?v=175a38ae88",
+   "ordre": 29
+  },
+  {
+   "id": "DF5_desenfumage-escaliers",
+   "titre": "Désenfumage des escaliers",
+   "articles": [
+    "ERP:DF 5"
+   ],
+   "fiche": "DF 3",
+   "legende": "Escalier encloisonné désenfumé par balayage naturel (exutoire de 1 m² en partie haute, amenée d'air de 1 m² en partie basse, commande manuelle au niveau d'accès) ou mis en surpression ; jamais d'extraction mécanique des fumées.",
+   "ecarts": [
+    "Valeurs de l'instruction technique n° 246 (2004) : ouvrant de 1 m² géométrique en partie haute, amenée d'air de 1 m² en partie basse, commande manuelle à proximité de l'accès principal (réarmement possible depuis le niveau d'accès).",
+    "Surpression : différence de pression de 20 à 80 Pa entre l'escalier et les volumes adjacents, toutes portes fermées."
+   ],
+   "image": "DF5_desenfumage-escaliers.png?v=14b67c243e",
+   "ordre": 30
+  },
+  {
+   "id": "DF6_desenfumage-circulations",
+   "titre": "Désenfumage des circulations",
+   "articles": [
+    "ERP:DF 6"
+   ],
+   "fiche": "DF 3",
+   "legende": "Circulations encloisonnées désenfumées par balayage : amenées d'air en partie basse et évacuations en partie haute, alternées ; 10 m au plus entre une amenée et une évacuation en ligne droite (15 m en mécanique), 7 m sinon (10 m en mécanique).",
+   "ecarts": [
+    "Valeurs de l'instruction technique n° 246 (version 2004) ; l'ancienne fiche reprenait la version de 1982 (ex. 15 m / 10 m mécanique, inchangés ; 10 dm² par UP en naturel, inchangé).",
+    "Obligatoire si la circulation dépasse 30 m, si elle est desservie par des escaliers en surpression, si elle dessert des locaux à sommeil, ou en sous-sol (DF 6 § 1). Halls de plus de 300 m² : désenfumés comme des locaux."
+   ],
+   "image": "DF6_desenfumage-circulations.png?v=9804665daf",
+   "ordre": 31
+  },
+  {
+   "id": "DF7_desenfumage-locaux",
+   "titre": "Désenfumage des locaux",
+   "articles": [
+    "ERP:DF 7",
+    "ERP:DF 8"
+   ],
+   "fiche": "DF 4",
+   "legende": "Locaux de plus de 300 m² (rez-de-chaussée, étage), de plus de 100 m² en sous-sol ou sans ouverture sur l'extérieur : désenfumés, naturellement ou mécaniquement. En naturel : cantons délimités par des écrans, exutoires en partie haute, amenées d'air en partie basse.",
+   "ecarts": [
+    "Les règles de dimensionnement (cantons, écrans, surface utile des exutoires, amenées d'air) sont dans l'instruction technique n° 246 (2004), qui n'est pas reprise dans la base Légifrance du widget : valeurs à vérifier sur le texte de l'IT.",
+    "L'ancienne fiche (1996) donnait Su = 1/200 de la surface pour les locaux de moins de 1 000 m² et le coefficient α au-delà : principe conservé en 2004 ; le coefficient k = 0,3 / 0,5 a été remplacé par la notion de surface utile (SUE) des dispositifs certifiés NF EN 12101-2.",
+    "Volume de 3 niveaux au plus en communication (si autorisé par le type) : désenfumé comme un local unique au-delà de 300 m² cumulés (DF 7 § 2). Compartiments : DF 8."
+   ],
+   "image": "DF7_desenfumage-locaux.png?v=0e74c85761",
+   "ordre": 32
   }
  ]
 }
