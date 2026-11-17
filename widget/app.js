@@ -158,6 +158,7 @@
   }
 
   function ingest(data) {
+    st.erpNum = null;
     const nodes = data.reg.filter((r) => r.Identifiant).map((r) => ({
       row: r.id, id: r.Identifiant, parent: r.Parent || '', type: r.Type, dom: r.Domaine || 'ERP', num: r.Numero || '',
       titre: r.Titre || '', chemin: r.Chemin || '', niveau: r.Niveau || 0, ordre: r.Ordre || 0, texte: r.Texte || '',
@@ -356,6 +357,7 @@
     hidePop();
     $('#tree').classList.remove('open');
     $('#btnVeille').setAttribute('aria-current', view.v === 'veille' ? 'page' : 'false');
+    $('#btnAppl').setAttribute('aria-current', view.v === 'appl' ? 'page' : 'false');
     if (view.v === 'home') renderHome();
     else if (view.v === 'board') renderBoard(view.dom);
     else if (view.v === 'read') renderRead(view.id, view.focus);
@@ -363,6 +365,7 @@
     else if (view.v === 'ask') renderAsk(view.q);
     else if (view.v === 'veille') renderVeille();
     else if (view.v === 'planches') renderPlanches(view.q);
+    else if (view.v === 'appl') renderAppl();
     renderTree();
   }
   window.addEventListener('popstate', (e) => { if (e.state) go(e.state, false); });
@@ -657,7 +660,8 @@
         <span>${esc(DOMAINES[d].label)}</span>
         <small>${a.length.toLocaleString('fr-FR')} articles · dernière modification ${fmtDate(last)}${nf ? ` · ${nf} à venir` : ''}</small></button>`;
     }).join('') + (st.illus && st.illus.length ? `<button class="sign planches-sign" data-planches="1"><b>Schémas</b><span>Planches illustrées SDIS 33</span>
-        <small>${st.illus.length} planche${st.illus.length > 1 ? 's' : ''} isométrique${st.illus.length > 1 ? 's' : ''} · rangées sur les articles</small></button>` : '');
+        <small>${st.illus.length} planche${st.illus.length > 1 ? 's' : ''} isométrique${st.illus.length > 1 ? 's' : ''} · rangées sur les articles</small></button>` : '')
+      + (st.appl ? `<button class="sign appl-sign" data-appl="1"><b>J…Y</b><span>Réglementation applicable</span><small>Extraction des articles par type et catégorie</small></button>` : '');
     const li = (n, sub) => `<li class="dom-${n.dom}"><button data-open="${n.id}"><span class="mini">${esc(dispNum(n).replace('Art. ', ''))}</span><span>${esc(n.chemin.split(' › ').slice(-1)[0] || '')}<span class="sub">${sub}</span></span></button></li>`;
     $('#read').innerHTML = `<div class="home">
       <h1>Réglementation sécurité incendie</h1>
@@ -721,6 +725,210 @@
         <span class="pr">${f.articles.map((x) => esc(x.split(':')[1])).join(' · ')}${f.fiche ? ` <em>fiche ${esc(f.fiche)}</em>` : ''}</span></button>`; }).join('') || '<p class="hint">Aucune planche ne correspond.</p>'}</div></div>`;
     const inp = $('#plq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; renderPlanches(inp.value); const i = $('#plq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250));
     $('#read').scrollTop = 0;
+  }
+
+  // ------------------------------------------------------------------ réglementation applicable (extraction par type et catégorie)
+  const CAT_LBL = { 1: '1re', 2: '2e', 3: '3e', 4: '4e', 5: '5e' };
+  function applNode(num) {
+    if (!st.erpNum) {
+      st.erpNum = new Map();
+      for (const n of st.nodes) if (n.type === 'Article' && n.dom === 'ERP' && !st.erpNum.has(n.num)) st.erpNum.set(n.num, n);
+    }
+    return st.erpNum.get(num);
+  }
+  function artTitle(n) {
+    const t = ((n && n.texte) || '').split('\n')[0].trim();
+    return t && t.length < 110 && !t.startsWith('§') ? t : (n ? n.chemin.split(' › ').slice(-1)[0].replace(/^(Section|Sous-section|Chapitre) [^:]*: /, '') : '');
+  }
+  function applState() {
+    const v = st.view || {};
+    const saved = store.get('appl', {});
+    const A = st.appl;
+    const t = A.types.find((x) => x.code === (v.t || saved.t)) || A.types.find((x) => x.code === 'L');
+    const c = +(v.c || saved.c || 3);
+    const s = v.s != null ? v.s : (saved.s != null && saved.t === t.code ? saved.s : !!t.sommeil);
+    return { t, c, s };
+  }
+  /* Rubriques effectives : [{c, id, t, dg:[num], dp:[num]}] selon le groupe */
+  function applRows(t, cat, sommeil) {
+    const A = st.appl;
+    const g2 = cat === 5 && t.livre === 'II';
+    const base = t.livre === 'IV' ? A.rub1.filter((r) => r.c === 'Classement et généralités' || (t.dp[r.id] || []).length) : (g2 ? A.rub2 : A.rub1);
+    const dpOf = (id) => (g2 ? ((t.dp5 || {})[id] || []) : (t.dp[id] || []));
+    const rows = base.map((r) => ({
+      c: r.c, id: r.id, t: r.t,
+      dg: t.livre === 'IV' ? r.dg.filter((n) => /^(GN|R1)/.test(n)) : r.dg.concat(g2 && sommeil ? (A.sommeil[r.id] || []) : []),
+      dp: dpOf(r.id),
+    }));
+    if (g2) {
+      // dispositions particulières d'un chapitre du livre III rangées dans une rubrique absente du squelette 5e : on les rattache au chapitre le plus proche
+      const known = new Set(rows.map((r) => r.id));
+      for (const [id, nums] of Object.entries(t.dp5 || {})) if (!known.has(id)) {
+        const r1 = A.rub1.find((r) => r.id === id);
+        const host = rows.find((r) => r1 && r.c === r1.c) || rows[0];
+        host.dp = host.dp.concat(nums);
+      }
+    }
+    return rows;
+  }
+  function applAutres(t, cat) {
+    const g2 = cat === 5 && t.livre === 'II';
+    return g2 ? (t.autres5 || []) : t.autres;
+  }
+  function catOf(t, pub, pers) {
+    const ens = t.seuils.map((r) => parseInt(r[3], 10)).filter((x) => !isNaN(x));
+    const seuil = ens.length ? Math.max(...ens) : null;
+    if (seuil && pub < seuil) return { c: 5, why: `public ${pub} < seuil de ${seuil} (PE 2, ensemble des niveaux) : 5e catégorie, à vérifier aussi par niveau` };
+    const tot = pub + pers;
+    const c = tot > 1500 ? 1 : tot > 700 ? 2 : tot > 300 ? 3 : 4;
+    return { c, why: `effectif total ${tot} (public + personnel) : ${CAT_LBL[c]} catégorie (R. 143-19)` };
+  }
+  const ORD = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, premiere: 1, deuxieme: 2, troisieme: 3, quatrieme: 4, cinquieme: 5 };
+  const CAT_RX = /\b((?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me)(?:\s*(?:,|et|à|ou)\s*(?:[1-5](?:re|er|ère|e|ème)|premi[èe]re|deuxi[èe]me|troisi[èe]me|quatri[èe]me|cinqui[èe]me))*\s+cat[ée]gories?|(?:deux|trois|quatre) premi[èe]res cat[ée]gories|(?:de )?la [1-5](?:re|e) (?:[àa]|et) (?:la )?[1-5]e cat[ée]gories?)/gi;
+  function catsIn(s) {
+    if (/quatre premi/i.test(s)) return [1, 2, 3, 4];
+    if (/trois premi/i.test(s)) return [1, 2, 3];
+    if (/deux premi/i.test(s)) return [1, 2];
+    const toks = [...s.matchAll(/([1-5])(?:re|er|ère|e|ème)|(premi|deuxi|troisi|quatri|cinqui)[èe]me|(premi[èe]re)|\s(à)\s/gi)];
+    const out = []; let range = false;
+    for (const m of toks) {
+      if (m[4]) { range = true; continue; }
+      const k = m[1] || S.fold(m[2] ? m[2] + 'eme' : m[3]).replace(/[^a-z]/g, '').replace(/^premi.*/, 'premiere');
+      const v = ORD[k] || ORD[k.replace(/eme$/, 'eme')];
+      if (!v) continue;
+      if (range && out.length) { for (let i = out[out.length - 1] + 1; i <= v; i++) out.push(i); range = false; } else out.push(v);
+    }
+    return out;
+  }
+  function markCats(el, cat) {
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); const todo = [];
+    while (tw.nextNode()) todo.push(tw.currentNode);
+    for (const tn of todo) {
+      const s = tn.nodeValue; CAT_RX.lastIndex = 0; let m, last = 0, frag = null;
+      while ((m = CAT_RX.exec(s))) {
+        frag = frag || document.createDocumentFragment();
+        frag.append(s.slice(last, m.index));
+        const mk = document.createElement('mark'); mk.className = 'catm' + (catsIn(m[0]).includes(cat) ? ' on' : ''); mk.textContent = m[0];
+        frag.append(mk); last = m.index + m[0].length;
+      }
+      if (frag) { frag.append(s.slice(last)); tn.replaceWith(frag); }
+    }
+  }
+  function chipHTML(num, kind) {
+    const n = applNode(num);
+    if (!n) return `<span class="an ${kind} miss" title="Absent de la base">${esc(num)}</span>`;
+    return `<button class="an ${kind}" data-ref="${n.id}" title="${esc(artTitle(n))}">${esc(dispNum(n))}</button>`;
+  }
+  function textsHTML(nums, kind) {
+    return nums.map((num) => {
+      const n = applNode(num); if (!n) return '';
+      return `<div class="atx ${kind}" data-atx="${n.id}"><div class="atx-h"><button class="an ${kind}" data-open="${n.id}" title="Lire dans le texte">${esc(dispNum(n))}</button><span>${esc(artTitle(n))}</span></div><div class="legal">${safeHTML(n.html, n.texte)}</div></div>`;
+    }).join('');
+  }
+  function illusFor(nums) {
+    const seen = new Set(); const out = [];
+    for (const num of nums) for (const f of (st.illusBy && st.illusBy.get(illusKey('ERP', num))) || []) if (!seen.has(f.id)) { seen.add(f.id); out.push(f); }
+    return out;
+  }
+  function renderAppl() {
+    setSide(false);
+    const A = st.appl;
+    if (!A) { $('#read').innerHTML = '<div class="home"><p class="hint">Grille indisponible (data/applicable.json).</p></div>'; return; }
+    const { t, c, s } = applState();
+    st.view = Object.assign(st.view || { v: 'appl' }, { t: t.code, c, s });
+    store.set('appl', { t: t.code, c, s });
+    st.applOpen = st.applOpen || new Set();
+    const g2 = c === 5 && t.livre === 'II';
+    const rows = applRows(t, c, s);
+    const autres = applAutres(t, c);
+    const groups = [['Types (livre II)', A.types.filter((x) => x.livre === 'II')], ['Établissements spéciaux (livre IV)', A.types.filter((x) => x.livre === 'IV')]];
+    const chap5 = g2 && t.chap5 ? t.chap5 : '';
+    const nDp = rows.reduce((k, r) => k + r.dp.length, 0) + autres.reduce((k, a) => k + a.n.length, 0);
+    const nDg = rows.reduce((k, r) => k + r.dg.length, 0);
+    let regime;
+    if (t.livre === 'IV') regime = `Livre IV : le chapitre ${esc(t.code)} est autonome et cite lui-même les articles des dispositions générales qui s'appliquent. Les dispositions communes du livre Ier (GN) restent applicables.`;
+    else if (g2) regime = `2e groupe : livre III (PE). Les dispositions du livre II ne s'appliquent pas, sauf celles expressément citées (PE 1).${chap5 ? ` Chapitre ${chap5} du livre III en complément${t.code === 'J' ? ' (sauf PU 4 § 2 et PU 5, PE 2 § 1)' : ''}.` : ''}`;
+    else regime = `1er groupe : dispositions générales du livre II (titre Ier) et dispositions particulières du type ${esc(t.code)} (titre II), qui les complètent ou les modifient en aggravation ou en atténuation.`;
+    const seuilsHTML = t.seuils.length ? `<table class="seuils"><thead><tr><th>Seuil du 1er groupe (PE 2)</th><th>Sous-sol</th><th>Étages</th><th>Ensemble</th></tr></thead><tbody>${t.seuils.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td><b>${esc(r[3])}</b></td></tr>`).join('')}</tbody></table>` : '';
+    let chapN = '';
+    const body = rows.map((r) => {
+      const head = r.c !== chapN ? `<h2 class="apl-ch">${esc(r.c)}</h2>` : ''; chapN = r.c;
+      const open = st.applOpen.has(r.id);
+      const ill = illusFor(r.dg.concat(r.dp));
+      return `${head}<section class="apl-row${open ? ' open' : ''}${r.dp.length ? ' has-dp' : ''}" id="apl-${r.id}">
+        <div class="apl-t"><button class="apl-tog" data-apltog="${r.id}" aria-expanded="${open}"><span class="car" aria-hidden="true"></span>${esc(r.t)}</button></div>
+        <div class="apl-dg">${r.dg.map((x) => chipHTML(x, 'dg')).join('') || '<span class="none">—</span>'}</div>
+        <div class="apl-dp">${r.dp.map((x) => chipHTML(x, 'dp')).join('') || '<span class="none">pas de disposition particulière</span>'}</div>
+        <div class="apl-il">${ill.slice(0, 3).map((f) => `<button class="apl-th" data-page="${esc(illusSrc(f))}" title="Planche : ${esc(f.titre)}"><img loading="lazy" src="${esc(illusSrc(f))}" alt=""></button>`).join('')}</div>
+        ${open ? `<div class="apl-txt"><div class="col">${r.dp.length ? `<h3 class="dp">Dispositions particulières ${g2 ? (chap5 || '') : esc(t.code)}</h3>${textsHTML(r.dp, 'dp')}` : ''}</div><div class="col">${r.dg.length ? `<h3>${g2 ? 'Livre III et livre Ier' : t.livre === 'IV' ? 'Livre Ier' : 'Dispositions générales'}</h3>${textsHTML(r.dg, 'dg')}` : ''}</div></div>` : ''}
+      </section>`;
+    }).join('');
+    const autresHTML = autres.length ? `<h2 class="apl-ch">Autres dispositions particulières ${g2 ? esc(chap5) : esc(t.code)}</h2>${autres.map((a, i) => {
+      const id = 'x' + i; const open = st.applOpen.has(id);
+      return `<section class="apl-row${open ? ' open' : ''} has-dp" id="apl-${id}"><div class="apl-t"><button class="apl-tog" data-apltog="${id}" aria-expanded="${open}"><span class="car" aria-hidden="true"></span>${esc(a.s.replace(/^(Section|Sous-section|Chapitre) [^:]*: /, ''))}</button></div>
+        <div class="apl-dg"><span class="none">—</span></div><div class="apl-dp">${a.n.map((x) => chipHTML(x, 'dp')).join('')}</div><div class="apl-il"></div>
+        ${open ? `<div class="apl-txt"><div class="col">${textsHTML(a.n, 'dp')}</div><div class="col"></div></div>` : ''}</section>`;
+    }).join('')}` : '';
+    $('#read').className = 'pane readpane dom-ERP';
+    $('#read').innerHTML = `<div class="home appl">
+      <h1>Réglementation applicable</h1>
+      <p class="lead">Choisissez le type et la catégorie : la page extrait, rubrique par rubrique, les dispositions générales et les dispositions particulières qui s'appliquent. Survolez un numéro pour lire l'article, dépliez une rubrique pour lire tous ses textes.</p>
+      <div class="apl-bar">
+        <div class="apl-types" role="group" aria-label="Type d'établissement">${groups.map(([g, ts]) => `<div class="apl-tg"><span class="lbl">${esc(g)}</span><div class="plates">${ts.map((x) => `<button class="tp" data-aplt="${x.code}" aria-pressed="${x.code === t.code}" title="${esc(x.label)}">${esc(x.code)}</button>`).join('')}</div></div>`).join('')}</div>
+        <div class="apl-cat"><span class="lbl">Catégorie</span><div class="plates" role="group" aria-label="Catégorie">${[1, 2, 3, 4, 5].map((k) => `<button class="cp" data-aplc="${k}" aria-pressed="${k === c}">${CAT_LBL[k]}</button>`).join('')}</div>
+          ${g2 && t.sommeil != null ? `<label class="apl-som"><input type="checkbox" id="aplSom" ${s ? 'checked' : ''}> Locaux à sommeil (PE 28 à PE 37)</label>` : ''}</div>
+      </div>
+      <div class="apl-card">
+        <div class="apl-id"><span class="bigt">${esc(t.code)}</span><div><b>${esc(t.label)}</b><span>${CAT_LBL[c]} catégorie · ${t.livre === 'IV' ? 'établissement spécial' : g2 ? '2e groupe' : '1er groupe'}</span></div></div>
+        <p class="apl-reg">${regime}</p>
+        <div class="apl-meta">
+          ${t.effectif.length ? `<div><span class="lbl">Calcul de l'effectif</span> ${t.effectif.map((x) => chipHTML(x, 'dp')).join('')} ${chipHTML('R143-19', 'dg')}</div>` : ''}
+          <div class="apl-calc"><span class="lbl">Classer</span><input id="aplPub" type="number" min="0" inputmode="numeric" placeholder="public" aria-label="Effectif du public"> + <input id="aplPers" type="number" min="0" inputmode="numeric" placeholder="personnel" aria-label="Effectif du personnel"> <button class="btn" id="aplCalc">Calculer la catégorie</button> <span id="aplWhy" class="hint"></span></div>
+        </div>
+        ${seuilsHTML}
+        <div class="apl-tools"><span class="hint">${nDg} renvois généraux · ${nDp} articles particuliers</span>
+          <button class="btn ghost" id="aplAll">${st.applOpen.size ? 'Tout replier' : 'Tout déplier'}</button>
+          <button class="btn ghost" id="aplCopy">Copier la liste</button>
+          <button class="btn" id="aplPrint">Imprimer l'extraction</button></div>
+      </div>
+      <div class="apl-head" aria-hidden="true"><span>Rubrique</span><span>${g2 ? 'Livre III, livre Ier' : t.livre === 'IV' ? 'Livre Ier' : 'Dispositions générales'}</span><span>Dispositions particulières</span><span>Schémas</span></div>
+      ${body}${autresHTML}
+      <p class="hint apl-src">${esc(A.source)}. Les mentions de catégorie sont surlignées dans les textes dépliés${c ? ` (en couleur quand elles visent la ${CAT_LBL[c]})` : ''}. Vérifiez toujours les renvois internes des articles.</p>
+    </div>`;
+    [...document.querySelectorAll('.apl-txt .legal')].forEach((el) => {
+      const n = st.byId.get(el.parentNode.dataset.atx);
+      const tt = n && artTitle(n);
+      while (el.firstElementChild && (!el.firstElementChild.textContent.trim() || el.firstElementChild.textContent.trim() === tt)) el.firstElementChild.remove();
+      if (n) linkify(el, n);
+      markCats(el, c);
+    });
+    const sb = $('#aplSom'); if (sb) sb.onchange = () => { st.view.s = sb.checked; renderAppl(); };
+    $('#aplCalc').onclick = () => {
+      const pub = +$('#aplPub').value || 0, pers = +$('#aplPers').value || 0;
+      if (!pub) { toast("Saisissez l'effectif du public"); return; }
+      const r = catOf(t, pub, pers); st.view.c = r.c; st.applWhy = r.why; renderAppl();
+    };
+    if (st.applWhy) { $('#aplWhy').textContent = st.applWhy; st.applWhy = ''; }
+    $('#aplAll').onclick = () => {
+      if (st.applOpen.size) st.applOpen.clear();
+      else { rows.forEach((r) => st.applOpen.add(r.id)); autres.forEach((a, i) => st.applOpen.add('x' + i)); }
+      const y = $('#read').scrollTop; renderAppl(); $('#read').scrollTop = y;
+    };
+    $('#aplPrint').onclick = () => {
+      rows.forEach((r) => st.applOpen.add(r.id)); autres.forEach((a, i) => st.applOpen.add('x' + i));
+      renderAppl(); setTimeout(() => window.print(), 200);
+    };
+    $('#aplCopy').onclick = () => {
+      const lines = [`Type ${t.code} (${t.label}) — ${CAT_LBL[c]} catégorie`];
+      let ch = '';
+      for (const r of rows) {
+        if (r.c !== ch) { lines.push('', r.c.toUpperCase()); ch = r.c; }
+        lines.push(`${r.t} : ${r.dg.join(', ') || '—'}${r.dp.length ? ' | ' + r.dp.join(', ') : ''}`);
+      }
+      for (const a of autres) lines.push(`${a.s} : ${a.n.join(', ')}`);
+      const txt = lines.join('\n');
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast('Liste copiée'), () => toast('Copie impossible dans ce navigateur'));
+    };
   }
 
   // ------------------------------------------------------------------ lecture continue
@@ -1204,6 +1412,10 @@
     if (d.page) { const lb = $('#lightbox'); $('img', lb).src = d.page; lb.classList.add('show'); return; }
     if (d.board) { go({ v: 'board', dom: d.board }); return; }
     if (d.planches) { go({ v: 'planches' }); return; }
+    if (d.appl) { go({ v: 'appl' }); return; }
+    if (d.aplt) { const cur = st.view || {}; go({ v: 'appl', t: d.aplt, c: cur.c, s: undefined }, false); return; }
+    if (d.aplc) { const cur = st.view || {}; go({ v: 'appl', t: cur.t, c: +d.aplc, s: cur.s }, false); return; }
+    if (d.apltog) { const y = $('#read').scrollTop; st.applOpen.has(d.apltog) ? st.applOpen.delete(d.apltog) : st.applOpen.add(d.apltog); renderAppl(); $('#read').scrollTop = y; return; }
     if (d.gosec) { scrollToItem(d.gosec, true); return; }
     if (d.goart) { scrollToItem(d.goart); return; }
     if (d.href) { window.open(d.href, '_blank', 'noopener'); return; }
@@ -1259,6 +1471,7 @@
   $('#mAsk').onclick = () => setMode('ask');
   $('#btnHome').onclick = () => { q.value = ''; go({ v: 'home' }); };
   $('#btnVeille').onclick = () => go({ v: 'veille' });
+  $('#btnAppl').onclick = () => go({ v: 'appl' });
   $('#btnTree').onclick = () => $('#tree').classList.toggle('open');
   $('#btnSide').onclick = () => $('#side').classList.toggle('open');
 
@@ -1342,6 +1555,7 @@
   async function boot() {
     if (!st.ss) st.ss = await fetch('data/sitesecurite.json').then((r) => r.json()).catch(() => null);
     if (!st.illus) loadIllus(await fetch('illustrations/index.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null));
+    if (!st.appl) st.appl = await fetch('data/applicable.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
     ingest(await fetchAll());
     buildPlans();
     renderChips(); updateBadge();

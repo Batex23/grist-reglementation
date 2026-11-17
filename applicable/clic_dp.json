@@ -1,0 +1,1344 @@
+{
+ "J": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "J 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "J 2 (effectif)"
+  },
+  {
+   "theme": "Façades accessibles",
+   "sous": "",
+   "dg": "CO 3 - CO 4",
+   "dp": "J 6"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "J 7"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 8 (vis-à-vis)",
+   "dp": "J 7"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 9 (superposés)",
+   "dp": "J 5"
+  },
+  {
+   "theme": "Franchissement",
+   "sous": "",
+   "dg": "CO 10 (parc de stationnement couvert)",
+   "dp": "J 8"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) - CO 15 (3 niv maxi)",
+   "dp": "J 9"
+  },
+  {
+   "theme": "Façades",
+   "sous": "",
+   "dg": "CO 20 - CO 21 - CO 22",
+   "dp": "J 13"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "J 10 (zones) - J 11 (compartiments) - J 12"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "J 16"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "J 14 - J 22 - J 23 - J 24"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "J 17 - J 18 - J 19"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "J 20 - J 31"
+  },
+  {
+   "theme": "Evacuation Handicapés",
+   "sous": "",
+   "dg": "CO 57 à CO 60 - AS 4 - GN 8",
+   "dp": "J 21"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "J 25"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "J 29"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "J 30"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "J 26"
+  },
+  {
+   "theme": "Grandes cuisines",
+   "sous": "",
+   "dg": "GC 1 à GC 11",
+   "dp": "J 27 - J 28"
+  },
+  {
+   "theme": "Réserve",
+   "sous": "",
+   "dg": "",
+   "dp": "J 32"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 MS 8 à MS 44",
+   "dp": "J 34"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "J 35 - J 36 à J 40"
+  }
+ ],
+ "L": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "L 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "L 2 - L 3 (effectif)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "L 63 (obstruction baie de scène) - L 39"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "L 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 9 (superposés)",
+   "dp": "L 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Franchissement",
+   "sous": "",
+   "dg": "CO 10 (parc de stationnement couvert)",
+   "dp": "L 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "L 6 - L 9 - L 51 - L 62 - L 63 - L 81"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "L 8 - L 12 § 2"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "L 11 - L 40 - L 46 - L 50 - L 56 - L 61 - L 78 - L 79"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "L 65 - L 66 - L 73 - L 77"
+  },
+  {
+   "theme": "Enfouissement",
+   "sous": "",
+   "dg": "CO 39 - CO 40",
+   "dp": "L 7"
+  },
+  {
+   "theme": "Balisage",
+   "sous": "",
+   "dg": "CO 42",
+   "dp": "L 5"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "L 10 - L 62"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "IT 246 - IT 247",
+   "dp": "L 30"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "L 58 - L 70 - L 74 - L 82"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "L 13 - L 47 - L 53 - L 68 - L 83"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "généralités",
+   "dg": "EC 1 à EC 5",
+   "dp": "L 84"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "L 13 - L 32 - L 43"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "L 33 - L 34 - L 54"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "L 12 - L 42 - L 82"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 32 à CH 41 (ventilation - art 11 du 23/06/78)",
+   "dp": "L 12"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 44 à CH 58 (app production)",
+   "dp": "L 12"
+  },
+  {
+   "theme": "Installation Gaz",
+   "sous": "",
+   "dg": "GZ 1 à GZ 30",
+   "dp": "L 52"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "L 14 (sos, sécu) - L 35 - L 44 - L 48 - L 69 - L 85"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "L 15 - L 16 - L 17 - L 71"
+  }
+ ],
+ "M": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "M 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "M 2 (effectif)"
+  },
+  {
+   "theme": "Desserte",
+   "sous": "",
+   "dg": "CO 1 - CO 2",
+   "dp": "M 3 (Traditionnel seul)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "M 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 8 (vis-à-vis)",
+   "dp": "M 5"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) ",
+   "dp": "M 4"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "M 6 - M 7"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "M 17 - M 46 à M 48 - M 50"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "M 15 -Mobilier M 3)"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "M 8"
+  },
+  {
+   "theme": "UP / Sorties",
+   "sous": "",
+   "dg": "CO 36 - CO 37 - CO 38 (Calcul)",
+   "dp": "M 9 - M 11"
+  },
+  {
+   "theme": "Dégt Accessoires",
+   "sous": "",
+   "dg": "CO 41",
+   "dp": "M 10 (chariots)"
+  },
+  {
+   "theme": "Balisage",
+   "sous": "",
+   "dg": "CO 42",
+   "dp": "M 14"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "M 11"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "M 12"
+  },
+  {
+   "theme": "Evacuation Handicapés",
+   "sous": "",
+   "dg": "CO 57 à CO 60 - AS 4 - GN 8",
+   "dp": "M 13"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "M 18 - M 19"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 5 (naturel)",
+   "dp": "M 54 (réserve)"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "M 23"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "M 24"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "M 20 à M 22"
+  },
+  {
+   "theme": "Grandes cuisines",
+   "sous": "",
+   "dg": "GC 1 à GC 11",
+   "dp": "M 53"
+  },
+  {
+   "theme": "Cuisines isolées",
+   "sous": "",
+   "dg": "GC 12 à GC 14",
+   "dp": "M 38"
+  },
+  {
+   "theme": "Cuisines ouvertes",
+   "sous": "",
+   "dg": "GC 15 à GC 17",
+   "dp": "M 38"
+  },
+  {
+   "theme": "Installation Gaz",
+   "sous": "",
+   "dg": "GZ 1 à GZ 30",
+   "dp": "M 34 à M 56"
+  },
+  {
+   "theme": "Réserve",
+   "sous": "",
+   "dg": "",
+   "dp": "M 16 - M 17"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "M 26 - M 27 - M 28 - M 35"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "M 29 - M 30 - M 32 - M 33 - M 57 - M 58"
+  }
+ ],
+ "N": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "N 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "N 2 (effectif)"
+  },
+  {
+   "theme": "Desserte",
+   "sous": "",
+   "dg": "CO 1 - CO 2",
+   "dp": "N 3 (secteurs autorisés)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "N 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Franchissement",
+   "sous": "",
+   "dg": "CO 10 (parc de stationnement couvert)",
+   "dp": "N 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "N 3 - N 5"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "N 6 - N 8"
+  },
+  {
+   "theme": "UP / Sorties",
+   "sous": "",
+   "dg": "CO 36 - CO 37 - CO 38 (Calcul)",
+   "dp": "N 7"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "N 6 - N 7 - N 8"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "N 9"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "N 12"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balis/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "N 13"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "N 10"
+  },
+  {
+   "theme": "Grandes cuisines",
+   "sous": "",
+   "dg": "GC 1 à GC 11",
+   "dp": "N 14 - N 15 - N 20"
+  },
+  {
+   "theme": "Cuisines ouvertes",
+   "sous": "",
+   "dg": "GC 15 à GC 17",
+   "dp": "N 11"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "N 16 - N 17"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "N 18 - N 19"
+  }
+ ],
+ "O": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "O 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "O 2 (effectif)"
+  },
+  {
+   "theme": "Desserte",
+   "sous": "",
+   "dg": "CO 1 - CO 2",
+   "dp": "O 3  (si secteurs, baies ouvrants sur circulation H)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "O 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Franchissement",
+   "sous": "",
+   "dg": "CO 10 (parc de stationnement couvert)",
+   "dp": "O 4 (parc de stationnement couvert)"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "O 5"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "O 10"
+  },
+  {
+   "theme": "UP / Sorties",
+   "sous": "",
+   "dg": "CO 36 - CO 37 - CO 38 (Calcul)",
+   "dp": "O 6 (circulations 2UP et FP)"
+  },
+  {
+   "theme": "Dégt Accessoires",
+   "sous": "",
+   "dg": "CO 41",
+   "dp": "O 7"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "O 9"
+  },
+  {
+   "theme": "Evacuation Handicapés",
+   "sous": "",
+   "dg": "CO 57 à CO 60 - AS 4 - GN 8",
+   "dp": "O 9 §2"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "O 11"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "O 14"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balis/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "O 15"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "O 12"
+  },
+  {
+   "theme": "Cuisines isolées",
+   "sous": "",
+   "dg": "GC 12 à GC 14",
+   "dp": "O 16 (appareils de cuisson)"
+  },
+  {
+   "theme": "Installation Gaz",
+   "sous": "",
+   "dg": "GZ 1 à GZ 30",
+   "dp": "O 13"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "O 17"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "O 19"
+  }
+ ],
+ "P": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "P 1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "P 2 (effectif)"
+  },
+  {
+   "theme": "Desserte",
+   "sous": "",
+   "dg": "CO 1 - CO 2",
+   "dp": "P 4 (tradi seulement)"
+  },
+  {
+   "theme": "Façades accessibles",
+   "sous": "",
+   "dg": "CO 3 - CO 4",
+   "dp": "P 6"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) - CO 15 (3 niv maxi)",
+   "dp": "P 4"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "P 5"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "P 12 - P 13"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "P 7"
+  },
+  {
+   "theme": "UP / Sorties",
+   "sous": "",
+   "dg": "CO 36 - CO 37 - CO 38 (Calcul)",
+   "dp": "P 8 - P 9 - P 11"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "P 14"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "P 16"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "P 17"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balis/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "P 18 - P 19"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "P 15"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "P 20 - P 21"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "P 22 - P 23 - P 24"
+  }
+ ],
+ "R": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "R 1 - R 3 - R 4"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "R 2 (effectif)"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) - CO 15 (3 niv maxi)",
+   "dp": "R 8"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "R 6 - R 7 - R 9"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "R 5 - R 10 - R 11 - R 12"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "R 18"
+  },
+  {
+   "theme": "UP / Sorties",
+   "sous": "",
+   "dg": "CO 36 - CO 37 - CO 38 (Calcul)",
+   "dp": "R 13 - R 14"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "R 16 - R 17"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "R 15"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "IT 246 - IT 247",
+   "dp": "R 19"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "R 24 - R 25"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "R 26"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "R 27"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "R 20"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 32 à CH 41 (ventilation - art 11 du 23/06/78)",
+   "dp": "R 22 - R 23"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 44 à CH 58 (app production)",
+   "dp": "R 21"
+  },
+  {
+   "theme": "Cuisines ouvertes",
+   "sous": "",
+   "dg": "GC 15 à GC 17",
+   "dp": "R 28 - R 29"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "R 30"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "R 31 - R 32 - R 33"
+  }
+ ],
+ "S": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "S1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "S 2 (effectif)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "S 4"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "S 5"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "S 3 - S 6 - S 7"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "S 8"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "IT 246 - IT 247",
+   "dp": "S 9 - S 10"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "S 12"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "S 13"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "S 14"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "S 11"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "S 15"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "S 16 à S 19"
+  }
+ ],
+ "T": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "T1 (assujetis)"
+  },
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "GN 1 (type)",
+   "dp": "T 3 à T 9 (obligation)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "T 2 (effectif)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "T 11"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "T 12"
+  },
+  {
+   "theme": "Franchissement",
+   "sous": "",
+   "dg": "CO 10 (parc de stationnement couvert)",
+   "dp": "T 12"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) - CO 15 (3 niv maxi)",
+   "dp": "T 24"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "T 10 - T 15 - T 16 - T 17"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "T 13"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "T 21 - T 22 - T 23"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "T 18"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "T 20"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "T 14 - T 19 - T 26"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "IT 246 - IT 247",
+   "dp": "T 25 - T 26"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "T 32 à T 37"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "T 37"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "T 38"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 3 - CH 5",
+   "dp": "T 27"
+  },
+  {
+   "theme": "Installation Gaz",
+   "sous": "",
+   "dg": "GZ 1 à GZ 30",
+   "dp": "T 28 à T 31"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "T 47"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "T 48 à T 52"
+  },
+  {
+   "theme": "Dispositions spéciales",
+   "sous": "",
+   "dg": "",
+   "dp": "T 39 à T 46"
+  }
+ ],
+ "U": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "U 1 (assujetis)"
+  },
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "GN 1 (type)",
+   "dp": "Voir U 49 (HP jour) - U 50 (thermalisme)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "U 2 (effectif) - U 3 - U 4"
+  },
+  {
+   "theme": "Desserte",
+   "sous": "",
+   "dg": "CO 1 - CO 2",
+   "dp": "U 10"
+  },
+  {
+   "theme": "Façades accessibles",
+   "sous": "",
+   "dg": "CO 3 - CO 4",
+   "dp": "U 7"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 6 (objet)",
+   "dp": "U 5"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "U 6"
+  },
+  {
+   "theme": "Résistance au feu",
+   "sous": "",
+   "dg": "CO 11 à CO 14 (rdc) - CO 15 (3 niv maxi)",
+   "dp": "U 8 - U 9"
+  },
+  {
+   "theme": "Façades",
+   "sous": "",
+   "dg": "CO 20 - CO 21 - CO 22",
+   "dp": "U 11"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "U 10 (zones)"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "U 13 - U 33 (A.I.A) - U 40"
+  },
+  {
+   "theme": "Conduits et gaines",
+   "sous": "",
+   "dg": "CO 30 - CO 31 - CO 32 - CO 33",
+   "dp": "U 34 - U 36"
+  },
+  {
+   "theme": "Aménagements",
+   "sous": "",
+   "dg": "AM 1 à AM 20",
+   "dp": "U 23 - U 24 - U 25"
+  },
+  {
+   "theme": "Conception",
+   "sous": "",
+   "dg": "CO 35",
+   "dp": "U 16"
+  },
+  {
+   "theme": "Enfouissement",
+   "sous": "",
+   "dg": "CO 39 - CO 40",
+   "dp": "U 14 - U 16"
+  },
+  {
+   "theme": "Dégt Accessoires",
+   "sous": "",
+   "dg": "CO 41",
+   "dp": "U 17"
+  },
+  {
+   "theme": "Sorties",
+   "sous": "",
+   "dg": "CO 43 à CO 48",
+   "dp": "U 20 - U 21"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "U 18 - U 19 - U 36"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "IT 246 - IT 247",
+   "dp": "U 12 - U 26 - U 34"
+  },
+  {
+   "theme": "Electricité",
+   "sous": "",
+   "dg": "EL 1 à EL 18",
+   "dp": "U 30"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "normal",
+   "dg": "EC 6",
+   "dp": "U 31"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "U 32"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 6 (implantation - art 3 du 23/06/78)",
+   "dp": "U 27"
+  },
+  {
+   "theme": "Chauffage",
+   "sous": "",
+   "dg": "CH 44 à CH 58 (app production)",
+   "dp": "U 28 - U 29"
+  },
+  {
+   "theme": "Installation Gaz",
+   "sous": "",
+   "dg": "GZ 1 à GZ 30",
+   "dp": "U 37 - U 41"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "U 42 - U 43 - U 47 - U 48"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "U 44 - U 46 - U 48"
+  }
+ ],
+ "W": [
+  {
+   "theme": "Type",
+   "sous": "",
+   "dg": "R. 123.2 (ERP)",
+   "dp": "W1 (assujetis)"
+  },
+  {
+   "theme": "Catégorie",
+   "sous": "",
+   "dg": "R.123.19",
+   "dp": "W 2 (effectif)"
+  },
+  {
+   "theme": "Isolement",
+   "sous": "",
+   "dg": "CO 7 (contigus - latéral)",
+   "dp": "W 7 (parc de stationnement)"
+  },
+  {
+   "theme": "Distributions Intérieures",
+   "sous": "",
+   "dg": "CO 1 - CO 12 - CO 24 - CO 25 - CO 26",
+   "dp": "W 3 - W 6"
+  },
+  {
+   "theme": "Locaux à risque",
+   "sous": "",
+   "dg": "CO 27 - CO 28 - CO 29",
+   "dp": "W 4"
+  },
+  {
+   "theme": "Enfouissement",
+   "sous": "",
+   "dg": "CO 39 - CO 40",
+   "dp": "W 5"
+  },
+  {
+   "theme": "Escaliers",
+   "sous": "",
+   "dg": "CO 49 à CO 56",
+   "dp": "W 8"
+  },
+  {
+   "theme": "Désenfumage",
+   "sous": "",
+   "dg": "DF 3 - DF 4",
+   "dp": "W 9"
+  },
+  {
+   "theme": "Eclairage",
+   "sous": "sécurité (balisage/ambiance)",
+   "dg": "EC 7 à EC 20",
+   "dp": "W 10"
+  },
+  {
+   "theme": "Moyens d'extinction",
+   "sous": "",
+   "dg": "MS 4 à MS 44",
+   "dp": "W 11 - W 12 - W 13"
+  },
+  {
+   "theme": "SSI",
+   "sous": "",
+   "dg": "MS 45 à MS 69",
+   "dp": "W 14 - W 15 - W 16"
+  }
+ ]
+}
