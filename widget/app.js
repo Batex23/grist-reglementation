@@ -152,9 +152,10 @@
   async function fetchAll() {
     await loadAgents();
     const get = async (name) => { try { return await st.ad.fetch(name); } catch (e) { console.warn(name, e); return []; } };
-    const [reg, com, vei, syn, par] = await Promise.all([get('REG_Articles'), get('REG_Commentaires'), get('REG_Veille'), get('REG_Synonymes'), get('REG_Parametres')]);
+    const opt = async (name) => { try { return await st.ad.fetch(name); } catch (e) { return null; } };
+    const [reg, com, vei, syn, par, sch] = await Promise.all([get('REG_Articles'), get('REG_Commentaires'), get('REG_Veille'), get('REG_Synonymes'), get('REG_Parametres'), opt('REG_Schemas')]);
     st.params = Object.fromEntries(par.map((p) => [p.Cle, p.Valeur]));
-    return { reg, com, vei, syn };
+    return { reg, com, vei, syn, sch };
   }
 
   function ingest(data) {
@@ -366,6 +367,7 @@
     else if (view.v === 'veille') renderVeille();
     else if (view.v === 'planches') renderPlanches(view.q);
     else if (view.v === 'appl') renderAppl();
+    else if (view.v === 'juris') renderJuris(view.q, view.sec);
     renderTree();
   }
   window.addEventListener('popstate', (e) => { if (e.state) go(e.state, false); });
@@ -659,9 +661,12 @@
       return `<button class="sign dom-${d}" data-board="${d}"><b>${esc(DOMAINES[d].court)}</b>
         <span>${esc(DOMAINES[d].label)}</span>
         <small>${a.length.toLocaleString('fr-FR')} articles · dernière modification ${fmtDate(last)}${nf ? ` · ${nf} à venir` : ''}</small></button>`;
-    }).join('') + (st.illus && st.illus.length ? `<button class="sign planches-sign" data-planches="1"><b>Schémas</b><span>Planches illustrées SDIS 33</span>
-        <small>${st.illus.length} planche${st.illus.length > 1 ? 's' : ''} isométrique${st.illus.length > 1 ? 's' : ''} · rangées sur les articles</small></button>` : '')
-      + (st.appl ? `<button class="sign appl-sign" data-appl="1"><b>J…Y</b><span>Réglementation applicable</span><small>Extraction des articles par type et catégorie</small></button>` : '');
+    }).join('');
+    const tools = [
+      st.appl ? `<button class="tool" data-appl="1"><b>Réglementation applicable</b><span>effectif, dégagements, extraction par type et catégorie</span></button>` : '',
+      st.illus && st.illus.length ? `<button class="tool" data-planches="1"><b>Schémas</b><span>${st.illus.length} planches illustrées</span></button>` : '',
+      `<button class="tool" data-juris="1"><b>Jurisprudence ERP</b><span>décisions par thème</span></button>`,
+    ].join('');
     const li = (n, sub) => `<li class="dom-${n.dom}"><button data-open="${n.id}"><span class="mini">${esc(dispNum(n).replace('Art. ', ''))}</span><span>${esc(n.chemin.split(' › ').slice(-1)[0] || '')}<span class="sub">${sub}</span></span></button></li>`;
     $('#read').innerHTML = `<div class="home">
       <h1>Réglementation sécurité incendie</h1>
@@ -671,14 +676,16 @@
         <section><h2>Changements à venir</h2>${fut.length ? `<ul class="list">${fut.slice(0, 12).map((n) => li(n, 'Nouvelle rédaction au ' + fmtDate(n.futDate))).join('')}</ul>` : '<p class="hint">Aucune modification programmée.</p>'}</section>
         <section><h2>Modifiés récemment</h2><ul class="list">${rec.map((n) => li(n, 'En vigueur depuis le ' + fmtDate(n.depuis))).join('')}</ul></section>
         <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, `<span class="hwho">${avatar(agentOf(c), c.auteur, 20)}<b>${esc(authorName(c))}</b></span> ${esc(c.texte.slice(0, 90))}`) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
-      </div></div>`;
+      </div>
+      <nav class="tools" aria-label="Outils">${tools}</nav></div>`;
     $('#read').scrollTop = 0;
   }
 
   // ------------------------------------------------------------------ planches illustrées (publiées avec le widget)
   function illusKey(dom, num) { return dom + ':' + String(num || '').replace(/\s+/g, ' ').trim().toUpperCase(); }
   function loadIllus(cat) {
-    st.illus = (cat && cat.fiches) || [];
+    if (cat) st.illusBase = cat.fiches || [];
+    st.illus = (st.illusBase || []).concat(st.userIllus || []);
     st.illusBy = new Map();
     for (const f of st.illus) for (const a of f.articles) {
       if (!st.illusBy.has(a)) st.illusBy.set(a, []);
@@ -686,7 +693,43 @@
     }
   }
   function illusOf(n) { return (st.illusBy && n && n.type === 'Article' && st.illusBy.get(illusKey(n.dom, n.num))) || []; }
-  function illusSrc(f) { return 'illustrations/' + f.image; }
+  function illusSrc(f) { return f.src || 'illustrations/' + f.image; }
+  /* Articles saisis à la main (« CO 38, CO 36 ; GH 7 ») → clés DOM:NUM des articles trouvés */
+  function parseArts(txt) {
+    const out = []; const bad = [];
+    for (const tok of String(txt || '').split(/[,;\n]+/).map((x) => x.trim()).filter(Boolean)) {
+      REF_RX.lastIndex = 0; const m = REF_RX.exec(tok);
+      let n = null;
+      if (m) {
+        const key = m[1] ? m[1] + m[2] : m[3] ? m[3] + m[4] + (m[5] ? m[5].toUpperCase() : '') : '';
+        const g = key && st.refGlobal.get(key);
+        if (g && g.length) n = g.find((x) => x.dom === 'ERP') || g[0];
+      }
+      if (n) { const k = illusKey(n.dom, n.num); if (!out.includes(k)) out.push(k); } else bad.push(tok);
+    }
+    return { keys: out, bad };
+  }
+  /* Schémas ajoutés par les agents (table REG_Schemas) : images chargées une fois en mémoire */
+  async function loadUserIllus(rows) {
+    st.hasSchemas = rows !== null;
+    const list = [];
+    for (const r of rows || []) {
+      const ids = gList(r.Image).filter((x) => typeof x === 'number' || typeof x === 'string');
+      if (!ids.length || !r.Titre) continue;
+      st.illusBlob = st.illusBlob || new Map();
+      let src = st.illusBlob.get(String(ids[0])) || '';
+      if (!src) try {
+        const u = await attUrl(ids[0]);
+        if (st.inGrist) { const b = await fetch(u).then((x) => (x.ok ? x.blob() : null)); if (b) src = URL.createObjectURL(b); } else src = u;
+      } catch (e) { /* image indisponible */ }
+      if (!src) continue;
+      st.illusBlob.set(String(ids[0]), src);
+      list.push({ id: 'U' + r.id, row: r.id, titre: r.Titre, articles: parseArts(r.Articles).keys, legende: r.Legende || '', src, user: true,
+        auteur: r.Auteur || '', email: normEmail(r.Auteur_email || ''), ecarts: [] });
+    }
+    st.userIllus = list;
+    loadIllus(null);
+  }
   function illusArts(f) {
     return f.articles.map((a) => { const [dom, num] = a.split(':'); return st.nodes.find((n) => n.type === 'Article' && n.dom === dom && illusKey(dom, n.num) === a); }).filter(Boolean);
   }
@@ -694,20 +737,21 @@
     const fs = illusOf(n); if (!fs.length) return '';
     return `<div class="figs${fs.length > 1 ? ' multi' : ''}">${fs.map((f) => `<figure class="illus">
       <button class="illus-img" data-page="${esc(illusSrc(f))}" title="Agrandir la planche « ${esc(f.titre)} »"><img loading="lazy" src="${esc(illusSrc(f))}" alt="Planche illustrée : ${esc(f.titre)}"></button>
-      <figcaption><b>${esc(f.titre)}</b> ${esc(f.legende || '')}<button class="linkish" data-focus="${n.id}" data-tab="cmt">Planche SDIS 33${f.fiche ? ' · fiche ' + esc(f.fiche) : ''}${f.ecarts && f.ecarts.length ? ' · ce qui a changé' : ''}</button></figcaption>
+      <figcaption><b>${esc(f.titre)}</b> ${esc(f.legende || '')}<button class="linkish" data-focus="${n.id}" data-tab="cmt">${f.user ? 'Schéma ajouté par ' + esc(f.auteur || 'un agent') : 'Planche SDIS 33'}${f.fiche ? ' · fiche ' + esc(f.fiche) : ''}${f.ecarts && f.ecarts.length ? ' · ce qui a changé' : ''}</button></figcaption>
     </figure>`).join('')}</div>`;
   }
   function illusCardHTML(n) {
     return illusOf(n).map((f) => {
       const autres = illusArts(f).filter((a) => a.id !== n.id);
-      return `<div class="cmt illus-card"><span class="av sdis" style="width:36px;height:36px;font-size:13px" aria-hidden="true">33</span><div class="cbody">
-        <div class="cname">Planche illustrée — Prévention SDIS 33</div>
+      const ag = f.user ? st.agentByEmail && st.agentByEmail.get(f.email) : null;
+      return `<div class="cmt illus-card">${f.user ? avatar(ag, f.auteur, 36) : '<span class="av sdis" style="width:36px;height:36px;font-size:13px" aria-hidden="true">33</span>'}<div class="cbody">
+        <div class="cname">${f.user ? `Schéma ajouté par ${esc(agentName(ag) || f.auteur || 'un agent')}` : 'Planche illustrée — Prévention SDIS 33'}</div>
         <div class="who"><span class="pill">Photo / schéma</span>${f.fiche ? `<span>Fiche ${esc(f.fiche)} actualisée</span>` : ''}</div>
         <button class="illus-img" data-page="${esc(illusSrc(f))}" title="Agrandir"><img src="${esc(illusSrc(f))}" alt="Planche illustrée : ${esc(f.titre)}"></button>
         <div class="txt"><b>${esc(f.titre)}.</b> ${esc(f.legende || '')}</div>
         ${autres.length ? `<div class="cited"><span class="nob">Aussi sur</span>${autres.map((a) => `<button class="docref dom-${a.dom}" data-open="${a.id}">${esc(dispNum(a))}</button>`).join('')}</div>` : ''}
         ${f.ecarts && f.ecarts.length ? `<details class="ecarts"><summary>Ce qui change par rapport à l'ancienne fiche</summary><ul>${f.ecarts.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></details>` : ''}
-        <a class="dl" href="${esc(illusSrc(f))}" download="${esc(f.id)}.png">Télécharger l'image</a>
+        <a class="dl" href="${esc(illusSrc(f))}" download="${esc(f.id)}.${f.user ? 'jpg' : 'png'}">Télécharger l'image</a>
       </div></div>`;
     }).join('');
   }
@@ -715,15 +759,93 @@
     setSide(false);
     const norm = (x) => S.fold(x);
     const qq = q ? norm(q) : '';
-    const list = (st.illus || []).filter((f) => !qq || norm([f.titre, f.legende, f.fiche, ...f.articles].join(' ')).includes(qq));
+    const list = (st.illus || []).filter((f) => !qq || norm([f.titre, f.legende, f.fiche, f.auteur, ...f.articles].join(' ')).includes(qq));
+    const nu = (st.userIllus || []).length;
     $('#read').innerHTML = `<div class="home planches">
-      <h1>Planches illustrées</h1>
-      <p class="lead">Schémas isométriques actualisés selon le texte en vigueur, rangés sur les articles qu'ils illustrent. Cliquez une planche pour lire l'article.</p>
+      <div class="pl-head"><h1>Planches illustrées</h1><button class="btn primary" data-addschema="1">Ajouter un schéma</button></div>
+      <p class="lead">Schémas isométriques actualisés selon le texte en vigueur${nu ? `, et ${nu} schéma${nu > 1 ? 's' : ''} ajouté${nu > 1 ? 's' : ''} par les agents` : ''}, rangés sur les articles qu'ils illustrent. Cliquez une planche pour lire l'article.</p>
       <input id="plq" type="search" placeholder="Filtrer : voie, escalier, CO 38, C.15…" value="${esc(q || '')}" aria-label="Filtrer les planches">
-      <div class="pgrid">${list.map((f) => { const a = illusArts(f)[0]; return `<button class="pcard" ${a ? `data-open="${a.id}"` : `data-page="${esc(illusSrc(f))}"`}>
+      <div class="pgrid">${list.map((f) => { const a = illusArts(f)[0]; return `<button class="pcard${f.user ? ' user' : ''}" ${a ? `data-open="${a.id}"` : `data-page="${esc(illusSrc(f))}"`}>
         <img loading="lazy" src="${esc(illusSrc(f))}" alt=""><span class="pt">${esc(f.titre)}</span>
-        <span class="pr">${f.articles.map((x) => esc(x.split(':')[1])).join(' · ')}${f.fiche ? ` <em>fiche ${esc(f.fiche)}</em>` : ''}</span></button>`; }).join('') || '<p class="hint">Aucune planche ne correspond.</p>'}</div></div>`;
+        <span class="pr">${f.articles.map((x) => esc(x.split(':')[1])).join(' · ')}${f.fiche ? ` <em>fiche ${esc(f.fiche)}</em>` : ''}${f.user ? ` <em>par ${esc(f.auteur || 'un agent')}</em>` : ''}</span></button>`; }).join('') || '<p class="hint">Aucune planche ne correspond.</p>'}</div></div>`;
     const inp = $('#plq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; renderPlanches(inp.value); const i = $('#plq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250));
+    $('#read').scrollTop = 0;
+  }
+  /* Formulaire « Ajouter un schéma » : image, titre, articles illustrés, légende */
+  function addSchemaForm(pre) {
+    let ov = $('#schemaForm');
+    if (!ov) { ov = document.createElement('div'); ov.id = 'schemaForm'; ov.className = 'cpv'; document.body.append(ov); }
+    ov.hidden = false;
+    ov.innerHTML = `<form class="cpv-box sf" role="dialog" aria-modal="true" aria-label="Ajouter un schéma">
+      <div class="cpv-head"><b>Ajouter un schéma</b><button type="button" class="x" data-sf="close" aria-label="Fermer">×</button></div>
+      <p class="hint">Le schéma est enregistré dans le document Grist et s'affiche sur chaque article indiqué, dans la galerie et dans la réglementation applicable.</p>
+      <label class="sf-drop" id="sfDrop"><input type="file" name="img" accept="image/*" hidden><span id="sfPrev">Déposez une image, collez-la (Ctrl+V) ou cliquez pour la choisir</span></label>
+      <label>Titre<input name="titre" required maxlength="120" placeholder="Ex. : Recoupement des combles"></label>
+      <label>Articles illustrés<input name="arts" required value="${esc(pre || '')}" placeholder="Ex. : CO 24, CO 25, GH 7"><span class="sf-arts" id="sfArts"></span></label>
+      <label>Légende<textarea name="leg" rows="3" placeholder="Ce que montre le schéma, valeurs à retenir, source"></textarea></label>
+      <div class="sf-go"><button type="button" class="btn ghost" data-sf="close">Annuler</button><button class="btn primary" type="submit">Enregistrer le schéma</button></div>
+    </form>`;
+    const f = $('form', ov); let file = null;
+    const show = () => { $('#sfPrev').innerHTML = file ? `<img src="${URL.createObjectURL(file)}" alt="">` : 'Déposez une image, collez-la (Ctrl+V) ou cliquez pour la choisir'; };
+    const arts = () => {
+      const r = parseArts(f.arts.value);
+      $('#sfArts').innerHTML = r.keys.map((k) => `<span class="ok">${esc(k.split(':')[1])}</span>`).join('') + r.bad.map((b) => `<span class="ko" title="Article introuvable">${esc(b)}</span>`).join('');
+      return r;
+    };
+    arts();
+    f.img.onchange = () => { file = f.img.files[0] || null; show(); };
+    const drop = $('#sfDrop');
+    ['dragover', 'dragenter'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, () => drop.classList.remove('over')));
+    drop.addEventListener('drop', (e) => { e.preventDefault(); const x = [...e.dataTransfer.files].find((y) => y.type.startsWith('image/')); if (x) { file = x; show(); } });
+    f.addEventListener('paste', (e) => { const x = [...((e.clipboardData || {}).files || [])].find((y) => y.type.startsWith('image/')); if (x) { file = x; show(); } });
+    f.arts.addEventListener('input', arts);
+    ov.onclick = (e) => { const b = e.target.closest('[data-sf]'); if ((b && b.dataset.sf === 'close') || e.target === ov) ov.hidden = true; };
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const r = arts();
+      if (!file) { toast('Ajoutez une image'); return; }
+      if (!r.keys.length) { toast('Indiquez au moins un article reconnu (ex. CO 38)'); return; }
+      const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Enregistrement…';
+      try {
+        await RegSync.ensureOptional(st.ad, 'REG_Schemas');
+        const ids = await upload([file]);
+        const ok = await act([['AddRecord', 'REG_Schemas', null, { Titre: f.titre.value.trim(), Articles: r.keys.map((k) => k.split(':')[1]).join(', '), Legende: f.leg.value.trim(), Image: ['L', ...ids] }]]);
+        if (ok) { ov.hidden = true; toast('Schéma enregistré'); await reload(); if (st.view && st.view.v !== 'planches') go(st.view, false); }
+        else { btn.disabled = false; btn.textContent = 'Enregistrer le schéma'; }
+      } catch (err) { toast('Échec : ' + (err.message || err)); btn.disabled = false; btn.textContent = 'Enregistrer le schéma'; }
+    });
+    setTimeout(() => f.titre.focus(), 50);
+  }
+
+  // ------------------------------------------------------------------ jurisprudence
+  async function renderJuris(q, sec) {
+    setSide(false);
+    if (!st.juris) st.juris = await fetch('data/jurisprudence.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
+    const J = st.juris;
+    if (!J) { $('#read').innerHTML = '<div class="home"><p class="hint">Jurisprudence indisponible.</p></div>'; return; }
+    const secs = [...new Set(J.decisions.map((d) => d.s).filter(Boolean))];
+    const qq = q ? S.fold(q) : '';
+    const list = J.decisions.filter((d) => (!sec || d.s === sec) && (!qq || S.fold(d.p + ' ' + d.s + ' ' + d.h.replace(/<[^>]+>/g, ' ') + ' ' + d.cite.join(' ')).includes(qq)));
+    let lc = null, ls = null, lp = null;
+    const body = list.map((d) => {
+      let h = '';
+      if (d.c !== lc) { h += `<h2 class="jc">${esc(d.c)}</h2>`; lc = d.c; ls = null; lp = null; }
+      if (d.s !== ls) { if (d.s) h += `<h3 class="js">${esc(d.s)}</h3>`; ls = d.s; lp = null; }
+      if (d.p && d.p !== lp) { h += `<p class="jp">${esc(d.p)}</p>`; lp = d.p; }
+      return h + `<article class="jd"><div class="legal jtxt">${d.h}</div>${d.cite.length ? `<footer>${d.j ? `<b>${esc(d.j)}</b>` : ''}${d.d ? `<span>${esc(d.d)}</span>` : ''}<span class="jfull">${esc(d.cite.join(' ; '))}</span></footer>` : ''}</article>`;
+    }).join('');
+    $('#read').className = 'pane readpane';
+    $('#read').innerHTML = `<div class="home juris">
+      <h1>Jurisprudence ERP</h1>
+      <p class="lead">${J.decisions.length} décisions classées par thème : consultation et avis de la commission de sécurité, notion d'ERP, pouvoirs de police, responsabilités.</p>
+      <input id="jq" type="search" placeholder="Filtrer : fermeture, permis de construire, 5e catégorie, association…" value="${esc(q || '')}" aria-label="Filtrer la jurisprudence">
+      <div class="jchips"><button class="jchip" data-jsec="" aria-pressed="${!sec}">Tout</button>${secs.map((x) => `<button class="jchip" data-jsec="${esc(x)}" aria-pressed="${x === sec}">${esc(x)}</button>`).join('')}</div>
+      <p class="hint">${list.length} décision${list.length > 1 ? 's' : ''}. ${esc(J.source)}.</p>
+      ${body || '<p class="hint">Aucune décision ne correspond.</p>'}
+    </div>`;
+    document.querySelectorAll('.jtxt').forEach((el) => linkify(el, { legitext: '' }));
+    const inp = $('#jq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; renderJuris(inp.value, st.view.sec).then(() => { const i = $('#jq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); }, 250));
     $('#read').scrollTop = 0;
   }
 
@@ -1957,6 +2079,9 @@
     if (d.board) { go({ v: 'board', dom: d.board }); return; }
     if (d.planches) { go({ v: 'planches' }); return; }
     if (d.appl) { go({ v: 'appl' }); return; }
+    if (d.juris) { go({ v: 'juris' }); return; }
+    if (d.jsec != null) { st.view.sec = d.jsec; renderJuris(st.view.q, d.jsec); return; }
+    if (d.addschema) { addSchemaForm(d.addschema === '1' ? '' : d.addschema); return; }
     if (d.aplt) { applToggleType(d.aplt); return; }
     if (d.aplc) { const c = calcState(); const r = classer(); c.cat = r && r.cat === +d.aplc ? null : +d.aplc; saveCalc(); renderApplExt(); return; }
     if (d.calcauto) { calcState().cat = null; saveCalc(); renderPane(); return; }
@@ -2062,10 +2187,12 @@
     const data = await fetchAll();
     const keep = st.active && st.active.id;
     ingest(data);
+    await loadUserIllus(data.sch);
     buildPlans();
     if (keep) st.active = st.byId.get(keep);
     updateBadge(); renderChips();
     if (st.view && st.view.v === 'read' && st.active) { renderSide(); refreshArticle(st.active); } else if (st.view && st.view.v === 'veille') renderVeille();
+    else if (st.view && st.view.v === 'planches') renderPlanches(st.view.q);
   }
 
   function showInstall(missing) {
@@ -2107,7 +2234,9 @@
     if (!st.ss) st.ss = await fetch('data/sitesecurite.json').then((r) => r.json()).catch(() => null);
     if (!st.illus) loadIllus(await fetch('illustrations/index.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null));
     if (!st.appl) st.appl = await fetch('data/applicable.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
-    ingest(await fetchAll());
+    const data = await fetchAll();
+    ingest(data);
+    await loadUserIllus(data.sch);
     buildPlans();
     renderChips(); updateBadge();
     go({ v: 'home' }, false);

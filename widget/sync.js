@@ -97,6 +97,28 @@
     return A;
   }
 
+  /* Tables facultatives : créées à la première utilisation, sans écran d'installation */
+  const OPTIONAL = {
+    REG_Schemas: [
+      ['Titre', 'Text'], ['Articles', 'Text'], ['Legende', 'Text'], ['Image', 'Attachments'],
+      ['Auteur', 'Text', null, 'user.Name'], ['Auteur_email', 'Text', null, 'user.Email'],
+      ['Cree_le', 'DateTime:Europe/Paris', null, 'NOW()'],
+    ],
+  };
+  async function ensureOptional(ad, t) {
+    const have = await ad.tables();
+    if (have.has(t)) return false;
+    const cols = OPTIONAL[t];
+    await ad.apply([['AddTable', t, cols.map(([id, type]) => ({ id, type, isFormula: false }))]]);
+    const mods = [];
+    for (const [id, , opts, trig] of cols) {
+      if (opts) mods.push(['ModifyColumn', t, id, { widgetOptions: opts }]);
+      if (trig) mods.push(['ModifyColumn', t, id, { formula: trig, isFormula: false, recalcWhen: 0, recalcDeps: null }]);
+    }
+    if (mods.length && ad !== undefined) { try { await ad.apply(mods); } catch (e) { /* adaptateur mémoire */ } }
+    return true;
+  }
+
   /* ---------- installation ---------- */
   async function missingTables(ad) {
     const have = await ad.tables();
@@ -323,5 +345,5 @@
     }
   }
 
-  global.RegSync = { SCHEMA, GristAdapter, MemoryAdapter, missingTables, install, migrate, update, apply, getParam };
+  global.RegSync = { SCHEMA, GristAdapter, MemoryAdapter, missingTables, install, migrate, update, apply, getParam, ensureOptional };
 })(window);
