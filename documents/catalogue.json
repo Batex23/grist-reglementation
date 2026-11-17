@@ -1,52 +1,92 @@
 {
-  "guide-type-M.pdf": {
-    "code": "M",
-    "titre": "Guide pratique relatif à la sécurité incendie dans les magasins de vente et les centres commerciaux",
-    "categorie": "Guides pratiques du ministère de l'Intérieur",
-    "edition": "2017-12-01",
-    "source": "Ministère de l'Intérieur – DGSCGC (BPRI)",
-    "domaine": "ERP"
-  },
-  "guide-type-PS.pdf": {
-    "code": "PS",
-    "titre": "Guide pratique relatif à la sécurité incendie dans les parcs de stationnement couverts ouverts au public",
-    "categorie": "Guides pratiques du ministère de l'Intérieur",
-    "edition": "2018-01-01",
-    "source": "Ministère de l'Intérieur – DGSCGC (BPRI), version 2",
-    "domaine": "ERP"
-  },
-  "doctrine-batiments-bois-8m.pdf": {
-    "code": "BOIS",
-    "titre": "Dispositions visant à accompagner la construction de bâtiments bois d'une hauteur supérieure à 8 mètres",
-    "categorie": "Doctrines départementales (Gironde)",
-    "edition": "2020-11-25",
-    "source": "Préfecture de la Gironde – CCDSA, point n° 3 (avis favorable)",
-    "sections": [
-      {
-        "num": "1",
-        "titre": "Constat",
-        "page": 1,
-        "debut": "1. CONSTAT"
-      },
-      {
-        "num": "2",
-        "titre": "Préconisations de la CCDSA : mesures et objectifs attendus",
-        "page": 2,
-        "debut": "Préconisations de la CCDSA"
-      },
-      {
-        "num": "3",
-        "titre": "Avis de la CCDSA et remarques",
-        "page": 4,
-        "debut": "AVIS de la CCDSA"
-      }
-    ]
-  },
-  "principes-operationnels-exploitants.pdf": {
-    "code": "OPS",
-    "titre": "Sécurité incendie dans les établissements : principes opérationnels à l'usage des exploitants",
-    "categorie": "Doctrines départementales (Gironde)",
-    "edition": "2009-03-06",
-    "source": "SDIS 33"
-  }
+ "guide-type-M.pdf": {
+  "code": "M",
+  "titre": "Guide pratique relatif à la sécurité incendie dans les magasins de vente et les centres commerciaux",
+  "categorie": "Guides pratiques du ministère de l'Intérieur",
+  "edition": "2017-12-01",
+  "source": "Ministère de l'Intérieur – DGSCGC (BPRI)",
+  "domaine": "ERP"
+ },
+ "guide-type-PS.pdf": {
+  "code": "PS",
+  "titre": "Guide pratique relatif à la sécurité incendie dans les parcs de stationnement couverts ouverts au public",
+  "categorie": "Guides pratiques du ministère de l'Intérieur",
+  "edition": "2018-01-01",
+  "source": "Ministère de l'Intérieur – DGSCGC (BPRI), version 2",
+  "domaine": "ERP"
+ },
+ "doctrine-batiments-bois-8m.pdf": {
+  "code": "BOIS",
+  "titre": "Dispositions visant à accompagner la construction de bâtiments bois d'une hauteur supérieure à 8 mètres",
+  "categorie": "Doctrines départementales (Gironde)",
+  "edition": "2020-11-25",
+  "source": "Préfecture de la Gironde – CCDSA, point n° 3 (avis favorable)",
+  "sections": [
+   {
+    "num": "1",
+    "titre": "Constat",
+    "page": 1,
+    "debut": "1. CONSTAT"
+   },
+   {
+    "num": "2",
+    "titre": "Préconisations de la CCDSA : mesures et objectifs attendus",
+    "page": 2,
+    "debut": "Préconisations de la CCDSA"
+   },
+   {
+    "num": "3",
+    "titre": "Avis de la CCDSA et remarques",
+    "page": 4,
+    "debut": "AVIS de la CCDSA"
+   }
+  ]
+ },
+ "principes-operationnels-exploitants.pdf": {
+  "code": "OPS",
+  "titre": "Sécurité incendie dans les établissements : principes opérationnels à l'usage des exploitants",
+  "categorie": "Doctrines départementales (Gironde)",
+  "edition": "2009-03-06",
+  "source": "SDIS 33"
+ },
+ "fiches-combustion-extinction.pdf": {
+  "code": "FEU",
+  "titre": "Fiches prévention : la combustion, les incendies et l'extinction",
+  "categorie": "Doctrines départementales (Gironde)",
+  "edition": "2001-02-01",
+  "source": "SDIS 33 – Groupement Prévention-Prévision (fiches I.P, Lcl F. Pouyadou, Cdt Bonjour)",
+  "domaine": "ERP",
+  "sections": [
+   {
+    "num": "1",
+    "titre": "La combustion : le feu",
+    "page": 1
+   },
+   {
+    "num": "2",
+    "titre": "La combustion : généralités",
+    "page": 2
+   },
+   {
+    "num": "3",
+    "titre": "Facteurs affectant la vitesse et la propagation de la combustion",
+    "page": 4
+   },
+   {
+    "num": "4",
+    "titre": "Incendies : mécanismes, causes, natures et classes",
+    "page": 6
+   },
+   {
+    "num": "5",
+    "titre": "Extinction : les moyens (agents extincteurs, mousses)",
+    "page": 8
+   },
+   {
+    "num": "6",
+    "titre": "Extinction : les principes",
+    "page": 10
+   }
+  ]
+ }
 }
