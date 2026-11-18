@@ -40,7 +40,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
-      - run: npm install --prefix sync @huggingface/transformers@3
+      - run: npm install --prefix sync @huggingface/transformers@3 --onnxruntime-node-install-cuda=skip
+        env:
+          ONNXRUNTIME_NODE_INSTALL_CUDA: skip
 
       - name: Restaurer le cache des textes officiels
         uses: actions/cache/restore@v4
