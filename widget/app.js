@@ -247,6 +247,7 @@
     }
     st.index = new S.Index(docs);
     st.idxDocs = docs;
+    st.idxPos = new Map(st.idxRows.map((n, i) => [n.id, i]));
     if (S.Semantic.state === 'ready') S.Semantic.load(docs);
   }
 
@@ -367,7 +368,7 @@
     else if (view.v === 'veille') renderVeille();
     else if (view.v === 'planches') renderPlanches(view.q);
     else if (view.v === 'appl') renderAppl();
-    else if (view.v === 'juris') renderJuris(view.q, view.sec);
+    else if (view.v === 'juris') renderJuris(view.q, view.sec, view.focus);
     renderTree();
   }
   window.addEventListener('popstate', (e) => { if (e.state) go(e.state, false); });
@@ -819,21 +820,55 @@
   }
 
   // ------------------------------------------------------------------ jurisprudence
-  async function renderJuris(q, sec) {
+  /* Surligne les termes de la requête dans un bloc déjà rendu */
+  function markTerms(el, terms) {
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); const todo = [];
+    while (tw.nextNode()) if (!tw.currentNode.parentNode.closest('mark,button')) todo.push(tw.currentNode);
+    for (const tn of todo) {
+      const h = S.highlight(tn.nodeValue, terms);
+      if (!h.includes('<mark>')) continue;
+      const t = document.createElement('template'); t.innerHTML = h; tn.replaceWith(t.content);
+    }
+  }
+  const jText = (d) => d.h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+  function jurisIndex() {
+    if (!st.juris || st.jIdx) return;
+    st.jIdx = new S.Index(st.juris.decisions.map((d, i) => ({ key: i, fields: { num: '', path: d.s + ' ' + d.p, body: jText(d), extra: d.cite.join(' ') + ' ' + d.j } })));
+  }
+  /* Décisions classées pour une requête : [{i, sc}] */
+  function jurisRank(terms) {
+    if (!st.jIdx) return [];
+    const sc = st.jIdx.score(terms);
+    const out = []; for (let i = 0; i < sc.length; i++) if (sc[i] > 0) out.push({ i, sc: sc[i] });
+    return out.sort((a, b) => b.sc - a.sc);
+  }
+  function jurisHitsHTML(q, terms, max) {
+    if (!st.domOn.has('ERP')) return '';
+    const hits = jurisRank(terms);
+    if (!hits.length) return '';
+    const J = st.juris.decisions;
+    return `<section class="jhits"><h2>Jurisprudence <span class="hint">${hits.length} décision${hits.length > 1 ? 's' : ''}</span></h2>
+      ${hits.slice(0, max).map(({ i }) => { const d = J[i]; return `<button class="jhit" data-jfocus="${i}" data-jq="${esc(q)}"><span class="jw">${esc(d.s || d.c)}${d.p ? ' › ' + esc(d.p.slice(0, 90)) + (d.p.length > 90 ? '…' : '') : ''}</span>
+        <span class="snip">${S.snippet(jText(d), terms, 260, 1)}</span><span class="jref">${esc([d.j, d.d].filter(Boolean).join(', '))}</span></button>`; }).join('')}
+      ${hits.length > max ? `<button class="linkish" data-jall="${esc(q)}">Voir les ${hits.length} décisions</button>` : ''}</section>`;
+  }
+  async function renderJuris(q, sec, focus) {
     setSide(false);
     if (!st.juris) st.juris = await fetch('data/jurisprudence.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
     const J = st.juris;
     if (!J) { $('#read').innerHTML = '<div class="home"><p class="hint">Jurisprudence indisponible.</p></div>'; return; }
     const secs = [...new Set(J.decisions.map((d) => d.s).filter(Boolean))];
-    const qq = q ? S.fold(q) : '';
-    const list = J.decisions.filter((d) => (!sec || d.s === sec) && (!qq || S.fold(d.p + ' ' + d.s + ' ' + d.h.replace(/<[^>]+>/g, ' ') + ' ' + d.cite.join(' ')).includes(qq)));
+    jurisIndex();
+    const qt = q && q.trim() ? S.buildQuery(q, st.syn).terms : null;
+    const keep = qt ? new Set(jurisRank(qt).map((x) => x.i)) : null;
+    const list = J.decisions.map((d, i) => Object.assign({ i }, d)).filter((d) => (!sec || d.s === sec) && (!keep || keep.has(d.i)));
     let lc = null, ls = null, lp = null;
     const body = list.map((d) => {
       let h = '';
       if (d.c !== lc) { h += `<h2 class="jc">${esc(d.c)}</h2>`; lc = d.c; ls = null; lp = null; }
       if (d.s !== ls) { if (d.s) h += `<h3 class="js">${esc(d.s)}</h3>`; ls = d.s; lp = null; }
       if (d.p && d.p !== lp) { h += `<p class="jp">${esc(d.p)}</p>`; lp = d.p; }
-      return h + `<article class="jd"><div class="legal jtxt">${d.h}</div>${d.cite.length ? `<footer>${d.j ? `<b>${esc(d.j)}</b>` : ''}${d.d ? `<span>${esc(d.d)}</span>` : ''}<span class="jfull">${esc(d.cite.join(' ; '))}</span></footer>` : ''}</article>`;
+      return h + `<article class="jd${focus === d.i ? ' focus' : ''}" id="jd-${d.i}"><div class="legal jtxt">${d.h}</div>${d.cite.length ? `<footer>${d.j ? `<b>${esc(d.j)}</b>` : ''}${d.d ? `<span>${esc(d.d)}</span>` : ''}<span class="jfull">${esc(d.cite.join(' ; '))}</span></footer>` : ''}</article>`;
     }).join('');
     $('#read').className = 'pane readpane';
     $('#read').innerHTML = `<div class="home juris">
@@ -844,9 +879,10 @@
       <p class="hint">${list.length} décision${list.length > 1 ? 's' : ''}. ${esc(J.source)}.</p>
       ${body || '<p class="hint">Aucune décision ne correspond.</p>'}
     </div>`;
-    document.querySelectorAll('.jtxt').forEach((el) => linkify(el, { legitext: '' }));
-    const inp = $('#jq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; renderJuris(inp.value, st.view.sec).then(() => { const i = $('#jq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); }, 250));
+    document.querySelectorAll('.jtxt').forEach((el) => { linkify(el, { legitext: '' }); if (qt) markTerms(el, qt); });
+    const inp = $('#jq'); inp.addEventListener('input', debounce(() => { st.view.q = inp.value; st.view.focus = null; renderJuris(inp.value, st.view.sec).then(() => { const i = $('#jq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }); }, 250));
     $('#read').scrollTop = 0;
+    if (focus != null) { const el = $('#jd-' + focus); if (el) el.scrollIntoView({ block: 'center' }); }
   }
 
   // ------------------------------------------------------------------ réglementation applicable (extraction par type et catégorie)
@@ -1557,8 +1593,11 @@
           <button class="btn ghost" id="aplCopy">Copier la liste</button>
           <button class="btn" id="aplPrint">Imprimer l'extraction</button></div>
       </div>
+      <div class="apl-search"><input id="aplQ" type="search" value="${esc(st.applQ || '')}" placeholder="Rechercher dans cette réglementation : désenfumage, porte, cuisine, alarme…" aria-label="Rechercher dans la réglementation applicable"></div>
+      <div id="aplRes"></div>
+      <div id="aplRows"${st.applQ ? ' hidden' : ''}>
       <div class="apl-head" aria-hidden="true"><span>Rubrique</span><span>${g2 ? 'Livre III, livre Ier' : 'Dispositions générales'}</span><span>Dispositions particulières</span><span>Schémas</span></div>
-      ${body}${autresHTML}
+      ${body}${autresHTML}</div>
       <p class="hint apl-src">${esc(A.source)}. Filtre par catégorie : un article est écarté quand son titre ou tous ses passages visent d'autres catégories ; dans les textes dépliés, les passages qui commencent par viser une autre catégorie sont masqués (cliquez pour les afficher). Les seuils d'effectif (« plus de 300 personnes ») sont surlignés pour vérification.</p>`;
     $$('#aplExt .apl-txt .legal').forEach((el) => {
       const n = st.byId.get(el.parentNode.dataset.atx);
@@ -1569,6 +1608,12 @@
       markCats(el, cat, calc ? calc.tot : 0);
     });
     const sb = $('#aplSom'); if (sb) sb.onchange = () => { c.sommeil = sb.checked; saveCalc(); renderApplExt(); };
+    const ctx = { rows, autres, cat, f, kinds: new Map() };
+    for (const r of rows) { r.dg.forEach((x) => ctx.kinds.set(x, { r: r.t, k: 'dg' })); r.dp.forEach((x) => ctx.kinds.set(x, { r: r.t, k: 'dp' })); }
+    for (const a of autres) a.n.forEach((x) => ctx.kinds.set(x, { r: a.s, k: 'dp' }));
+    const qi = $('#aplQ');
+    qi.addEventListener('input', debounce(() => { st.applQ = qi.value; applSearch(ctx); }, 200));
+    if (st.applQ) applSearch(ctx);
     $('#aplFilt').onchange = (e) => { c.filtre = e.target.checked; saveCalc(); renderApplExt(); };
     const allRows = rows.map((r) => r.id).concat(autres.map((a, i) => 'x' + i));
     $('#aplAll').onclick = () => {
@@ -1583,6 +1628,31 @@
       const txt = lines.join('\n');
       (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast('Liste copiée'), () => toast('Copie impossible dans ce navigateur'));
     };
+  }
+  /* Recherche par mot-clé limitée aux articles de l'extraction ; extraits pris dans les passages qui visent la catégorie */
+  function applSearch(ctx) {
+    const res = $('#aplRes'), rowsEl = $('#aplRows'); if (!res) return;
+    const q = (st.applQ || '').trim();
+    rowsEl.hidden = !!q;
+    if (!q) { res.innerHTML = ''; return; }
+    const { terms, recognized } = S.buildQuery(q, st.syn);
+    const allowed = new Map();
+    for (const num of ctx.kinds.keys()) { const n = applNode(num); const i = n && st.idxPos.get(n.id); if (i != null) allowed.set(i, num); }
+    const sc = st.index.score(terms, (i) => allowed.has(i));
+    const ids = [...allowed.keys()].filter((i) => sc[i] > 0).sort((a, b) => sc[b] - sc[a]);
+    const txtOf = (n) => {
+      const lines = (n.texte || '').split('\n');
+      if (!ctx.f) return n.texte || '';
+      const b = blocksScope(lines.slice(1), ctx.cat);
+      return [lines[0]].concat(b.filter((x) => x.ok !== false).map((x) => x.t)).join('\n');
+    };
+    res.innerHTML = `<p class="hint apl-rescount">${ids.length ? `${ids.length} article${ids.length > 1 ? 's' : ''} de votre réglementation (${esc(ctx.rows.length ? CAT_LBL[ctx.cat] + ' catégorie' : '')}) pour « ${esc(q)} »` : `Aucun article de votre réglementation ne parle de « ${esc(q)} ».`}${recognized.length ? ' Termes associés inclus : ' + recognized.map((x) => esc(x.group.key)).join(', ') + '.' : ''}</p>
+      ${ids.slice(0, 60).map((i) => {
+        const n = st.idxRows[i]; const k = ctx.kinds.get(allowed.get(i));
+        return `<div class="hit dom-${n.dom} apl-hit"><button class="plate an ${k.k}" data-open="${n.id}" data-ref="${n.id}">${esc(dispNum(n))}</button>
+          <div><div class="where"><span class="tag ${k.k}">${k.k === 'dp' ? 'Disposition particulière' : 'Disposition générale'}</span> ${esc(k.r)} · ${esc(artTitle(n))}</div>
+          <div class="snip">${S.snippet(txtOf(n), terms, 380, 2)}</div></div></div>`;
+      }).join('')}`;
   }
   function applGenerate() {
     const c = calcState(); const rt = rowTypes();
@@ -1915,7 +1985,9 @@
       ${direct.map((n) => `<div class="jump dom-${n.dom}"><button class="plate" style="position:static;width:auto" data-open="${n.id}">${esc(dispNum(n))}</button><div><b>${esc(DOMAINES[n.dom].label)}</b><div class="hint" style="margin:0">${esc(n.chemin.split(' › ').slice(-1)[0])}</div></div><button class="btn" data-open="${n.id}" style="margin-left:auto">Ouvrir</button></div>`).join('')}
       <h1>${r.ids.length ? r.ids.length.toLocaleString('fr-FR') + ' résultat' + (r.ids.length > 1 ? 's' : '') : 'Aucun résultat'} pour « ${esc(q)} »</h1>
       <p class="hint">${r.recognized.length ? 'Termes associés inclus : ' + r.recognized.map((x) => esc(x.group.key)).join(', ') + '. ' : ''}Passez en mode « Question » pour une réponse guidée.</p>
-      ${shown.map((i) => hitHTML(st.idxRows[i], r.terms)).join('')}
+      ${shown.slice(0, 6).map((i) => hitHTML(st.idxRows[i], r.terms)).join('')}
+      ${jurisHitsHTML(q, r.terms, 3)}
+      ${shown.slice(6).map((i) => hitHTML(st.idxRows[i], r.terms)).join('')}
       ${!r.ids.length ? '<p class="empty">Essayez un terme plus général, un synonyme, ou réactivez toutes les réglementations dans les filtres.</p>' : ''}
     </div>`;
     $('#read').scrollTop = 0;
@@ -1994,6 +2066,7 @@
         ${futs.length ? `<p class="pill warn" style="white-space:normal">Attention : ${futs.map(dispNum).join(', ')} ${futs.length > 1 ? 'vont changer' : 'va changer'} prochainement. Vérifiez la date de dépôt de votre dossier.</p>` : ''}
         <p class="disclaim">Extraits tirés des textes officiels, classés par pertinence. ${st.semOn ? 'Recherche par le sens activée.' : 'Activez la recherche sémantique dans les réglages pour mieux comprendre les questions formulées librement.'} Lisez toujours l'article complet avant de conclure.</p>
       </div>
+      ${jurisHitsHTML(q, r.terms, 3)}
       ${next.length ? `<h1 style="font-size:16px">Pour aller plus loin</h1>${next.map((n) => hitHTML(n, r.terms)).join('')}` : ''}
     </div>`;
     $('#read').scrollTop = 0;
@@ -2080,6 +2153,8 @@
     if (d.planches) { go({ v: 'planches' }); return; }
     if (d.appl) { go({ v: 'appl' }); return; }
     if (d.juris) { go({ v: 'juris' }); return; }
+    if (d.jfocus != null) { go({ v: 'juris', q: d.jq || '', focus: +d.jfocus }); return; }
+    if (d.jall != null) { go({ v: 'juris', q: d.jall }); return; }
     if (d.jsec != null) { st.view.sec = d.jsec; renderJuris(st.view.q, d.jsec); return; }
     if (d.addschema) { addSchemaForm(d.addschema === '1' ? '' : d.addschema); return; }
     if (d.aplt) { applToggleType(d.aplt); return; }
@@ -2234,6 +2309,8 @@
     if (!st.ss) st.ss = await fetch('data/sitesecurite.json').then((r) => r.json()).catch(() => null);
     if (!st.illus) loadIllus(await fetch('illustrations/index.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null));
     if (!st.appl) st.appl = await fetch('data/applicable.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
+    if (!st.juris) st.juris = await fetch('data/jurisprudence.json', { cache: 'no-cache' }).then((r) => r.json()).catch(() => null);
+    jurisIndex();
     const data = await fetchAll();
     ingest(data);
     await loadUserIllus(data.sch);
