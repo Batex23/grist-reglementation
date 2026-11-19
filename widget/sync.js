@@ -100,7 +100,7 @@
   /* Tables facultatives : créées à la première utilisation, sans écran d'installation */
   const OPTIONAL = {
     REG_Schemas: [
-      ['Titre', 'Text'], ['Articles', 'Text'], ['Legende', 'Text'], ['Image', 'Attachments'],
+      ['Titre', 'Text'], ['Articles', 'Text'], ['Legende', 'Text'], ['Image', 'Attachments'], ['Image_data', 'Text'],
       ['Auteur', 'Text', null, 'user.Name'], ['Auteur_email', 'Text', null, 'user.Email'],
       ['Cree_le', 'DateTime:Europe/Paris', null, 'NOW()'],
     ],

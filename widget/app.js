@@ -226,7 +226,7 @@
 
   function ingestComments(com) {
     st.comments = com.filter((c) => c.Article).map((c) => ({
-      row: c.id, art: c.Article, type: c.Type || '', texte: c.Texte || '', images: gList(c.Images), auteur: c.Auteur || '',
+      row: c.id, art: c.Article, type: c.Type || '', texte: c.Texte || '', images: gList(c.Images).concat(jsonList(c.Images_data)), auteur: c.Auteur || '',
       email: normEmail(c.Auteur_email), agentId: refId(c.Agent),
       date: typeof c.Cree_le === 'number' ? new Date(c.Cree_le * 1000).toISOString() : (c.Cree_le || ''),
     })).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
@@ -264,7 +264,7 @@
     return st.token;
   }
   async function attUrl(id) {
-    if (!st.inGrist) return id; // en démo, l'« id » est une URL locale
+    if (!st.inGrist || (typeof id === 'string' && id.startsWith('data:'))) return id; // URL locale (démo) ou image intégrée
     const t = await token();
     return `${t.baseUrl}/attachments/${id}/download?auth=${t.token}`;
   }
@@ -279,6 +279,21 @@
     const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.85));
     return new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
   }
+  /* Image → data URL compressée, stockée dans une colonne texte : évite l'envoi REST des pièces jointes,
+     refusé par le serveur Grist depuis l'origine du widget (CORS). */
+  async function toDataURL(file, max = 1400) {
+    const img = await createImageBitmap(file);
+    const k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+    const jpg = c.toDataURL('image/jpeg', 0.84); const png = c.toDataURL('image/png');
+    return png.length < jpg.length ? png : jpg;
+  }
+  async function ensureCol(table, col) {
+    const cols = await st.ad.columns(table);
+    if (!cols.has(col)) await st.ad.apply([['AddColumn', table, col, { type: 'Text', isFormula: false }]]);
+  }
+  const jsonList = (v) => { try { const x = JSON.parse(v || '[]'); return Array.isArray(x) ? x : []; } catch (e) { return []; } };
   async function upload(files) {
     if (!st.inGrist) return files.map((f) => URL.createObjectURL(f));
     const t = await token(); const fd = new FormData();
@@ -716,15 +731,10 @@
     const list = [];
     for (const r of rows || []) {
       const ids = gList(r.Image).filter((x) => typeof x === 'number' || typeof x === 'string');
-      if (!ids.length || !r.Titre) continue;
-      st.illusBlob = st.illusBlob || new Map();
-      let src = st.illusBlob.get(String(ids[0])) || '';
-      if (!src) try {
-        const u = await attUrl(ids[0]);
-        if (st.inGrist) { const b = await fetch(u).then((x) => (x.ok ? x.blob() : null)); if (b) src = URL.createObjectURL(b); } else src = u;
-      } catch (e) { /* image indisponible */ }
+      if ((!ids.length && !r.Image_data) || !r.Titre) continue;
+      let src = r.Image_data || '';
+      if (!src) try { src = await attUrl(ids[0]); } catch (e) { /* image indisponible */ }
       if (!src) continue;
-      st.illusBlob.set(String(ids[0]), src);
       list.push({ id: 'U' + r.id, row: r.id, titre: r.Titre, articles: parseArts(r.Articles).keys, legende: r.Legende || '', src, user: true,
         auteur: r.Auteur || '', email: normEmail(r.Auteur_email || ''), ecarts: [] });
     }
@@ -810,8 +820,10 @@
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Enregistrement…';
       try {
         await RegSync.ensureOptional(st.ad, 'REG_Schemas');
-        const ids = await upload([file]);
-        const ok = await act([['AddRecord', 'REG_Schemas', null, { Titre: f.titre.value.trim(), Articles: r.keys.map((k) => k.split(':')[1]).join(', '), Legende: f.leg.value.trim(), Image: ['L', ...ids] }]]);
+        const rec = { Titre: f.titre.value.trim(), Articles: r.keys.map((k) => k.split(':')[1]).join(', '), Legende: f.leg.value.trim() };
+        if (st.inGrist) { await ensureCol('REG_Schemas', 'Image_data'); rec.Image_data = await toDataURL(file, 1800); }
+        else rec.Image = ['L', ...(await upload([file]))];
+        const ok = await act([['AddRecord', 'REG_Schemas', null, rec]]);
         if (ok) { ov.hidden = true; toast('Schéma enregistré'); await reload(); if (st.view && st.view.v !== 'planches') go(st.view, false); }
         else { btn.disabled = false; btn.textContent = 'Enregistrer le schéma'; }
       } catch (err) { toast('Échec : ' + (err.message || err)); btn.disabled = false; btn.textContent = 'Enregistrer le schéma'; }
@@ -1903,9 +1915,11 @@
       if (!texte && !files.length) { toast('Écrivez un commentaire ou ajoutez une image.'); return; }
       const btn = $('button[type=submit]', f); btn.disabled = true; btn.textContent = 'Publication…';
       try {
-        const ids = files.length ? await upload(files) : [];
         const rec = { Article: n.row, Type: f.type.value, Texte: texte };
-        if (ids.length) rec.Images = ['L', ...ids];
+        if (files.length) {
+          if (st.inGrist) { await ensureCol('REG_Commentaires', 'Images_data'); rec.Images_data = JSON.stringify(await Promise.all(files.map((x) => toDataURL(x)))); }
+          else rec.Images = ['L', ...(await upload(files))];
+        }
         const ok = await act([['AddRecord', 'REG_Commentaires', null, rec]]);
         if (ok) { toast('Commentaire publié'); await reload(); }
       } catch (err) { toast('Échec : ' + err.message); btn.disabled = false; btn.textContent = 'Publier le commentaire'; }
