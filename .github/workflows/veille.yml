@@ -69,7 +69,9 @@ jobs:
           fi
 
       - name: Appliquer les publications du Journal officiel
-        run: python -I sync/grist_sync.py extraire
+        run: |
+          python -I sync/grist_sync.py extraire
+          cp data/cibles.json cache/cibles.json
 
       - name: Ajouter la doctrine et les guides (dossier documents/)
         run: python -I sync/documents.py fusionner data/reglementation.json --images widget/documents

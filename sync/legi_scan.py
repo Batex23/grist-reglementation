@@ -26,14 +26,19 @@ CIBLES_TITRE = [
     ("CDT", re.compile(r"^Arrêté du 5 août 1992 pris pour l'application des articles", re.I), {}),
     # textes ajoutés après l'audit de novembre 2026
     ("CCH", re.compile(r"^Arrêté du 21 novembre 2002 relatif à la réaction au feu des produits de construction", re.I), {}),
-    ("CCH", re.compile(r"^Arrêté du 22 mars 2004 relatif à la résistance au feu des produits", re.I), {}),
+    ("CCH", re.compile(r"^Arrêté du \d+(?:er)? \w+ \d{4} relatif (?:à la|aux performances de) résistance au feu des produits", re.I), {}),
     ("CCH", re.compile(r"^Arrêté du \d+(?:er)? \w+ 20\d\d .*effet équivalent", re.I), {}),
     ("CCH", re.compile(r"référentiel national de la défense extérieure contre l'incendie", re.I), {}),
     ("CDT", re.compile(r"^Arrêté du .*règlement de sécurité .*bâtiments (?:à usage professionnel|professionnels)", re.I), {}),
     ("ERP", re.compile(r"^Décret n° ?95-260 du 8 mars 1995", re.I), {}),
     ("ERP", re.compile(r"^Arrêté du 9 janvier 1990 .*(?:flottant|bateau|incendie)", re.I), {}),
-    ("IGH", re.compile(r"^Arrêté du 18 octobre 1977 portant règlement de sécurité pour la construction des immeubles de grande hauteur", re.I),
-     {"abroge": "2012-03-31", "suffixe": " (1977)"}),
+    # instructions techniques publiées en annexe d'un arrêté (IT 249 façades, IT 250 radiocommunications)
+    ("ERP", re.compile(r"^Arrêté du 24 mai 2010 portant approbation de diverses dispositions complétant et modifiant le règlement de sécurité", re.I), {}),
+    ("ERP", re.compile(r"^Arrêté du 28 mai 2015 portant modification du règlement de sécurité contre les risques d'incendie", re.I), {}),
+    # règles de sécurité propres et service de sécurité incendie
+    ("ERP", re.compile(r"^Arrêté du 2 mai 2005 relatif aux missions, à l'emploi et à la qualification du personnel permanent des services de sécurité incendie", re.I), {}),
+    ("ERP", re.compile(r"^Arrêté du 18 juillet 2006 portant approbation des règles de sécurité contre les risques d'incendie et de panique dans les établissements pénitentiaires", re.I), {}),
+    ("ERP", re.compile(r"^Arrêté du 24 juin 2025 portant approbation des règles de sécurité contre les risques d'incendie et de panique dans les centres de rétention", re.I), {}),
 ]
 # Mots dont un texte doit contenir au moins un pour être lu (accélère le parcours de l'archive)
 INDICES = (b"incendie", b"5 ao", b"au feu", b"effet \xc3\xa9quivalent", b"95-260", b"flottant", b"usage professionnel")
@@ -44,6 +49,16 @@ CODES = {
     "LEGITEXT000006072050": "CDT",   # Code du travail
     "LEGITEXT000006070633": "CCH",   # Code général des collectivités territoriales (DECI)
 }
+
+
+def cible(titre, abroge=False):
+    """(domaine, options) si le titre correspond à un texte recherché, sinon None."""
+    for dom, rx, opts in CIBLES_TITRE:
+        if rx.search(titre) and abroge == bool(opts.get("abroge")):
+            if dom == "CDT" and "incendie" not in titre.lower():
+                continue
+            return dom, opts
+    return None
 
 
 def main(path):
@@ -66,14 +81,10 @@ def main(path):
             titre = (root.findtext(".//TITREFULL") or "").strip()
             if DECOUVERTE.search(titre):
                 print(f"vu{' (abrogé)' if abroge else ''}: {leg} {titre[:160]}", file=sys.stderr)
-            for dom, rx, opts in CIBLES_TITRE:
-                if rx.search(titre):
-                    if abroge != bool(opts.get("abroge")):
-                        continue
-                    if dom == "CDT" and "incendie" not in titre.lower():
-                        continue
-                    found[leg] = {"domaine": dom, "dir": rel(base), "titre": titre, **opts}
-                    print(f"trouvé {dom}: {leg} {titre[:90]}", file=sys.stderr)
+            r = cible(titre, abroge)
+            if r:
+                found[leg] = {"domaine": r[0], "dir": rel(base), "titre": titre, **r[1]}
+                print(f"trouvé {r[0]}: {leg} {titre[:90]}", file=sys.stderr)
     json.dump(found, sys.stdout, ensure_ascii=False, indent=1)
 
 

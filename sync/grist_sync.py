@@ -317,10 +317,41 @@ def liste_increments():
     return sorted(set(re.findall(r'href="(LEGI_(\d{8}-\d{6})\.tar\.gz)"', page)), key=lambda x: x[1])
 
 
-def applique_increment(url, cache_dir, dossiers):
+def nouveaux_textes(buf, cibles):
+    """Repère, dans un incrément, les textes recherchés publiés depuis l'archive globale (ex. un nouvel arrêté)."""
+    import legi_scan
+    from lxml import etree
+    ajouts = {}
+    buf.seek(0)
+    with tarfile.open(fileobj=buf, mode="r:gz") as tar:
+        for m in tar:
+            n = m.name
+            if "/texte/version/" not in n or not n.endswith(".xml"):
+                continue
+            leg = n.rsplit("/", 1)[1][:-4]
+            if leg in cibles:
+                continue
+            data = tar.extractfile(m).read()
+            if not any(k in data for k in legi_scan.INDICES):
+                continue
+            titre = (etree.fromstring(data).findtext(".//TITREFULL") or "").strip()
+            r = legi_scan.cible(titre, "_non_vigueur" in n)
+            if r:
+                ajouts[leg] = {"domaine": r[0], "dir": legi_scan.rel(n.split("/texte/version/")[0]), "titre": titre, **r[1]}
+                print(f"nouveau texte suivi : {titre[:120]}")
+    buf.seek(0)
+    return ajouts
+
+
+def applique_increment(url, cache_dir, dossiers, cibles=None):
     """Extrait dans le cache les fichiers d'un incrément qui concernent nos textes."""
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=600) as r:
         buf = io.BytesIO(r.read())
+    if cibles is not None:
+        nouv = nouveaux_textes(buf, cibles)
+        if nouv:
+            cibles.update(nouv)
+            dossiers.extend(c["dir"] for c in nouv.values())
     n = 0
     with tarfile.open(fileobj=buf, mode="r:gz") as tar:
         for m in tar:
@@ -359,9 +390,10 @@ def cmd_extraire(args):
     if not a_traiter:
         print(f"Aucun nouvel incrément depuis {dernier}.")
     for f, d in a_traiter:
-        n = applique_increment(DILA + f, args.cache, dossiers)
+        n = applique_increment(DILA + f, args.cache, dossiers, cibles)
         print(f"incrément {d} : {n} fichier(s) concernant nos textes")
         open(etat_path, "w").write(d)
+        json.dump(cibles, open(args.cibles, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     noeuds = legi_build.build(args.cache, cibles, dt.date.today().isoformat())
     if os.path.exists(args.vecteurs):
         vec = json.load(open(args.vecteurs, encoding="utf-8"))
