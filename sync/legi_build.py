@@ -165,7 +165,8 @@ def build(root_dir, cibles, date):
                 if l.tag == "LIEN_ART" and a_venir(l, date):
                     futurs.setdefault(l.get("num") or l.get("id"), []).append(l)
             for l in liens:
-                if not valide(l, date):
+                futur_sec = l.tag == "LIEN_SECTION_TA" and a_venir(l, date)
+                if not valide(l, date) and not futur_sec:
                     continue
                 lid = l.get("id")
                 if l.tag == "LIEN_SECTION_TA":
@@ -181,6 +182,9 @@ def build(root_dir, cibles, date):
                         "Chemin": " › ".join(chemin), "Texte_officiel": legitext,
                         "Lien_Legifrance": f"{base_url}/section_lc/{legitext}/{lid}/",
                     }
+                    if futur_sec:  # section créée par un texte qui n'est pas encore en vigueur (ex. GN 16)
+                        snode["Etat"] = "A_VENIR"
+                        snode["Date_a_venir"] = l.get("debut")
                     enfants = visite(sections_et_articles(sroot.find("STRUCTURE_TA")), lid, niveau + 1, chemin + [titre])
                     if filtre and not enfants:
                         continue
@@ -246,11 +250,38 @@ def build(root_dir, cibles, date):
         text_node["Ordre"] = ordre[0]
         struct = etree.parse(spath).getroot().find("STRUCT")
         corps = visite(sections_et_articles(struct), legitext, 1, [text_node["Titre"] if not est_code else ("Code de la construction et de l'habitation" if dom == "CCH" else "Code du travail")])
+        corps = elague_futurs(corps)
         nodes.append(text_node)
         nodes.extend(corps)
         n_art = sum(1 for n in corps if n["Type"] == "Article")
         print(f"{dom} {legitext}: {n_art} articles, {len(corps) - n_art} sections", file=sys.stderr)
     return repartit_cch(nodes)
+
+
+def elague_futurs(corps):
+    """Dans les sections à venir, ne garde que les articles qui n'existent pas déjà (versions futures
+    d'articles en vigueur, déjà portées par « Version_a_venir ») et retire les sections devenues vides."""
+    courants = {n["Numero"] for n in corps if n["Type"] == "Article" and n.get("Etat") != "A_VENIR"}
+    vus = set()
+    gardes = []
+    for n in corps:
+        if n["Type"] == "Article" and n.get("Etat") == "A_VENIR":
+            if n["Numero"] in courants or n["Numero"] in vus:
+                continue
+            vus.add(n["Numero"])
+        gardes.append(n)
+    # sections à venir sans descendant
+    enfants = {}
+    for n in gardes:
+        enfants.setdefault(n["Parent"], []).append(n)
+
+    def vivant(n):
+        if n["Type"] == "Article":
+            return True
+        return any(vivant(c) for c in enfants.get(n["Identifiant"], []))
+
+    morts = {n["Identifiant"] for n in gardes if n["Type"] == "Section" and n.get("Etat") == "A_VENIR" and not vivant(n)}
+    return [n for n in gardes if n["Identifiant"] not in morts]
 
 
 DOM_CCH = {"141": "CCH", "142": "HAB", "143": "ERP", "144": "CDT", "145": "IGH", "146": "IGH"}
