@@ -40,7 +40,8 @@
     "page": 4,
     "debut": "AVIS de la CCDSA"
    }
-  ]
+  ],
+  "figures": false
  },
  "principes-operationnels-exploitants.pdf": {
   "code": "OPS",
@@ -86,6 +87,303 @@
     "num": "6",
     "titre": "Extinction : les principes",
     "page": 10
+   }
+  ]
+ },
+ "IT-246-desenfumage.pdf": {
+  "code": "IT 246",
+  "titre": "Instruction technique n° 246 relative au désenfumage dans les établissements recevant du public",
+  "categorie": "Instructions techniques du règlement ERP",
+  "edition": "2005-08-11",
+  "source": "Ministère de l'Intérieur — IT approuvée par l'arrêté du 22 mars 2004 (version mise à jour le 11 août 2005)",
+  "domaine": "ERP",
+  "colonnes": 2,
+  "titres_courts": true
+ },
+ "IT-247-mecanismes-declenchement.pdf": {
+  "code": "IT 247",
+  "titre": "Instruction technique n° 247 relative aux mécanismes de déclenchement des dispositifs de fermeture résistant au feu et de désenfumage",
+  "categorie": "Instructions techniques du règlement ERP",
+  "edition": "2006-09-04",
+  "source": "Ministère de l'Intérieur (version mise à jour le 4 septembre 2006)",
+  "domaine": "ERP",
+  "colonnes": 2,
+  "titres_courts": true
+ },
+ "IT-248-systemes-alarme.pdf": {
+  "code": "IT 248",
+  "titre": "Instruction technique n° 248 relative aux systèmes d'alarme utilisés dans les établissements recevant du public",
+  "categorie": "Instructions techniques du règlement ERP",
+  "edition": "2006-09-04",
+  "source": "Ministère de l'Intérieur (version mise à jour le 4 septembre 2006)",
+  "domaine": "ERP",
+  "colonnes": 2,
+  "titres_courts": true
+ },
+ "IT-263-volumes-libres.pdf": {
+  "code": "IT 263",
+  "titre": "Instruction technique n° 263 relative à la construction et au désenfumage des volumes libres intérieurs dans les ERP",
+  "categorie": "Instructions techniques du règlement ERP",
+  "edition": "2006-11-23",
+  "source": "Ministère de l'Intérieur — IT du 30 décembre 1994 (version mise à jour le 23 novembre 2006)",
+  "domaine": "ERP",
+  "colonnes": 2,
+  "titres_courts": true
+ },
+ "RDDECI-33.pdf": {
+  "code": "RDDECI",
+  "titre": "Règlement départemental de défense extérieure contre l'incendie de la Gironde",
+  "categorie": "Doctrines départementales (Gironde)",
+  "edition": "2017-06-26",
+  "source": "Préfecture de la Gironde — arrêté préfectoral du 26 juin 2017 (SDIS 33)",
+  "ocr": true,
+  "sections": [
+   {
+    "num": "0",
+    "titre": "Arrêté préfectoral du 26 juin 2017 portant approbation du RDDECI",
+    "page": 2,
+    "debut": ""
+   },
+   {
+    "num": "SOM",
+    "titre": "Table des matières",
+    "page": 4,
+    "debut": "Table des mati"
+   },
+   {
+    "num": "PR",
+    "titre": "Préambule",
+    "page": 7,
+    "debut": "PRÉAMBULE"
+   },
+   {
+    "num": "I",
+    "titre": "Cadre juridique de la défense extérieure contre l'incendie",
+    "page": 8,
+    "debut": "Cadre juridique de la défense"
+   },
+   {
+    "num": "I-A",
+    "titre": "Cadre national",
+    "page": 8,
+    "debut": "A. Cadre national"
+   },
+   {
+    "num": "I-B",
+    "titre": "Cadre territorial",
+    "page": 10,
+    "debut": "B. Cadre territorial"
+   },
+   {
+    "num": "II",
+    "titre": "Gestion générale de la DECI : rôles des acteurs",
+    "page": 11,
+    "debut": "Gestion générale de la DECI"
+   },
+   {
+    "num": "II-A",
+    "titre": "Police administrative spéciale de DECI",
+    "page": 11,
+    "debut": "A. Police administrative"
+   },
+   {
+    "num": "II-B",
+    "titre": "Service public de DECI",
+    "page": 11,
+    "debut": "B. Service public de DECI"
+   },
+   {
+    "num": "II-C",
+    "titre": "Service public de DECI et service public de l'eau",
+    "page": 11,
+    "debut": "C. Service public de DECI et"
+   },
+   {
+    "num": "II-D",
+    "titre": "Participation de tiers à la DECI",
+    "page": 12,
+    "debut": "D. Participation de tiers"
+   },
+   {
+    "num": "III",
+    "titre": "Principes de la DECI",
+    "page": 13,
+    "debut": "Principes de la DECI"
+   },
+   {
+    "num": "III-A",
+    "titre": "Optimisation des délais entre l'action des secours en fonction du PEI utilisé, contrainte d'utilisation des PEI, distance d'implantation",
+    "page": 13,
+    "debut": "A. Optimisation des délais"
+   },
+   {
+    "num": "III-B",
+    "titre": "Qualification des différents risques à couvrir — DECI correspondante",
+    "page": 14,
+    "debut": "B. Qualification des différents"
+   },
+   {
+    "num": "III-C",
+    "titre": "Enjeux relevant du risque courant",
+    "page": 15,
+    "debut": "C. Enjeux relevant du risque courant"
+   },
+   {
+    "num": "III-D",
+    "titre": "Enjeux relevant du risque particulier",
+    "page": 17,
+    "debut": "D. Enjeux relevant du risque particulier"
+   },
+   {
+    "num": "III-E",
+    "titre": "Synthèse, grilles de couverture",
+    "page": 19,
+    "debut": "E. Synthèse",
+    "apercu": true
+   },
+   {
+    "num": "III-F",
+    "titre": "Principe d'utilisation des grilles de couverture",
+    "page": 20,
+    "debut": "F. Principe d'utilisation"
+   },
+   {
+    "num": "IV",
+    "titre": "Modalités de consultation du SDIS",
+    "page": 24,
+    "debut": "Modalités de consultation"
+   },
+   {
+    "num": "IV-A",
+    "titre": "Principes de consultation du SDIS",
+    "page": 24,
+    "debut": "A. Principes de consultation"
+   },
+   {
+    "num": "V",
+    "titre": "Caractéristiques techniques des différents PEI en Gironde",
+    "page": 25,
+    "debut": "Caractéristiques techniques des différents"
+   },
+   {
+    "num": "V-A",
+    "titre": "Caractéristiques communes des différents PEI",
+    "page": 25,
+    "debut": "A. Caractéristiques communes"
+   },
+   {
+    "num": "V-B",
+    "titre": "Inventaire des PEI concourant à la DECI",
+    "page": 25,
+    "debut": "B. Inventaire des PEI"
+   },
+   {
+    "num": "V-C",
+    "titre": "Distinction entre PEI « publics » et PEI « privés »",
+    "page": 34,
+    "debut": "C. Distinction entre PEI"
+   },
+   {
+    "num": "V-D",
+    "titre": "Signalisation des PEI",
+    "page": 37,
+    "debut": "D. Signalisation des PE"
+   },
+   {
+    "num": "VI",
+    "titre": "Mise en service et maintien en condition opérationnelle des PEI",
+    "page": 41,
+    "debut": "Mise en service et maintien"
+   },
+   {
+    "num": "VI-A",
+    "titre": "Opérations de contrôle et d'entretien",
+    "page": 41,
+    "debut": "A. Opérations de contrôle"
+   },
+   {
+    "num": "VI-B",
+    "titre": "Reconnaissances opérationnelles",
+    "page": 44,
+    "debut": "B. Reconnaissances opérationnelles"
+   },
+   {
+    "num": "VII",
+    "titre": "Échanges de données",
+    "page": 46,
+    "debut": "Echanges de données"
+   },
+   {
+    "num": "VII-A",
+    "titre": "Outil de gestion opérationnelle des PEI",
+    "page": 46,
+    "debut": "A. Outil de gestion"
+   },
+   {
+    "num": "VII-B",
+    "titre": "Acteurs : sources des données relatives à la DECI",
+    "page": 47,
+    "debut": "B. Acteurs"
+   },
+   {
+    "num": "VIII",
+    "titre": "Arrêté municipal ou intercommunal de DECI",
+    "page": 50,
+    "debut": "Arrêté municipal ou intercommunal de DECI"
+   },
+   {
+    "num": "VIII-A",
+    "titre": "Arrêté municipal ou intercommunal de DECI",
+    "page": 50,
+    "debut": "A. Arrêté municipal"
+   },
+   {
+    "num": "IX",
+    "titre": "Schéma communal ou intercommunal de DECI",
+    "page": 52,
+    "debut": "Schéma communal ou intercommunal de DECI"
+   },
+   {
+    "num": "IX-A",
+    "titre": "Objectifs du schéma",
+    "page": 52,
+    "debut": "A. Objectifs du sch"
+   },
+   {
+    "num": "IX-B",
+    "titre": "Processus d'élaboration",
+    "page": 52,
+    "debut": "B. Processus d'élaboration"
+   },
+   {
+    "num": "IX-C",
+    "titre": "Constitution du dossier du schéma",
+    "page": 54,
+    "debut": "C. Constitution du dossier"
+   },
+   {
+    "num": "IX-D",
+    "titre": "Procédure d'adoption du schéma",
+    "page": 54,
+    "debut": "D. Procédure d'adoption"
+   },
+   {
+    "num": "IX-E",
+    "titre": "Procédure de révision",
+    "page": 55,
+    "debut": "E. Procédure de révision"
+   },
+   {
+    "num": "GL",
+    "titre": "Glossaire",
+    "page": 56,
+    "debut": "GLOSSAIRE"
+   },
+   {
+    "num": "AN",
+    "titre": "Annexes : fiches synthétiques « réserves incendie » et « voie engin », formulaire de remontée d'informations PEI",
+    "page": 57,
+    "debut": "ANNEXES"
    }
   ]
  }

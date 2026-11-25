@@ -1,0 +1,321 @@
+{
+ "LEGITEXT000022443053": {
+  "source": "Instruction technique n° 249 (figures du document SDIS 33, d'après le JO n° 154 du 6 juillet 2010)",
+  "figures": [
+   {
+    "label": "Figure 1a",
+    "legende": "Figure 1a : cas général",
+    "images": [
+     "IT249/figure-1a.jpg"
+    ]
+   },
+   {
+    "label": "Figure 1b",
+    "legende": "Figure 1b : baies décalées",
+    "images": [
+     "IT249/figure-1b.jpg"
+    ]
+   },
+   {
+    "label": "Figure 2a",
+    "legende": "Figure 2a : résistance au feu des éléments participant au C",
+    "images": [
+     "IT249/figure-2a.jpg"
+    ]
+   },
+   {
+    "label": "Figure 2b",
+    "legende": "Figure 2b : résistance au feu des éléments participant au C",
+    "images": [
+     "IT249/figure-2b.jpg"
+    ]
+   },
+   {
+    "label": "Figure 2c",
+    "legende": "Figure 2c : cas particulier de complément de C en verre feuilleté",
+    "images": [
+     "IT249/figure-2c.jpg"
+    ]
+   },
+   {
+    "label": "Figure 3",
+    "legende": "Figure 3 : résistance au feu des éléments participant au D",
+    "images": [
+     "IT249/figure-3.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 4-a",
+    "legende": "Schéma 4-a",
+    "images": [
+     "IT249/schema-4-a.jpg",
+     "IT249/schema-4-a-2.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 4-d",
+    "legende": "Schéma 4-d",
+    "images": [
+     "IT249/schema-4-d.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 4-b",
+    "legende": "Schéma 4-b",
+    "images": [
+     "IT249/schema-4-b.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 4-c",
+    "legende": "Schéma 4-c",
+    "images": [
+     "IT249/schema-4-c.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 5-a",
+    "legende": "Schéma 5-a",
+    "images": [
+     "IT249/schema-5-a.jpg",
+     "IT249/schema-5-a-2.jpg"
+    ]
+   },
+   {
+    "label": "Schéma 5-b",
+    "legende": "Schéma 5-b",
+    "images": [
+     "IT249/schema-5-b.jpg"
+    ]
+   },
+   {
+    "label": "Figure 6",
+    "legende": "Figure 6 : principe de façade semi-rideau",
+    "images": [
+     "IT249/figure-6.jpg"
+    ]
+   },
+   {
+    "label": "Figure 7",
+    "legende": "Figure 7 : étanchéité en périphérie des châssis vision",
+    "images": [
+     "IT249/figure-7.jpg"
+    ]
+   },
+   {
+    "label": "Figure 8",
+    "legende": "Figure 8 : protection des habillages intérieurs combustibles",
+    "images": [
+     "IT249/figure-8.jpg"
+    ]
+   },
+   {
+    "label": "Figure 9",
+    "legende": "Figure 9 : exemple de soufflet au-dessus du plancher",
+    "images": [
+     "IT249/figure-9.jpg"
+    ]
+   },
+   {
+    "label": "Figure 10",
+    "legende": "Figure 10 : exemple de dispositif devant le nez de plancher",
+    "images": [
+     "IT249/figure-10.jpg"
+    ]
+   },
+   {
+    "label": "Figure 11",
+    "legende": "Figure 11 : autre exemple de dispositif devant le nez de plancher",
+    "images": [
+     "IT249/figure-11.jpg"
+    ]
+   },
+   {
+    "label": "Figure 12",
+    "legende": "Figure 12 : exemple de dispositif de fixation",
+    "images": [
+     "IT249/figure-12.jpg"
+    ]
+   },
+   {
+    "label": "Figure 13",
+    "legende": "Figure 13 : exemple de fixation s’opposant à tout mouvement relatif",
+    "images": [
+     "IT249/figure-13.jpg"
+    ]
+   },
+   {
+    "label": "Figure 14",
+    "legende": "Figure 14 : panneau de façade à ossature en PVC posé au plus au nu extérieur",
+    "images": [
+     "IT249/figure-14.jpg"
+    ]
+   },
+   {
+    "label": "Figure 15",
+    "legende": "Figure 15 : panneau de façade à ossature en PVC posé au plus au nu extérieur",
+    "images": [
+     "IT249/figure-15.jpg"
+    ]
+   },
+   {
+    "label": "Figure 16",
+    "legende": "Figure 16 : jonction entre fenêtres ou ensembles menuisés",
+    "images": [
+     "IT249/figure-16.jpg"
+    ]
+   },
+   {
+    "label": "Figure 17",
+    "legende": "Figure 17 : jonction de murs à ossature bois en nez de dalle béton",
+    "images": [
+     "IT249/figure-17.jpg"
+    ]
+   },
+   {
+    "label": "Figure 18",
+    "legende": "Figure 18 : jonction de murs à ossature bois devant plancher bois",
+    "images": [
+     "IT249/figure-18.jpg"
+    ]
+   },
+   {
+    "label": "Figure 19",
+    "legende": "Figure 19 : jonction de murs à ossature bois entre dalles béton",
+    "images": [
+     "IT249/figure-19.jpg"
+    ]
+   },
+   {
+    "label": "Figure 20",
+    "legende": "Figure 20 : jonction de murs à ossature bois entre planchers bois",
+    "images": [
+     "IT249/figure-20.jpg"
+    ]
+   },
+   {
+    "label": "Figure 21",
+    "legende": "Figure 21 : jonction de murs à ossature bois entre planchers bois monobloc",
+    "images": [
+     "IT249/figure-21.jpg"
+    ]
+   },
+   {
+    "label": "Figure 22",
+    "legende": "Figure 22 : jonction d’éléments bois monobloc entre planchers bois monobloc",
+    "images": [
+     "IT249/figure-22.jpg"
+    ]
+   },
+   {
+    "label": "Figure 23",
+    "legende": "Figure 23 : exemple de jonction façade/plancher lorsque le C + D n’est pas appliqué",
+    "images": [
+     "IT249/figure-23.jpg"
+    ]
+   },
+   {
+    "label": "Figure 24",
+    "legende": "Figure 24 : définition de la surface de référence Sref",
+    "images": [
+     "IT249/figure-24.jpg"
+    ]
+   },
+   {
+    "label": "Figure A1",
+    "legende": "Figure A1 : étage supérieur en retrait",
+    "images": [
+     "IT249/figure-a1.jpg"
+    ]
+   },
+   {
+    "label": "Figure A2",
+    "legende": "Figure A2 : règle de calcul du D, d < 0,15 m",
+    "images": [
+     "IT249/figure-a2.jpg"
+    ]
+   },
+   {
+    "label": "Figure A3",
+    "legende": "Figure A3 : règle de calcul du D, d ≥ 0,15 m",
+    "images": [
+     "IT249/figure-a3.jpg"
+    ]
+   },
+   {
+    "label": "Figure A4",
+    "legende": "Figure A4 : allège en retrait d’une façade entièrement vitrée",
+    "images": [
+     "IT249/figure-a4.jpg"
+    ]
+   },
+   {
+    "label": "Figure A5",
+    "legende": "Figure A5 : façade inclinée vers l'intérieur",
+    "images": [
+     "IT249/figure-a5.jpg"
+    ]
+   },
+   {
+    "label": "Figure A6",
+    "legende": "Figure A6 : façade inclinée vers l'extérieur",
+    "images": [
+     "IT249/figure-a6.jpg"
+    ]
+   },
+   {
+    "label": "Figure A7",
+    "legende": "Figure A7 : garde-corps",
+    "images": [
+     "IT249/figure-a7.jpg"
+    ]
+   },
+   {
+    "label": "Figure A8",
+    "legende": "Figure A8 : cas a à f",
+    "images": [
+     "IT249/figure-a8.jpg",
+     "IT249/figure-a8-2.jpg",
+     "IT249/figure-a8-3.jpg",
+     "IT249/figure-a8-4.jpg",
+     "IT249/figure-a8-5.jpg",
+     "IT249/figure-a8-6.jpg"
+    ]
+   },
+   {
+    "label": "Figure 1",
+    "legende": "Figure 1",
+    "images": [
+     "IT249/figure-1.jpg"
+    ]
+   }
+  ]
+ },
+ "LEGITEXT000020303557": {
+  "source": "Instruction technique relative à l'utilisation d'installations particulières (figures du document SDIS 33 ; texte : version Légifrance)",
+  "figures": [
+   {
+    "label": "Figure 1",
+    "legende": "Fig. 1 : tirs omnidirectionnels libres dans le cône vertical de demi-angle au sommet égal à 30° ; S = source du laser",
+    "images": [
+     "IT-installations/figure-1.png"
+    ]
+   },
+   {
+    "label": "Figure 2",
+    "legende": "Fig. 2 : tirs sur cible matérielle fixe opaque et non réfléchissante pour tout rayon formant un angle (α) supérieur à 30° ; S = source du laser ; C1, C2, C3 = cibles fixes opaques et non réfléchissantes",
+    "images": [
+     "IT-installations/figure-2.png"
+    ]
+   },
+   {
+    "label": "Figure 3",
+    "legende": "Fig. 3 : tirs sur cible matérielle fixe opaque et non réfléchissante avec déviation du rayon ; S = source du laser ; C1, C2, C3=cibles fixes opaques et non réfléchissantes",
+    "images": [
+     "IT-installations/figure-3.png"
+    ]
+   }
+  ],
+  "debut_article": "Instruction technique relative à l'utilisation"
+ }
+}

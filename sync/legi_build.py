@@ -20,11 +20,14 @@ FILTRE_CODES = {
     "LEGITEXT000006072050": re.compile(r"^R\.? ?42(16|27)-"),                                   # Code du travail
     "LEGITEXT000006074096": re.compile(r"^(L|R)\.? ?(14[1-6]-|112-(9|1[0-2])$)"),              # CCH (dont SEE L. 112-9 à 12)
     "LEGITEXT000006070633": re.compile(r"^(L|R)\.? ?2225-"),                                     # CGCT : DECI
+    # Code de l'urbanisme : desserte et accès des engins de secours, permis des ERP et IGH (articles cités par le SDIS 33)
+    "LEGITEXT000006074075": re.compile(r"^R\*?\.? ?(111-(1|2|5|6)|311-(5-1|6)|423-(23|25|28|41-1|70|71)|424-5-1|425-1[45]|431-(16|29|30)|462-[137])$"),
 }
 TITRES_CODES = {
     "LEGITEXT000006074096": "Code de la construction et de l'habitation",
     "LEGITEXT000006072050": "Code du travail",
     "LEGITEXT000006070633": "Code général des collectivités territoriales — défense extérieure contre l'incendie",
+    "LEGITEXT000006074075": "Code de l'urbanisme — desserte, permis de construire des ERP et IGH",
 }
 
 ALLOWED_TAGS = {"p", "br", "table", "tr", "td", "th", "tbody", "thead", "ul", "ol", "li",

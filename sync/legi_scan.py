@@ -48,6 +48,7 @@ CODES = {
     "LEGITEXT000006074096": "CCH",   # Code de la construction et de l'habitation
     "LEGITEXT000006072050": "CDT",   # Code du travail
     "LEGITEXT000006070633": "CCH",   # Code général des collectivités territoriales (DECI)
+    "LEGITEXT000006074075": "CCH",   # Code de l'urbanisme (desserte, permis des ERP)
 }
 
 

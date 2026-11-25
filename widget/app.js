@@ -10,7 +10,7 @@
     IGH: { label: 'Immeubles de grande hauteur', court: 'IGH' },
     HAB: { label: "Bâtiments d'habitation", court: 'Habitation' },
     CDT: { label: 'Code du travail', court: 'Travail' },
-    CCH: { label: 'Code de la construction, produits (réaction et résistance au feu), solutions d\'effet équivalent, DECI', court: 'CCH & textes communs' },
+    CCH: { label: 'Code de la construction, produits (réaction et résistance au feu), solutions d\'effet équivalent, DECI, urbanisme', court: 'CCH & textes communs' },
     DOC: { label: 'Doctrine & guides', court: 'Doctrine & guides' },
   };
   const ORDRE_DOM = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH', 'DOC'];
@@ -62,14 +62,21 @@
   function debounce(fn, ms) { let t; const f = (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; f.cancel = () => clearTimeout(t); return f; }
 
   /* HTML d'un article, filtré par liste blanche (le contenu vient du document) */
-  const OK_TAGS = new Set(['P', 'BR', 'TABLE', 'TBODY', 'THEAD', 'TR', 'TD', 'TH', 'UL', 'OL', 'LI', 'B', 'STRONG', 'I', 'EM', 'SUP', 'SUB', 'U', 'DIV', 'SPAN', 'BLOCKQUOTE', 'PRE']);
+  const OK_TAGS = new Set(['P', 'BR', 'TABLE', 'TBODY', 'THEAD', 'TR', 'TD', 'TH', 'UL', 'OL', 'LI', 'B', 'STRONG', 'I', 'EM', 'SUP', 'SUB', 'U', 'DIV', 'SPAN', 'BLOCKQUOTE', 'PRE', 'IMG']);
   function safeHTML(html, fallbackText) {
     if (!html) return (fallbackText || '').split(/\n+/).map((p) => `<p>${esc(p)}</p>`).join('');
     const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
     const walk = (el) => {
       [...el.children].forEach((c) => {
         if (!OK_TAGS.has(c.tagName)) { c.replaceWith(document.createTextNode(c.textContent)); return; }
-        [...c.attributes].forEach((a) => { if (!['colspan', 'rowspan'].includes(a.name)) c.removeAttribute(a.name); });
+        [...c.attributes].forEach((a) => {
+          if (['colspan', 'rowspan'].includes(a.name)) return;
+          // figures des textes officiels (documents/figures) et illustrations des documents, publiées avec le widget
+          if (c.tagName === 'IMG' && (a.name === 'alt' || (a.name === 'src' && /^documents\/[\w\-\/.]+$/.test(a.value)))) return;
+          if (a.name === 'class' && ['fig', 'figcap'].includes(a.value)) return;
+          c.removeAttribute(a.name);
+        });
+        if (c.tagName === 'IMG') { if (!c.getAttribute('src')) { c.remove(); return; } c.setAttribute('data-zoom', ''); c.setAttribute('loading', 'lazy'); }
         walk(c);
       });
     };

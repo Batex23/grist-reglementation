@@ -46,10 +46,25 @@ def nb_pages(pdf):
     return int(re.search(r"Pages:\s+(\d+)", out).group(1))
 
 
-def texte_page(pdf, i, tmp):
-    """Texte d'une page (mise en page conservée) ; OCR si la page est une image."""
-    t = run(["pdftotext", "-layout", "-enc", "UTF-8", "-f", str(i), "-l", str(i), pdf, "-"]).stdout.decode("utf-8", "replace")
-    if len(re.sub(r"\s", "", t)) >= 40:
+def taille_page(pdf, i):
+    out = run(["pdfinfo", "-f", str(i), "-l", str(i), pdf]).stdout.decode("utf-8", "replace")
+    m = re.search(r"Page\s+\d+\s+size:\s+([\d.]+) x ([\d.]+)", out) or re.search(r"Page size:\s+([\d.]+) x ([\d.]+)", out)
+    return float(m.group(1)), float(m.group(2))
+
+
+def texte_page(pdf, i, tmp, colonnes=1, ocr=False):
+    """Texte d'une page (mise en page conservée) ; OCR si la page est une image ou si le catalogue l'impose
+    (polices sans table Unicode). Pages à colonnes : lues colonne par colonne."""
+    t = ""
+    if not ocr:
+        if colonnes > 1:
+            w, h = taille_page(pdf, i)
+            bande = w / colonnes
+            t = "\n".join(run(["pdftotext", "-layout", "-enc", "UTF-8", "-f", str(i), "-l", str(i), "-x", str(int(k * bande)), "-y", "0",
+                                "-W", str(int(bande) + 1), "-H", str(int(h) + 1), pdf, "-"]).stdout.decode("utf-8", "replace") for k in range(colonnes))
+        else:
+            t = run(["pdftotext", "-layout", "-enc", "UTF-8", "-f", str(i), "-l", str(i), pdf, "-"]).stdout.decode("utf-8", "replace")
+    if not ocr and len(re.sub(r"\s", "", t)) >= 40:
         return t, False
     if not shutil.which("tesseract"):
         return t, False
@@ -59,11 +74,26 @@ def texte_page(pdf, i, tmp):
     return open(base + ".txt", encoding="utf-8").read(), True
 
 
-def lire(pdf):
+def lire(pdf, info=None):
+    """Texte des pages ; mis en cache (cache/documents/) quand l'OCR est nécessaire, pour ne pas relire chaque jour."""
+    info = info or {}
+    cle_cache = hashlib.sha1(open(pdf, "rb").read() + json.dumps([info.get("colonnes"), info.get("ocr")]).encode()).hexdigest()[:16]
+    fcache = os.path.join(ROOT, "cache", "documents", cle_cache + ".json")
+    if os.path.exists(fcache):
+        c = json.load(open(fcache, encoding="utf-8"))
+        return c["pages"], c["ocr"]
+    pages, ocr = _lire(pdf, info)
+    if ocr:
+        os.makedirs(os.path.dirname(fcache), exist_ok=True)
+        json.dump({"pages": pages, "ocr": ocr}, open(fcache, "w", encoding="utf-8"), ensure_ascii=False)
+    return pages, ocr
+
+
+def _lire(pdf, info):
     pages, ocr = [], 0
     with tempfile.TemporaryDirectory() as tmp:
         for i in range(1, nb_pages(pdf) + 1):
-            t, o = texte_page(pdf, i, tmp)
+            t, o = texte_page(pdf, i, tmp, int(info.get("colonnes", 1)), bool(info.get("ocr")))
             ocr += o
             pages.append(PUA.sub("•", t).replace("\f", ""))
     return pages, ocr
@@ -83,7 +113,7 @@ def nettoie(pages):
     for p in pages:
         for k in {cle(l) for l in p.splitlines() if 3 < len(cle(l)) < 120}:
             vus[k] += 1
-    seuil = max(2, int(len(pages) * 0.6)) if len(pages) > 1 else 99
+    seuil = max(min(3, len(pages)), int(len(pages) * 0.6)) if len(pages) > 1 else 99
     repetes = {k for k, n in vus.items() if n >= seuil}
     out = []
     for p in pages:
@@ -125,8 +155,9 @@ def successeur(prec, num):
     return any(a[:k] == p[:k] and a[k] == p[k] + 1 and all(x == 1 for x in a[k + 1:]) for k in range(min(len(a), len(p))))
 
 
-def titres_numerotes(pages):
-    """Repère les titres numérotés, dans l'ordre, en écartant les listes et le sommaire."""
+def titres_numerotes(pages, courts=False):
+    """Repère les titres numérotés, dans l'ordre, en écartant les listes et le sommaire.
+    courts=True : un titre court suffit, même en minuscules (« 1. Objet », « 3.1. Principe de fonctionnement »)."""
     trouves, prec, partie = [], None, None
     for ip, lignes in enumerate(pages):
         if est_sommaire(lignes):
@@ -145,13 +176,25 @@ def titres_numerotes(pages):
             titre = re.sub(r"\.\s*\(\s*", " (", titre).replace(" )", ")")
             court = len(titre) <= 90 and not titre.endswith((",", ";"))
             # un titre est en majuscules, ou court et à un niveau ≥ 2 (« 5.1 Introduction. »)
-            if not court or not (majuscules(titre) or ("." in num and len(titre) < 60)):
+            if not court or not (majuscules(titre) or ("." in num and len(titre) < 60) or (courts and len(titre) < 75 and titre[0].isupper())):
                 continue
             if not successeur(prec, num):
                 continue
             if partie is not None and "." in num and int(num.split(".")[0]) != partie and int(num.split(".")[0]) != partie + 1:
                 continue
-            trouves.append({"page": ip, "ligne": il, "num": num, "titre": titre})
+            t = {"page": ip, "ligne": il, "num": num, "titre": titre}
+            if courts:
+                # paragraphe numéroté (« 3.4.1. Les conduits doivent… ») plutôt qu'un titre : la phrase continue
+                suite = next((x.strip() for x in lignes[il + 1:il + 3] if x.strip()), "")
+                debut_phrase = re.match(r"(?:Le|La|Les|L['’]|Un|Une|Des|Ce|Ces|Cet|Cette|Il|Ils|Elle|Elles|Lorsque|Lorsqu|Dans|Pour|Si|En|Chaque|Tout|Toute|Tous|Aucun|Aucune|Sauf|Toutefois|Leur|Leurs|On)\b", titre)
+                if debut_phrase and (suite[:1].islower() or len(titre.split()) > 5) and not majuscules(titre):
+                    t["phrase"] = True
+                elif suite[:1].islower() and len(suite) < 70 and not titre.endswith((".", ":")):
+                    # titre sur deux lignes (« Implantation des évacuations de fumées / et des amenées d'air »)
+                    j = next(k for k in range(il + 1, len(lignes)) if lignes[k].strip())
+                    t["titre"] = f"{titre} {suite}".rstrip(" .:")
+                    t["fin_titre"] = j
+            trouves.append(t)
             prec = num
     # parties dont l'intercalaire est une image (« PARTIE 1 » non lisible) : page courte juste avant n.1
     if any(t.get("partie") for t in trouves):
@@ -190,7 +233,14 @@ def sections_manuelles(sections, pages):
         if sec.get("debut"):
             k = cle(sec["debut"])
             ligne = next((il for il, l in enumerate(pages[ip]) if k and k in cle(l)), -1)
-        out.append({"page": ip, "ligne": ligne, "num": str(sec.get("num", i)), "titre": sec["titre"]})
+        t = {"page": ip, "ligne": ligne, "num": str(sec.get("num", i)), "titre": sec["titre"]}
+        if sec.get("partie"):  # regroupement (chapitre) : « P » + numéro, intitulé libre
+            t.update(partie=True, num="P" + str(sec.get("num", i)), libelle=sec["titre"])
+        if sec.get("apercu"):
+            t["apercu"] = True
+        if sec.get("hors_partie"):  # préambule, glossaire… : rattachés au document, pas au chapitre précédent
+            t["racine"] = True
+        out.append(t)
     return out
 
 
@@ -310,9 +360,112 @@ def meta_pdf(pdf):
     return None
 
 
+def images_pdf(pdf, tmp):
+    """Images (schémas, photos) du PDF avec leur position, via pdftohtml -xml.
+    Écarte les petites images, les logos répétés et les pages scannées entières."""
+    import xml.etree.ElementTree as ET
+    base = os.path.join(tmp, "x")
+    subprocess.run(["pdftohtml", "-xml", "-fmt", "png", "-q", "-nodrm", pdf, base], capture_output=True)
+    if not os.path.exists(base + ".xml"):
+        return []
+    try:
+        racine = ET.parse(base + ".xml").getroot()
+    except ET.ParseError:
+        return []
+    out = []
+    for page in racine.iter("page"):
+        n, pw, ph = int(page.get("number")), float(page.get("width")), float(page.get("height"))
+        k = 0
+        for im in page.iter("image"):
+            w, h = float(im.get("width")), float(im.get("height"))
+            src = os.path.join(tmp, os.path.basename(im.get("src")))
+            top, left = float(im.get("top")), float(im.get("left"))
+            if w < 80 or h < 80 or w * h > 0.6 * pw * ph or (w > 0.75 * pw and h > 0.35 * ph) or not os.path.exists(src):
+                continue  # petite image, ou page scannée (le texte est déjà lu par OCR)
+            if n == 1 and ((top < 0.2 * ph and w < 0.5 * pw) or nb_pages(pdf) >= 15):
+                continue  # logos, couverture des guides
+            k += 1
+            out.append({"page": n, "top": top, "left": left, "w": w, "pw": pw, "ph": ph,
+                        "src": src, "nom": f"img-{n:03d}-{k}{os.path.splitext(src)[1]}",
+                        "empreinte": hashlib.sha1(open(src, "rb").read()).hexdigest()})
+    vus, bandes = {}, {}
+    for i in out:
+        vus[i["empreinte"]] = vus.get(i["empreinte"], 0) + 1
+        b = (i["page"], round(i["left"]), round(i["w"]))
+        bandes[b] = bandes.get(b, 0) + 1
+    # logos répétés ; bandes empilées de même largeur (page scannée découpée)
+    return [i for i in out if vus[i["empreinte"]] < 3 and bandes[(i["page"], round(i["left"]), round(i["w"]))] < 3]
+
+
+def textes_pdf(pdf, tmp):
+    """Lignes de texte du PDF avec leur position (page, top, left)."""
+    import xml.etree.ElementTree as ET
+    base = os.path.join(tmp, "t")
+    subprocess.run(["pdftohtml", "-xml", "-i", "-q", "-nodrm", pdf, base], capture_output=True)
+    out = []
+    try:
+        racine = ET.parse(base + ".xml").getroot()
+    except (ET.ParseError, FileNotFoundError):
+        return out
+    for page in racine.iter("page"):
+        n = int(page.get("number"))
+        for t in page.iter("text"):
+            out.append((n, float(t.get("top")), float(t.get("left")), "".join(t.itertext())))
+    return out
+
+
+def placer_images(pdf, info, pages, debuts, noeuds, sl):
+    """Ajoute à chaque fiche les images de sa portion de document (ordre de lecture : page, colonne, hauteur)."""
+    if info.get("figures") is False:
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        imgs = images_pdf(pdf, tmp)
+        if not imgs:
+            return
+        lignes = [] if info.get("ocr") else textes_pdf(pdf, tmp)
+    ncol = int(info.get("colonnes", 1))
+    pw, ph = imgs[0]["pw"], imgs[0]["ph"]
+
+    def col(left, w=pw):
+        return min(ncol - 1, int(left // (w / ncol))) if ncol > 1 else 0
+
+    # position de départ de chaque fiche
+    positions = []
+    for nid, t in debuts:
+        p = t["page"] + 1
+        cible = cle((t["num"] if not re.match(r"^p\. ", t["num"]) else "") + " " + (t.get("debut") or t["titre"])[:25])
+        pos = None
+        if lignes and len(cible) > 3:
+            for (n, top, left, txt) in lignes:
+                if n == p and cle(txt) and (cible.startswith(cle(txt)[:max(4, len(cle(txt)))]) or cle(txt).startswith(cible[:12])):
+                    pos = (n, col(left), top)
+                    break
+        if pos is None:  # estimation par la ligne dans la page
+            nb = max(1, len(pages[t["page"]]))
+            pos = (p, 0, max(0, t["ligne"]) / nb * ph)
+        positions.append((pos, nid))
+    positions.sort()
+    par_id = {n["Identifiant"]: n for n in noeuds}
+    ajout = {}
+    for im in imgs:
+        cle_im = (im["page"], col(im["left"], im["pw"]), im["top"])
+        nid = None
+        for pos, i in positions:
+            if pos <= cle_im:
+                nid = i
+            else:
+                break
+        nid = nid or positions[0][1]
+        ajout.setdefault(nid, []).append(im)
+    for nid, lst in ajout.items():
+        n = par_id[nid]
+        bloc = "".join(f'<img src="documents/{sl}/{html.escape(i["nom"])}" alt="Illustration, page {i["page"]}">' for i in lst)
+        n["Texte_HTML"] = (n.get("Texte_HTML") or "") + f'<div class="fig">{bloc}</div>'
+
+
 def fiches(nom, info, ordre0):
     pdf = os.path.join(DOSSIER, nom)
-    brut, ocr = lire(pdf)
+    brut, ocr = lire(pdf, info)
     pages = nettoie(brut)
     code = info.get("code") or re.sub(r"[^A-Z0-9]", "", slug(nom).upper())[:5]
     sid = f"DOC:{slug(nom)}"
@@ -327,10 +480,11 @@ def fiches(nom, info, ordre0):
         "Nota": info.get("source", ""), "Pages": f"1-{len(pages)}", "Etat": "VIGUEUR",
         "Historique": json.dumps({"empreinte": empreinte, "ocr": ocr}, ensure_ascii=False),
     }
-    titres = sections_manuelles(info.get("sections"), pages) or titres_numerotes(pages) or intertitres(pages)
+    titres = sections_manuelles(info.get("sections"), pages) or titres_numerotes(pages, bool(info.get("titres_courts"))) or intertitres(pages)
     if not titres:
         titres = [{"page": i, "ligne": 0, "num": f"p. {i + 1}", "titre": f"Page {i + 1}"} for i in range(len(pages)) if any(l.strip() for l in pages[i])]
     noeuds, ordre = [racine], ordre0
+    debuts = []
     racine["Ordre"] = ordre
     partie_id = None
     for k, t in enumerate(titres):
@@ -339,7 +493,7 @@ def fiches(nom, info, ordre0):
         corps = []
         for ip in range(t["page"], fin["page"] + 1):
             lignes = pages[ip]
-            a = t["ligne"] + 1 if ip == t["page"] else 0
+            a = (t["ligne"] if t.get("phrase") else t.get("fin_titre", t["ligne"]) + 1) if ip == t["page"] else 0
             b = fin["ligne"] if ip == fin["page"] and k + 1 < len(titres) else len(lignes)
             corps += lignes[a:b] + [""]
         ordre += 1
@@ -353,20 +507,31 @@ def fiches(nom, info, ordre0):
         if t.get("partie"):
             partie_id = f"{sid}:{t['num']}"
             noeuds.append({"Identifiant": partie_id, "Parent": sid, "Type": "Section", "Domaine": DOM, "Numero": "",
-                           "Titre": f"Partie {t['num'][1:]} — {t['titre']}", "Chemin": titre, "Niveau": 1, "Ordre": ordre,
+                           "Titre": t.get("libelle") or f"Partie {t['num'][1:]} — {t['titre']}", "Chemin": titre, "Niveau": 1, "Ordre": ordre,
                            "Texte_officiel": sid, "Lien_Legifrance": f"{lien}#page={p1}", "Pages": f"{p1}"})
             continue
+        if t.get("racine"):
+            partie_id = None
+        if t.get("phrase") and corps:
+            corps[0] = re.sub(r"^\s*" + re.escape(t["num"]) + r"\.?\s*", "", corps[0])
         blocs = paragraphes(corps)
         noeuds.append({
             "Identifiant": f"{sid}:{t['num'].replace(' ', '')}", "Parent": partie_id or sid, "Type": "Article", "Domaine": DOM,
-            "Numero": t["num"], "Titre": t["titre"].capitalize() if majuscules(t["titre"]) else t["titre"],
+            "Numero": t["num"], "Titre": (" ".join(t["titre"].split()[:7]).rstrip(" ,;:") + " …") if t.get("phrase") else t["titre"].capitalize() if majuscules(t["titre"]) else t["titre"],
             "Niveau": 2 if partie_id else 1, "Ordre": ordre,
             "Chemin": " › ".join(x for x in [titre, next((n["Titre"] for n in noeuds if n["Identifiant"] == partie_id), "")] if x),
             "Texte": texte_de(blocs), "Texte_HTML": html_de(blocs), "Etat": "VIGUEUR",
             "En_vigueur_depuis": edition, "Texte_officiel": sid, "Lien_Legifrance": f"{lien}#page={p1}",
             "Pages": f"{p1}-{p2}" if p2 > p1 else f"{p1}",
         })
-    print(f"{nom} : {len(pages)} pages{f' (dont {ocr} lues par OCR)' if ocr else ''}, {sum(1 for n in noeuds if n['Type'] == 'Article')} fiches", file=sys.stderr)
+        debuts.append((noeuds[-1]["Identifiant"], t))
+        if t.get("apercu"):  # tableaux mal lus (OCR) : image des pages à la suite du texte
+            noeuds[-1]["Texte_HTML"] += '<div class="fig">' + "".join(
+                f'<img src="documents/{slug(nom)}/p{k:03d}.jpg" alt="Page {k} du document">' for k in range(p1, p2 + 1)) + "</div>"
+    if debuts:
+        placer_images(pdf, info, pages, debuts, noeuds, slug(nom))
+    nimg = sum(n.get("Texte_HTML", "").count("<img") for n in noeuds)
+    print(f"{nom} : {len(pages)} pages{f' (dont {ocr} lues par OCR)' if ocr else ''}, {sum(1 for n in noeuds if n['Type'] == 'Article')} fiches, {nimg} images", file=sys.stderr)
     return noeuds, ordre
 
 
@@ -386,6 +551,73 @@ def documents():
     return out
 
 
+
+# --------------------------------------------------------------------------- figures des textes officiels
+
+def _motif_label(label):
+    """« Figure 1a » → regex tolérante (espaces, « Shéma », tiret facultatif) ; « Figure 1 » ne prend pas « Figure 10 »."""
+    kind, num = label.split(" ", 1)
+    k = "Sch?[ée]ma" if kind.lower().startswith("sch") else r"Fig(?:ure|\.)?"
+    n = re.escape(num).replace("\\-", "[-\\s]?")
+    return re.compile(rf"(?i:{k})(?:\s|&nbsp;|&#160;)*{n}(?![0-9a-z])")
+
+
+def figures(noeuds, dest=None):
+    """Insère dans le HTML des articles officiels (Légifrance) les figures absentes de la base LEGI.
+    documents/figures/index.json : {LEGITEXT: {source, debut_article?, figures: [{label, legende, images: [chemin]}]}}
+    (debut_article : limite la recherche aux articles dont le texte commence ainsi, ex. une IT rangée dans l'arrêté de 1980).
+    Chaque figure est placée devant sa légende (« Figure 1a : cas général »), à défaut après le paragraphe
+    qui la cite, à défaut en fin du dernier article du texte. Avec dest : copie les images pour la publication."""
+    racine = os.path.join(DOSSIER, "figures")
+    idx_path = os.path.join(racine, "index.json")
+    if not os.path.exists(idx_path):
+        return 0
+    idx = json.load(open(idx_path, encoding="utf-8"))
+    total = 0
+    for texte, info in idx.items():
+        arts = [n for n in noeuds if n.get("Texte_officiel") == texte and n.get("Type") == "Article" and n.get("Texte_HTML")
+                and (not info.get("debut_article") or (n.get("Texte") or "").startswith(info["debut_article"]))]
+        if not arts:
+            print(f"figures : texte {texte} absent de la base", file=sys.stderr)
+            continue
+        for f in info["figures"]:
+            if any(f'data-fig="{html.escape(f["label"])}"' in a["Texte_HTML"] for a in arts):
+                continue
+            rx = _motif_label(f["label"])
+            bloc = "".join(f'<img src="documents/figures/{html.escape(i)}" alt="{html.escape(f["legende"])}">' for i in f["images"])
+            place, legende = None, True
+            # 1. légende seule en début de paragraphe ou de ligne
+            for a in arts:
+                for m in rx.finditer(a["Texte_HTML"]):
+                    avant = a["Texte_HTML"][:m.start()]
+                    debut = max(avant.rfind("<p>"), avant.rfind("<br>"), avant.rfind("<br/>"))
+                    if debut >= 0 and not re.sub(r"<[^>]+>|\s|&nbsp;", "", avant[debut:]):
+                        place, legende = (a, debut), False  # la légende officielle suit la figure
+                if place:
+                    break
+            # 2. après le paragraphe qui la cite
+            if not place:
+                for a in arts:
+                    m = rx.search(a["Texte_HTML"])
+                    if m:
+                        fin = a["Texte_HTML"].find("</p>", m.end())
+                        place = (a, fin + 4 if fin >= 0 else len(a["Texte_HTML"]))
+                        break
+            if not place:
+                place = (arts[-1], len(arts[-1]["Texte_HTML"]))
+            a, pos = place
+            if legende:  # plusieurs figures citées dans le même paragraphe : dans l'ordre
+                while a["Texte_HTML"].startswith('<div class="fig"', pos):
+                    pos = a["Texte_HTML"].index("</div>", pos) + 6
+            cap = f'<span class="figcap">{html.escape(f["legende"])}</span>' if legende else ""
+            bloc = f'<div class="fig" data-fig="{html.escape(f["label"])}">{bloc}{cap}</div>'
+            a["Texte_HTML"] = a["Texte_HTML"][:pos] + bloc + a["Texte_HTML"][pos:]
+            total += 1
+        print(f"figures : {len(info['figures'])} placées dans {texte} ({info.get('source', '')})", file=sys.stderr)
+    if dest:
+        shutil.copytree(racine, os.path.join(dest, "figures"), dirs_exist_ok=True, ignore=shutil.ignore_patterns("index.json"))
+    return total
+
 def images(dest):
     """Copie les PDF et rend chaque page en image (JPEG ~110 dpi) : dest/<slug>/p001.jpg."""
     os.makedirs(dest, exist_ok=True)
@@ -402,6 +634,9 @@ def images(dest):
             m = re.match(r"p-(\d+)\.jpg$", f)
             if m:
                 os.replace(os.path.join(d, f), os.path.join(d, f"p{int(m.group(1)):03d}.jpg"))
+        with tempfile.TemporaryDirectory() as tmp:
+            for im in images_pdf(pdf, tmp):
+                shutil.copy(im["src"], os.path.join(d, im["nom"]))
     print(f"PDF et images des pages écrits dans {dest}", file=sys.stderr)
 
 
@@ -409,6 +644,7 @@ def fusionner(fichier, dossier_images=None):
     noeuds = json.load(open(fichier, encoding="utf-8")) if os.path.exists(fichier) else []
     noeuds = [n for n in noeuds if n.get("Domaine") != DOM]
     docs = documents()
+    figures(noeuds, dossier_images)
     json.dump(noeuds + docs, open(fichier, "w", encoding="utf-8"), ensure_ascii=False)
     print(f"{sum(1 for n in docs if n['Type'] == 'Texte')} document(s), {sum(1 for n in docs if n['Type'] == 'Article')} fiche(s) fusionnés dans {fichier}", file=sys.stderr)
     if dossier_images:
