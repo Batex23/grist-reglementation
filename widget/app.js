@@ -2259,8 +2259,23 @@
     if (d.vsave) { const ta = $('textarea', t.closest('.vitem')); setVeille(+d.vsave, { Analyse: ta.value, Statut: 'Impact analysé' }); return; }
     if (d.dom) { st.domOn.has(d.dom) ? st.domOn.delete(d.dom) : st.domOn.add(d.dom); if (!st.domOn.size) ORDRE_DOM.forEach((x) => st.domOn.add(x)); store.set('dom', [...st.domOn]); renderChips(); go(st.view, false); return; }
   });
+  // volets repliables : sommaire (gauche) et commentaires (droite), mémorisés pour l'agent
+  function setVolet(cote, cache) {
+    const main = $('#main'); const btn = $(cote === 'tree' ? '#edgeTree' : '#edgeSide');
+    main.classList.toggle('hide-' + cote, cache);
+    btn.setAttribute('aria-expanded', String(!cache));
+    btn.title = (cache ? 'Afficher ' : 'Masquer ') + (cote === 'tree' ? 'le sommaire ( [ )' : 'le panneau des commentaires ( ] )');
+    store.set('volet-' + cote, cache);
+  }
+  const toggleVolet = (cote) => setVolet(cote, !$('#main').classList.contains('hide-' + cote));
+  setVolet('tree', !!store.get('volet-tree', false));
+  setVolet('side', !!store.get('volet-side', false));
+  $('#edgeTree').addEventListener('click', () => toggleVolet('tree'));
+  $('#edgeSide').addEventListener('click', () => toggleVolet('side'));
+
   document.addEventListener('keydown', (e) => {
     const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+    if (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && (e.key === '[' || e.key === ']')) { e.preventDefault(); toggleVolet(e.key === '[' ? 'tree' : 'side'); return; }
     if (e.key === 'Escape') { hidePop(); $('#lightbox').classList.remove('show'); $('#tree').classList.remove('open'); $('#side').classList.remove('open'); }
     if (typing) return;
     if (e.key === '/' || (e.key === 'k' && (e.ctrlKey || e.metaKey))) { e.preventDefault(); $('#q').focus(); $('#q').select(); }
