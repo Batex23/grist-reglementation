@@ -10,7 +10,7 @@
     IGH: { label: 'Immeubles de grande hauteur', court: 'IGH' },
     HAB: { label: "Bâtiments d'habitation", court: 'Habitation' },
     CDT: { label: 'Code du travail', court: 'Travail' },
-    CCH: { label: 'Code de la construction', court: 'CCH' },
+    CCH: { label: 'Code de la construction, produits (réaction et résistance au feu), solutions d\'effet équivalent, DECI', court: 'CCH & textes communs' },
     DOC: { label: 'Doctrine & guides', court: 'Doctrine & guides' },
   };
   const ORDRE_DOM = ['ERP', 'IGH', 'HAB', 'CDT', 'CCH', 'DOC'];
@@ -1284,11 +1284,13 @@
     if (!eff) return null;
     if (ct) {
       const neuf = calcState().ctMode !== 'existant';
+      // R. 4216-8 est abrogé au 1er janvier 2027 (décret n° 2025-1100) : règles reprises par le CCH (R. 144-10) et le règlement de sécurité des bâtiments à usage professionnel
+      const R8 = new Date() >= new Date('2027-01-01') ? 'R. 144-10 CCH et règlement BUP (ex-R. 4216-8)' : 'R. 4216-8';
       if (neuf) {
-        if (eff < 20) return { s: '1', u: '1', ns: 1, nu: 1, mode: 'up', ref: 'R. 4216-8' };
-        if (eff <= 50) return { s: '1 + 1 acc.', u: '1', ns: 2, nu: 1, mode: 'up', ref: 'R. 4216-8', note: 'ou 1 dégagement de 2 UP si parcours ≤ 25 m, hors sous-sol' };
-        if (eff <= 100) return { s: '2', u: '2', ns: 2, nu: 2, mode: 'up', ref: 'R. 4216-8', note: 'ou 1 + 1 accessoire' };
-        return { s: String(nbOf(eff)), u: String(Math.max(3, Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0))), ns: nbOf(eff), nu: Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0), mode: 'up', ref: 'R. 4216-8' };
+        if (eff < 20) return { s: '1', u: '1', ns: 1, nu: 1, mode: 'up', ref: R8 };
+        if (eff <= 50) return { s: '1 + 1 acc.', u: '1', ns: 2, nu: 1, mode: 'up', ref: R8, note: 'ou 1 dégagement de 2 UP si parcours ≤ 25 m, hors sous-sol' };
+        if (eff <= 100) return { s: '2', u: '2', ns: 2, nu: 2, mode: 'up', ref: R8, note: 'ou 1 + 1 accessoire' };
+        return { s: String(nbOf(eff)), u: String(Math.max(3, Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0))), ns: nbOf(eff), nu: Math.ceil(eff / 100) + (eff <= 500 ? 1 : 0), mode: 'up', ref: R8 };
       }
       const w = eff < 20 ? 0.8 : eff <= 100 ? 1.5 : eff <= 300 ? 2 : eff <= 500 ? 2.5 : 2.5 + 0.5 * Math.ceil((eff - 500) / 100);
       const n = eff <= 100 ? 1 : eff <= 500 ? 2 : 2 + Math.ceil((eff - 500) / 500);

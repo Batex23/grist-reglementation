@@ -10,7 +10,7 @@ réellement présents dans la base ; une référence absente fait échouer le te
 
 # (chapitre, id, titre, références des dispositions générales)
 RUBRIQUES_G1 = [
-    ("Classement et généralités", "classement", "Définition, type et catégorie", ["R143-2", "R143-18", "R143-19", "GN 1"]),
+    ("Classement et généralités", "classement", "Définition, type et catégorie, terminologie", ["R143-2", "R143-18", "R143-19", "GN 1", "GN 16"]),
     ("Classement et généralités", "groupement", "Groupements d'établissements, locaux de types différents", ["GN 2", "GN 3", "GN 5", "GN 6"]),
     ("Classement et généralités", "adaptation", "Adaptation, existant, aménagement dans un bâtiment existant", ["GN 4", "GN 9", "GN 10", "GN 7"]),
     ("Classement et généralités", "controle", "Contrôle, exploitation, consignes, travaux", ["GE 1-GE 10", "GN 11-GN 14"]),
@@ -53,7 +53,7 @@ RUBRIQUES_G1 = [
 # 5e catégorie (livre III) : seules s'appliquent ces dispositions, plus celles
 # du livre II expressément citées (PE 1 § 1).
 RUBRIQUES_G2 = [
-    ("Classement et généralités", "classement", "Définition, type et catégorie", ["R143-2", "R143-14", "R143-18", "R143-19", "GN 1", "PE 1", "PE 2", "PE 3"]),
+    ("Classement et généralités", "classement", "Définition, type et catégorie, terminologie", ["R143-2", "R143-14", "R143-18", "R143-19", "GN 1", "GN 16", "PE 1", "PE 2", "PE 3"]),
     ("Classement et généralités", "groupement", "Groupements d'établissements, locaux de types différents", ["GN 2", "GN 3", "GN 5", "GN 6"]),
     ("Classement et généralités", "adaptation", "Adaptation, existant", ["GN 4", "GN 9", "GN 10"]),
     ("Classement et généralités", "controle", "Vérifications techniques", ["PE 4"]),

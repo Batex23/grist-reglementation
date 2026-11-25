@@ -54,11 +54,18 @@ jobs:
           key: legi-${{ github.run_id }}
           restore-keys: legi-
 
-      - name: Première extraction (si le cache est vide)
+      - name: Première extraction (cache vide ou liste des textes modifiée)
         run: |
-          if [ ! -d cache/legi ]; then
+          sig=$(sha1sum sync/legi_scan.py | cut -c1-12)
+          if [ ! -d cache/legi ] || [ "$(cat cache/cibles.sig 2>/dev/null)" != "$sig" ]; then
+            rm -rf cache/legi cache/dernier_increment.txt
             mkdir -p cache/legi
+            rm -f data/cibles.json
             python -I sync/legi_scan.py bootstrap cache/legi data/cibles.json
+            cp data/cibles.json cache/cibles.json
+            echo "$sig" > cache/cibles.sig
+          elif [ -f cache/cibles.json ]; then
+            cp cache/cibles.json data/cibles.json
           fi
 
       - name: Appliquer les publications du Journal officiel

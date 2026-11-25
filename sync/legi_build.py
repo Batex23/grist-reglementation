@@ -17,8 +17,14 @@ FIN_OUVERTE = "2999-01-01"
 
 # Filtre des codes : seuls ces articles sont gardés (les sections vides sont élaguées)
 FILTRE_CODES = {
-    "CDT": re.compile(r"^R\.? ?42(16|27)-"),
-    "CCH": re.compile(r"^(L|R)\.? ?14[1-6]-"),
+    "LEGITEXT000006072050": re.compile(r"^R\.? ?42(16|27)-"),                                   # Code du travail
+    "LEGITEXT000006074096": re.compile(r"^(L|R)\.? ?(14[1-6]-|112-(9|1[0-2])$)"),              # CCH (dont SEE L. 112-9 à 12)
+    "LEGITEXT000006070633": re.compile(r"^(L|R)\.? ?2225-"),                                     # CGCT : DECI
+}
+TITRES_CODES = {
+    "LEGITEXT000006074096": "Code de la construction et de l'habitation",
+    "LEGITEXT000006072050": "Code du travail",
+    "LEGITEXT000006070633": "Code général des collectivités territoriales — défense extérieure contre l'incendie",
 }
 
 ALLOWED_TAGS = {"p", "br", "table", "tr", "td", "th", "tbody", "thead", "ul", "ol", "li",
@@ -135,8 +141,11 @@ def build(root_dir, cibles, date):
 
     for legitext, info in cibles.items():
         dom = info["domaine"]
-        est_code = legitext in ("LEGITEXT000006074096", "LEGITEXT000006072050")
-        filtre = FILTRE_CODES.get(dom) if est_code else None
+        est_code = legitext in FILTRE_CODES
+        filtre = FILTRE_CODES.get(legitext)
+        abroge = info.get("abroge")          # texte abrogé conservé : version figée à cette date
+        suffixe = info.get("suffixe", "")
+        date_txt = abroge or date
         vpath = idx.get("version:" + legitext)
         spath = idx.get("struct:" + legitext)
         if not spath:
@@ -162,11 +171,11 @@ def build(root_dir, cibles, date):
             # articles regroupés par numéro pour repérer les versions à venir
             futurs = {}
             for l in liens:
-                if l.tag == "LIEN_ART" and a_venir(l, date):
+                if l.tag == "LIEN_ART" and not abroge and a_venir(l, date_txt):
                     futurs.setdefault(l.get("num") or l.get("id"), []).append(l)
             for l in liens:
-                futur_sec = l.tag == "LIEN_SECTION_TA" and a_venir(l, date)
-                if not valide(l, date) and not futur_sec:
+                futur_sec = l.tag == "LIEN_SECTION_TA" and not abroge and a_venir(l, date_txt)
+                if not valide(l, date_txt) and not futur_sec:
                     continue
                 lid = l.get("id")
                 if l.tag == "LIEN_SECTION_TA":
@@ -202,10 +211,10 @@ def build(root_dir, cibles, date):
                     ordre[0] += 1
                     node = {
                         "Identifiant": lid, "Parent": parent_id, "Type": "Article", "Domaine": dom,
-                        "Numero": a["num"] or num, "Titre": "", "Niveau": niveau, "Ordre": ordre[0],
+                        "Numero": (a["num"] or num) + suffixe, "Titre": "", "Niveau": niveau, "Ordre": ordre[0],
                         "Chemin": " › ".join(chemin), "Texte_officiel": legitext,
                         "Texte": a["texte"], "Texte_HTML": a["html"], "Nota": a["nota"],
-                        "Etat": a["etat"], "En_vigueur_depuis": a["debut"],
+                        "Etat": "VIGUEUR" if abroge else a["etat"], "En_vigueur_depuis": a["debut"],
                         "Fin_de_vigueur": "" if a["fin"] == FIN_OUVERTE else a["fin"],
                         "Historique": json.dumps(a["modifs"], ensure_ascii=False),
                         "Lien_Legifrance": f"{base_url}/article_lc/{lid}/",
@@ -223,7 +232,7 @@ def build(root_dir, cibles, date):
                             node["A_venir_par"] = json.dumps(fa["modifs"], ensure_ascii=False)
                     produits.append(node)
             # articles créés dans le futur (n'existent pas encore aujourd'hui)
-            nums_courants = {(l.get("num") or l.get("id")) for l in liens if l.tag == "LIEN_ART" and valide(l, date)}
+            nums_courants = {(l.get("num") or l.get("id")) for l in liens if l.tag == "LIEN_ART" and valide(l, date_txt)}
             for num, lst in futurs.items():
                 if num in nums_courants:
                     continue
@@ -249,7 +258,12 @@ def build(root_dir, cibles, date):
         ordre[0] += 1
         text_node["Ordre"] = ordre[0]
         struct = etree.parse(spath).getroot().find("STRUCT")
-        corps = visite(sections_et_articles(struct), legitext, 1, [text_node["Titre"] if not est_code else ("Code de la construction et de l'habitation" if dom == "CCH" else "Code du travail")])
+        if abroge:
+            text_node["Titre"] += f" — texte abrogé, version du {abroge[8:10]}/{abroge[5:7]}/{abroge[:4]} conservée pour les bâtiments antérieurs"
+            text_node["Abroge"] = abroge
+        if legitext == "LEGITEXT000006070633":
+            text_node["Titre"] = TITRES_CODES[legitext]
+        corps = visite(sections_et_articles(struct), legitext, 1, [text_node["Titre"] if not est_code else TITRES_CODES.get(legitext, text_node["Titre"])])
         corps = elague_futurs(corps)
         nodes.append(text_node)
         nodes.extend(corps)
@@ -284,7 +298,7 @@ def elague_futurs(corps):
     return [n for n in gardes if n["Identifiant"] not in morts]
 
 
-DOM_CCH = {"141": "CCH", "142": "HAB", "143": "ERP", "144": "CDT", "145": "IGH", "146": "IGH"}
+DOM_CCH = {"112": "CCH", "141": "CCH", "142": "HAB", "143": "ERP", "144": "CDT", "145": "IGH", "146": "IGH"}
 LIB_CCH = {"CCH": "dispositions communes", "HAB": "bâtiments d'habitation", "ERP": "établissements recevant du public",
            "CDT": "bâtiments à usage professionnel", "IGH": "immeubles de moyenne et de grande hauteur"}
 
@@ -333,7 +347,7 @@ def repartit_cch(nodes):
     textes = {}
     for n in sortie:
         if n["Type"] == "Texte":
-            textes[n["Texte_officiel"]] = (rang.get(n["Domaine"], 9), 1 if "#" in n["Texte_officiel"] else 0, n["Ordre"])
+            textes[n["Texte_officiel"]] = (rang.get(n["Domaine"], 9), 2 if n.get("Abroge") else 1 if "#" in n["Texte_officiel"] else 0, n["Ordre"])
     sortie.sort(key=lambda n: (textes[n["Texte_officiel"]], 0 if n["Type"] == "Texte" else 1, n["Ordre"]))
     for i, n in enumerate(sortie, 1):
         n["Ordre"] = i

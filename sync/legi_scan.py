@@ -17,16 +17,32 @@ def rel(name):
     """Chemin relatif à la racine « legi/ » de l'archive."""
     return re.sub(r"^(?:.*?/)?legi/", "", name, count=1)
 
-# Textes recherchés : (domaine, motif sur le titre complet)
+# Textes recherchés : (domaine, motif sur le titre complet, options)
+# options : « abroge » = texte abrogé gardé pour les bâtiments existants (version figée à la date donnée)
 CIBLES_TITRE = [
-    ("ERP", re.compile(r"^Arrêté du 25 juin 1980 portant approbation des dispositions générales du règlement de sécurité contre les risques d'incendie et de panique dans les établissements recevant du public", re.I)),
-    ("IGH", re.compile(r"^Arrêté du 30 décembre 2011 portant règlement de sécurité pour la construction des immeubles de grande hauteur", re.I)),
-    ("HAB", re.compile(r"^Arrêté du 31 janvier 1986 relatif à la protection contre l'incendie des bâtiments d'habitation", re.I)),
-    ("CDT", re.compile(r"^Arrêté du 5 août 1992 pris pour l'application des articles", re.I)),
+    ("ERP", re.compile(r"^Arrêté du 25 juin 1980 portant approbation des dispositions générales du règlement de sécurité contre les risques d'incendie et de panique dans les établissements recevant du public", re.I), {}),
+    ("IGH", re.compile(r"^Arrêté du 30 décembre 2011 portant règlement de sécurité pour la construction des immeubles de grande hauteur", re.I), {}),
+    ("HAB", re.compile(r"^Arrêté du 31 janvier 1986 relatif à la protection contre l'incendie des bâtiments d'habitation", re.I), {}),
+    ("CDT", re.compile(r"^Arrêté du 5 août 1992 pris pour l'application des articles", re.I), {}),
+    # textes ajoutés après l'audit de novembre 2026
+    ("CCH", re.compile(r"^Arrêté du 21 novembre 2002 relatif à la réaction au feu des produits de construction", re.I), {}),
+    ("CCH", re.compile(r"^Arrêté du 22 mars 2004 relatif à la résistance au feu des produits", re.I), {}),
+    ("CCH", re.compile(r"^Arrêté du \d+(?:er)? \w+ 20\d\d .*effet équivalent", re.I), {}),
+    ("CCH", re.compile(r"référentiel national de la défense extérieure contre l'incendie", re.I), {}),
+    ("CDT", re.compile(r"^Arrêté du .*règlement de sécurité .*bâtiments (?:à usage professionnel|professionnels)", re.I), {}),
+    ("ERP", re.compile(r"^Décret n° ?95-260 du 8 mars 1995", re.I), {}),
+    ("ERP", re.compile(r"^Arrêté du 9 janvier 1990 .*(?:flottant|bateau|incendie)", re.I), {}),
+    ("IGH", re.compile(r"^Arrêté du 18 octobre 1977 portant règlement de sécurité pour la construction des immeubles de grande hauteur", re.I),
+     {"abroge": "2012-03-31", "suffixe": " (1977)"}),
 ]
+# Mots dont un texte doit contenir au moins un pour être lu (accélère le parcours de l'archive)
+INDICES = (b"incendie", b"5 ao", b"au feu", b"effet \xc3\xa9quivalent", b"95-260", b"flottant", b"usage professionnel")
+# Titres signalés dans le journal pour l'audit (textes voisins à examiner)
+DECOUVERTE = re.compile(r"instruction technique|effet équivalent|défense extérieure contre l'incendie|établissements flottants|réaction au feu|résistance au feu|usage professionnel|désenfumage|complétant et modifiant le règlement de sécurité", re.I)
 CODES = {
     "LEGITEXT000006074096": "CCH",   # Code de la construction et de l'habitation
     "LEGITEXT000006072050": "CDT",   # Code du travail
+    "LEGITEXT000006070633": "CCH",   # Code général des collectivités territoriales (DECI)
 }
 
 
@@ -42,18 +58,21 @@ def main(path):
             if leg in CODES:
                 found[leg] = {"domaine": CODES[leg], "dir": rel(base), "titre": None}
                 continue
-            if "_non_vigueur" in n:
-                continue
+            abroge = "_non_vigueur" in n
             data = tar.extractfile(m).read()
-            if b"incendie" not in data and b"5 ao" not in data:
+            if not any(k in data for k in INDICES):
                 continue
             root = etree.fromstring(data)
             titre = (root.findtext(".//TITREFULL") or "").strip()
-            for dom, rx in CIBLES_TITRE:
+            if DECOUVERTE.search(titre):
+                print(f"vu{' (abrogé)' if abroge else ''}: {leg} {titre[:160]}", file=sys.stderr)
+            for dom, rx, opts in CIBLES_TITRE:
                 if rx.search(titre):
+                    if abroge != bool(opts.get("abroge")):
+                        continue
                     if dom == "CDT" and "incendie" not in titre.lower():
                         continue
-                    found[leg] = {"domaine": dom, "dir": rel(base), "titre": titre}
+                    found[leg] = {"domaine": dom, "dir": rel(base), "titre": titre, **opts}
                     print(f"trouvé {dom}: {leg} {titre[:90]}", file=sys.stderr)
     json.dump(found, sys.stdout, ensure_ascii=False, indent=1)
 
