@@ -77,6 +77,41 @@
     return root.innerHTML;
   }
 
+  /* Commentaires : HTML accepté (mise en forme, tableaux, liens, images), nettoyé avant affichage. */
+  const CMT_TAGS = new Set(['P', 'BR', 'B', 'STRONG', 'I', 'EM', 'U', 'S', 'DEL', 'INS', 'MARK', 'SMALL', 'SUB', 'SUP', 'CODE', 'PRE', 'BLOCKQUOTE', 'H2', 'H3', 'H4', 'H5', 'UL', 'OL', 'LI', 'DL', 'DT', 'DD', 'HR', 'A', 'IMG', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR', 'TH', 'TD', 'CAPTION', 'COLGROUP', 'COL', 'SPAN', 'DIV', 'FIGURE', 'FIGCAPTION', 'DETAILS', 'SUMMARY', 'ABBR', 'Q', 'CITE', 'FONT', 'CENTER']);
+  const CMT_DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'FORM', 'INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'LINK', 'META', 'BASE', 'SVG', 'MATH', 'TEMPLATE', 'NOSCRIPT', 'FRAME', 'FRAMESET', 'HEAD', 'TITLE']);
+  const isHTML = (t) => /<\/?[a-z][a-z0-9]*\b[^>]*>|&[a-z]+;|&#\d+;/i.test(t || '');
+  function cleanStyle(v) {
+    return (v || '').split(';').map((d) => d.trim()).filter((d) => {
+      const m = d.match(/^([a-z-]+)\s*:\s*(.+)$/i);
+      return m && /^(color|background(-color)?|font-(weight|style|size)|text-(align|decoration)|border(-[a-z]+)*|padding(-[a-z]+)?|margin(-[a-z]+)?|width|vertical-align|white-space)$/i.test(m[1]) && !/url\(|expression|javascript:|@import|position/i.test(m[2]);
+    }).join(';');
+  }
+  function cmtHTML(texte) {
+    if (!isHTML(texte)) return `<div class="txt">${esc(texte)}</div>`;
+    const doc = new DOMParser().parseFromString(`<div>${texte}</div>`, 'text/html');
+    const walk = (el) => {
+      [...el.children].forEach((c) => {
+        if (CMT_DROP.has(c.tagName)) { c.remove(); return; }
+        if (!CMT_TAGS.has(c.tagName)) { walk(c); c.replaceWith(...c.childNodes); return; }
+        [...c.attributes].forEach((a) => {
+          const k = a.name.toLowerCase(), v = a.value.trim();
+          if (k === 'href' && c.tagName === 'A' && /^(https?:|mailto:|#)/i.test(v)) return;
+          if (k === 'src' && c.tagName === 'IMG' && /^(https:|data:image\/(png|jpe?g|gif|webp);)/i.test(v)) return;
+          if (['alt', 'title', 'colspan', 'rowspan', 'width', 'height', 'align', 'color', 'open'].includes(k) && !/javascript:/i.test(v)) return;
+          if (k === 'style') { const cs = cleanStyle(v); if (cs) { c.setAttribute('style', cs); return; } }
+          c.removeAttribute(a.name);
+        });
+        if (c.tagName === 'A') { c.setAttribute('target', '_blank'); c.setAttribute('rel', 'noopener noreferrer'); }
+        if (c.tagName === 'IMG') { c.setAttribute('loading', 'lazy'); c.setAttribute('data-zoom', ''); }
+        walk(c);
+      });
+    };
+    const root = doc.body.firstChild; walk(root);
+    return `<div class="txt rich">${root.innerHTML}</div>`;
+  }
+  const cmtPlain = (t) => (isHTML(t) ? (new DOMParser().parseFromString(t, 'text/html').body.textContent || '') : (t || '')).replace(/\s+/g, ' ').trim();
+
   // ------------------------------------------------------------------ chargement des données
   function colsToRows(t) {
     const keys = Object.keys(t); const n = (t.id || []).length; const out = [];
@@ -238,7 +273,7 @@
     const docs = []; st.idxRows = [];
     for (const n of st.nodes) {
       if (n.type === 'Texte') continue;
-      const cm = (st.cmtBy.get(n.row) || []).map((c) => c.texte).join(' ');
+      const cm = (st.cmtBy.get(n.row) || []).map((c) => cmtPlain(c.texte)).join(' ');
       docs.push({
         key: n.id, vec: n.vec,
         fields: { num: n.type === 'Article' ? n.num + ' ' + dispNum(n) : '', path: (n.chemin.split(' › ').slice(-3).join(' ')) + ' ' + n.titre, body: (n.texte || '') + ' ' + (n.fut || ''), extra: n.tags.join(' ') + ' ' + cm },
@@ -691,7 +726,7 @@
       <div class="cols">
         <section><h2>Changements à venir</h2>${fut.length ? `<ul class="list">${fut.slice(0, 12).map((n) => li(n, 'Nouvelle rédaction au ' + fmtDate(n.futDate))).join('')}</ul>` : '<p class="hint">Aucune modification programmée.</p>'}</section>
         <section><h2>Modifiés récemment</h2><ul class="list">${rec.map((n) => li(n, 'En vigueur depuis le ' + fmtDate(n.depuis))).join('')}</ul></section>
-        <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, `<span class="hwho">${avatar(agentOf(c), c.auteur, 20)}<b>${esc(authorName(c))}</b></span> ${esc(c.texte.slice(0, 90))}`) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
+        <section><h2>Derniers commentaires</h2>${lastCm.length ? `<ul class="list">${lastCm.map((c) => { const n = st.byRow.get(c.art); return n ? li(n, `<span class="hwho">${avatar(agentOf(c), c.auteur, 20)}<b>${esc(authorName(c))}</b></span> ${esc(cmtPlain(c.texte).slice(0, 90))}`) : ''; }).join('')}</ul>` : '<p class="hint">Aucun commentaire pour l’instant. Ouvrez un article et ajoutez le premier.</p>'}</section>
       </div>
       <nav class="tools" aria-label="Outils">${tools}</nav></div>`;
     $('#read').scrollTop = 0;
@@ -1860,11 +1895,13 @@
         ${illusCardHTML(n)}
         ${cm.length ? cm.map((c) => `<div class="cmt">${avatar(agentOf(c), c.auteur, 36)}<div class="cbody"><div class="cname">${esc(authorName(c))}</div>
           <div class="who">${c.type ? `<span class="pill">${esc(c.type)}</span>` : ''}<span>${fmtDate(c.date)}</span></div>
-          ${c.texte ? `<div class="txt">${esc(c.texte)}</div>` : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div></div>`).join('') : (illusOf(n).length ? '' : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>')}
+          ${c.texte ? cmtHTML(c.texte) : ''}${c.images.length ? `<div class="thumbs" data-cimgs="${c.row}"></div>` : ''}</div></div>`).join('') : (illusOf(n).length ? '' : '<p class="hint" style="margin-top:10px">Pas encore de commentaire sur cet article.</p>')}
         <form class="form" id="cform">
           ${st.me ? `<div class="asme">${avatar(st.me, '', 28)}<span>Publier en tant que <b>${esc(agentName(st.me))}</b></span></div>` : ''}
           <select name="type" aria-label="Type de commentaire">${['Interprétation', 'Retour terrain', 'Photo / schéma', 'Question', 'Jurisprudence', 'Doctrine / réponse ministérielle'].map((t) => `<option>${t}</option>`).join('')}</select>
-          <textarea name="texte" placeholder="Votre interprétation, un retour de visite, une question…" aria-label="Commentaire"></textarea>
+          <textarea name="texte" placeholder="Votre interprétation, un retour de visite, une question… (HTML accepté : <b>, <table>, <a href>…)" aria-label="Commentaire"></textarea>
+          <div class="cmt-tools"><label><input type="checkbox" name="rich"> Coller avec la mise en forme (Word, LibreOffice, page web → HTML)</label><button type="button" class="linkbtn" id="cprev">Aperçu</button></div>
+          <div class="cmt-prev" id="cprevbox" hidden></div>
           <label class="drop" id="drop">Glissez des photos ou schémas ici, ou <u>choisissez des fichiers</u><input type="file" name="files" accept="image/*" multiple hidden></label>
           <div class="thumbs" id="preview"></div>
           <button class="btn" type="submit">Publier le commentaire</button>
@@ -1908,9 +1945,22 @@
     ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, () => drop.classList.remove('over')));
     drop.addEventListener('drop', (e) => { e.preventDefault(); files = files.concat([...e.dataTransfer.files].filter((x) => x.type.startsWith('image/'))); show(); });
     f.texte.addEventListener('paste', (e) => {
-      const imgs = [...(e.clipboardData || {}).files || []].filter((x) => x.type.startsWith('image/'));
+      const cd = e.clipboardData || {};
+      const imgs = [...cd.files || []].filter((x) => x.type.startsWith('image/'));
       if (imgs.length) { files = files.concat(imgs); show(); }
+      const h = f.rich.checked && cd.getData && cd.getData('text/html');
+      if (h) {
+        e.preventDefault();
+        const body = (h.match(/<body[^>]*>([\s\S]*)<\/body>/i) || [, h])[1].replace(/<!--[\s\S]*?-->/g, '').trim();
+        const clean = cmtHTML(body).replace(/^<div class="txt rich">|<\/div>$/g, '');
+        const t = f.texte; t.setRangeText(clean, t.selectionStart, t.selectionEnd, 'end');
+        t.dispatchEvent(new Event('input'));
+      }
     });
+    const pbox = $('#cprevbox', f);
+    const pv = () => { pbox.innerHTML = f.texte.value.trim() ? cmtHTML(f.texte.value) : '<p class="hint">Rien à afficher.</p>'; };
+    $('#cprev', f).addEventListener('click', () => { pbox.hidden = !pbox.hidden; if (!pbox.hidden) pv(); });
+    f.texte.addEventListener('input', () => { if (!pbox.hidden) pv(); });
     f.addEventListener('submit', async (e) => {
       e.preventDefault();
       const texte = f.texte.value.trim();
